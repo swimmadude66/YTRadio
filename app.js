@@ -1,5 +1,6 @@
 var express    = require('express'); 		// call express
 var https      = require('https');
+var http       = require('http');
 var fs         = require('fs');
 var bodyParser = require('body-parser');
 var path       = require('path');
@@ -14,6 +15,7 @@ app.set('views', __dirname + '/client/views');
 app.use(bodyParser.json())
 
 var port = 3000;
+
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -50,14 +52,27 @@ app.use(function(req, res, next){
   return res.type('txt').send('Not found');
 });
 
+var server;
+
 if('SSL' in global.config){
   var config = {
     key: fs.readFileSync(global.config.SSL.keyfile),
    cert: fs.readFileSync(global.config.SSL.certfile)
   };
-  https.createServer(config, app).listen(port);
+  server = https.createServer(config, app);
 }
 else{
-  app.listen(port);
+  server = http.Server(app);
 }
+var io = require('socket.io')(server);
+server.listen(port);
+
+
+io.on('connection', function (socket) {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log(data);
+  });
+});
+
 console.log('Magic happens on port ' + port);
