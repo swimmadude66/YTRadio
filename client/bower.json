@@ -1,0 +1,23 @@
+{
+  "name": "Bonsai",
+  "version": "0.0.1",
+  "authors": [
+    "Adam Yost <swimmadude66@gmail.com>"
+  ],
+  "description": "Hosted Radio powered by Youtube and Writhem",
+  "main": "index.js",
+  "license": "NONE",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.6",
+    "angular-youtube-mb": "~1.1.0",
+    "bootstrap": "~3.3.5",
+    "jquery": "~2.1.4"
+  }
+}
