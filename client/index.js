@@ -5,11 +5,12 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
   $scope.videoID;
   $scope.playerVars = {
     controls: 0,
-    autoplay: 1
+    autoplay: 1,
+    start: 0
   };
 
-  $scope.socket = Socket;
   $scope.queue = [];
+
 
   $scope.search=function(){
     $http.get('/api/search/'+$scope.searchCriteria)
@@ -33,8 +34,17 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
   };
 
   $scope.$on('youtube.player.ended', function ($event, player) {
-    console.log('song is over');
-    $scope.socket.emit('song_end');
+    $http.get('/api/songend')
+    .then(function(res){
+      console.log('sent song-end');
+    });
+  });
+
+  Socket.on('join', function(data){
+    $scope.queue = data.videoQueue;
+    $scope.playerVars.start = data.startSeconds;
+    console.log($scope.playerVars);
+    $scope.videoID = data.Info.id.videoId;
   });
 
   Socket.on('queue_updated', function(data){
@@ -42,10 +52,11 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
   });
 
   Socket.on('song_start', function(data){
+    console.log('new song received');
+    console.log(data);
     $scope.videoID = data.Info.id.videoId;
-    $scope.ytplayer.playVideo();
+    $scope.playerVars.start = 0;
   });
-
 });
 
 app.factory('Socket', function (socketFactory) {

@@ -7,29 +7,28 @@ var currentVideo = false;
 
 module.exports= function(io){
 
-  io.on('connect', function(socket){
-    console.log(currentVideo);
-    if(currentVideo){
-      //send currentID and time in to video
-    }
-    else{
-      currentVideo = {Info: videoqueue[0], StartTime:new Date().getTime()};
-      io.sockets.emit('song_start', currentVideo);
-    }
-  });
-
-  io.on('song_end', function(data){
-    console.log('song ended');
-    videoqueue.splice(0,1);
-    io.sockets.emit('queue_updated', videoqueue);
+  function playNextSong(){
+    var now = new Date().getTime();
     if(videoqueue.length>0){
-      currentVideo = videoqueue[0];
-      currentVideo = {Info: videoqueue[0], StartTime:new Date().getTime()};
-      io.sockets.emit('song_start', currentVideo);
+      var newguy = videoqueue.shift();
+      currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
+      io.emit('queue_updated', videoqueue);
     }
-    else{
-      currentVideo = false;
+  }
+
+  function getTimeElapsed(){
+    var now = new Date().getTime();
+    if(currentVideo && now <= currentVideo.EndTime){
+      return Math.ceil((now - currentVideo.StartTime)/1000.0);
     }
+    currentVideo = false;
+    playNextSong();
+    return 0;
+  }
+
+  io.on('connect', function(socket){
+      var elapsed = getTimeElapsed();
+      io.sockets.emit('join', {videoQueue:videoqueue, Info:currentVideo.Info, startSeconds: elapsed});
   });
 
   router.get('/search/:query', function(req, res){
@@ -60,20 +59,31 @@ module.exports= function(io){
       else{
         var body_obj = JSON.parse(body);
         var duration = body_obj.items[0].contentDetails.duration;
-        var durationparts = duration.replace(/P(\d*)D?T(\d*)H?(\d*)M?(\d+)S/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
+        var durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
         var durationmillis = 0;
         var mults = [1000, 60000, 60*60000, 24*60*60000];
         for(var i=durationparts.length-1; i>=0; i--){
-          durationmillis += parseInt(durationparts[i]*mults[3-i]);
+          durationmillis += parseInt(durationparts[i].substring(0,durationparts[i].length-1)*mults[3-i]);
         }
         videoinfo.Duration = durationmillis;
         videoqueue.push(videoinfo);
-        io.sockets.emit('queue_updated', videoqueue);
-        currentVideo = {Info: videoqueue[0], StartTime:new Date().getTime()};
-        io.sockets.emit('song_start', currentVideo);
+        if(!currentVideo){
+          playNextSong();
+        }
+        else{
+          io.sockets.emit('queue_updated', videoqueue);
+        }
         return res.send({Success:true});
       }
     });
+  });
+
+  router.get('/songend', function(req,res){
+    var elapsed = getTimeElapsed();
+    if(elapsed == 0){
+      io.sockets.emit('song_start', currentVideo);
+    }
+    return res.send({Success:true});
   });
 
   return router;
