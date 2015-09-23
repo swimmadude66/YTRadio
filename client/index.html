@@ -16,6 +16,7 @@
           <div class="embed-responsive embed-responsive-16by9">
             <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
           </div>
+          <hr>
           <div class="row">
             <div class="col-xs-8">
               <div class="input-group">
@@ -32,13 +33,19 @@
           <hr>
           <div class="row">
             <ul>
-              <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)">{{result.snippet.title}}</li>
+              <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="nav nav-stacked" style="cursor:pointer">
+                <span><img src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
+              </li>
             </ul>
           </div>
         </div>
         <div class="col-xs-2">
+          <h1>Queued Items</h1>
+          <hr>
           <ul>
-            <li ng-repeat="video in queue track by $index">{{video.snippet.title}}</li>
+            <li ng-repeat="video in queue track by $index" class="nav nav-stacked" style="cursor:pointer">
+              <span><img src="{{video.snippet.thumbnails.default.url}}"></img>{{video.snippet.title}}<span>
+            </li>
           </ul>
         </div>
       </div>
