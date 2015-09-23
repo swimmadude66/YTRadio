@@ -6,13 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io.connect('http://localhost');
-      socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'data' });
-      });
-    </script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   </head>
@@ -21,25 +14,48 @@
       <div class="row">
         <div class="col-xs-10">
           <div class="embed-responsive embed-responsive-16by9">
-            <youtube-video video-id="theBestVideo" player-vars="playerVars"></youtube-video>
+            <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
+          </div>
+          <div class="row">
+            <div class="col-xs-8">
+              <div class="input-group">
+                <span class="input-group-addon">Search</span>
+                <input type="text" class="form-control" placeholder="Search for a video here" ng-model="searchCriteria">
+              </div>
+            </div>
+            <div class="col-xs-4">
+              <button type="button" class="btn btn-default" ng-click="search()">
+                Search
+              </button>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <ul>
+              <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)">{{result.snippet.title}}</li>
+            </ul>
           </div>
         </div>
         <div class="col-xs-2">
-          <h1>Chat will go here</h1>
+          <ul>
+            <li ng-repeat="video in queue track by $index">{{video.snippet.title}}</li>
+          </ul>
         </div>
       </div>
     </div>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!--  Angular and dependencies -->
-    <script src="bower_components/angular/angular.min.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script src="bower_components/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
+    <script type="text/javascript" src="bower_components/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
+    <script type="text/javascript" src="bower_components/angular-socket-io/socket.min.js">
 
+    </script>
     <!--source -->
-    <script src="index.js"></script>
+    <script type="text/javascript" src="index.js"></script>
 
     </script>
   </body>

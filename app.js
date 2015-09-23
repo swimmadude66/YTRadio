@@ -16,6 +16,20 @@ app.use(bodyParser.json())
 
 var port = 3000;
 
+var server;
+
+if('SSL' in global.config){
+  var config = {
+    key: fs.readFileSync(global.config.SSL.keyfile),
+   cert: fs.readFileSync(global.config.SSL.certfile)
+  };
+  server = https.createServer(config, app);
+}
+else{
+  server = http.Server(app);
+}
+var io = require('socket.io')(server);
+server.listen(port);
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -25,17 +39,9 @@ app.get('/', function(req, res){
   res.render('index');
 });
 
-//app.use('/api/', require('./routes/api.js'));
+var api = require('./routes/api.js')(io);
 
-var videos = ["CXPADwU05OQ", "BjsjIkSb0cM", "b4taIpALfAo", "sWir8bPu7kI", "FHxH0kkXWpY", "rx4xblzpkgs"];
-var count = 0;
-
-app.get('/api/nextvideo', function(req, res, next){
-  var vid = videos[count%videos.length];
-  count ++;
-  return res.send({Success:true, vidID: vid});
-});
-
+app.use('/api/', api);
 
 //keep this last, as it will return 404
 app.use(function(req, res, next){
@@ -52,27 +58,6 @@ app.use(function(req, res, next){
   return res.type('txt').send('Not found');
 });
 
-var server;
 
-if('SSL' in global.config){
-  var config = {
-    key: fs.readFileSync(global.config.SSL.keyfile),
-   cert: fs.readFileSync(global.config.SSL.certfile)
-  };
-  server = https.createServer(config, app);
-}
-else{
-  server = http.Server(app);
-}
-var io = require('socket.io')(server);
-server.listen(port);
-
-
-io.on('connection', function (socket) {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log(data);
-  });
-});
 
 console.log('Magic happens on port ' + port);
