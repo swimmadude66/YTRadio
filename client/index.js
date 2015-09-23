@@ -1,4 +1,4 @@
-var app = angular.module('Bonsai', ['youtube-embed', 'btford.socket-io']);
+var app = angular.module('YTRadio', ['youtube-embed', 'btford.socket-io']);
 
 app.controller('PageCtrl', function ($scope, $http, Socket) {
   // have a video id
