@@ -10,21 +10,33 @@
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
   </head>
   <body ng-controller="PageCtrl">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-xs-10">
-          <div class="embed-responsive embed-responsive-16by9">
-            <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
+          <div id="video-wrapper" ng-hide="novid">
+            <div class="embed-responsive embed-responsive-16by9">
+              <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
+            </div>
           </div>
-          <hr>
+          <div id="error-wrapper" ng-show="novid">
+            <div class="embed-responsive embed-responsive-16by9">
+              <h1 style="margin-top:250px;">No Videos Queued <small>Add a video to get the party rolling!</small></h1>
+            </div>
+          </div>
+          <br />
           <div class="row">
+            <div class="col-xs-2">
+              <button type="button" class="btn btn-default" ng-click="skip()">
+                Skip
+              </button>
+            </div>
             <div class="col-xs-8">
               <div class="input-group">
                 <span class="input-group-addon">Search</span>
                 <input type="text" class="form-control" placeholder="Search for a video here" ng-model="searchCriteria">
               </div>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-2">
               <button type="button" class="btn btn-default" ng-click="search()">
                 Search
               </button>
@@ -32,8 +44,8 @@
           </div>
           <hr>
           <div class="row">
-            <ul>
-              <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="nav nav-stacked" style="cursor:pointer">
+            <ul class="nav nav-stacked">
+              <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)"  style="cursor:pointer" role="presentation">
                 <span><img src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
               </li>
             </ul>
@@ -42,8 +54,8 @@
         <div class="col-xs-2">
           <h1>Queued Items</h1>
           <hr>
-          <ul>
-            <li ng-repeat="video in queue track by $index" class="nav nav-stacked" style="cursor:pointer">
+          <ul class="nav nav-stacked">
+            <li ng-repeat="video in queue track by $index" class="nav nav-stacked" style="cursor:pointer" role="presentation">
               <span><img src="{{video.snippet.thumbnails.default.url}}"></img>{{video.snippet.title}}<span>
             </li>
           </ul>

@@ -9,11 +9,13 @@ module.exports= function(io){
 
   function playNextSong(){
     var now = new Date().getTime();
+    currentVideo = false;
     if(videoqueue.length>0){
       var newguy = videoqueue.shift();
       currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
       io.emit('queue_updated', videoqueue);
     }
+    io.emit('song_start', currentVideo);
   }
 
   function getTimeElapsed(){
@@ -21,14 +23,13 @@ module.exports= function(io){
     if(currentVideo && now <= currentVideo.EndTime){
       return Math.ceil((now - currentVideo.StartTime)/1000.0);
     }
-    currentVideo = false;
     playNextSong();
     return 0;
   }
 
   io.on('connect', function(socket){
       var elapsed = getTimeElapsed();
-      io.sockets.emit('join', {videoQueue:videoqueue, Info:currentVideo.Info, startSeconds: elapsed});
+      io.sockets.emit('join', {videoQueue:videoqueue, currVid:currentVideo, startSeconds: elapsed});
   });
 
   router.get('/search/:query', function(req, res){
@@ -84,6 +85,10 @@ module.exports= function(io){
       io.sockets.emit('song_start', currentVideo);
     }
     return res.send({Success:true});
+  });
+
+  router.get('/skip', function(req, res){
+    playNextSong();
   });
 
   return router;

@@ -8,7 +8,7 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
     autoplay: 1,
     start: 0
   };
-
+  $scope.novid = true;
   $scope.queue = [];
 
 
@@ -33,6 +33,13 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
     });
   };
 
+  $scope.skip = function(){
+    $http.get('/api/skip')
+    .then(function(res){
+      console.log('skipping');
+    });
+  }
+
   $scope.$on('youtube.player.ended', function ($event, player) {
     $http.get('/api/songend')
     .then(function(res){
@@ -40,11 +47,20 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
     });
   });
 
+  $scope.$on('youtube.player.paused', function ($event, player) {
+    player.playVideo();
+  });
+
   Socket.on('join', function(data){
     $scope.queue = data.videoQueue;
-    $scope.playerVars.start = data.startSeconds;
-    console.log($scope.playerVars);
-    $scope.videoID = data.Info.id.videoId;
+    if(data.currVid){
+      $scope.novid = false;
+      $scope.videoID = data.currVid.Info.id.videoId;
+      $scope.playerVars.start = data.startSeconds;
+    }
+    else{
+      $scope.novid = true;
+    }
   });
 
   Socket.on('queue_updated', function(data){
@@ -52,10 +68,14 @@ app.controller('PageCtrl', function ($scope, $http, Socket) {
   });
 
   Socket.on('song_start', function(data){
-    console.log('new song received');
-    console.log(data);
-    $scope.videoID = data.Info.id.videoId;
-    $scope.playerVars.start = 0;
+    if(data){
+      $scope.novid = false;
+      $scope.videoID = data.Info.id.videoId;
+      $scope.playerVars.start = 0;
+    }
+    else{
+      $scope.novid = true;
+    }
   });
 });
 
