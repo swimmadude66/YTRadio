@@ -1,0 +1,7 @@
+<h1>Queued Items</h1>
+<hr>
+<ul class="nav nav-stacked">
+  <li ng-repeat="video in queue track by $index" class="nav nav-stacked" style="cursor:pointer" role="presentation">
+    <span>{{video.snippet.title}}<span>
+  </li>
+</ul>

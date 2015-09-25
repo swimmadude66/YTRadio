@@ -40,7 +40,6 @@ app.get('/', function(req, res){
 });
 
 var api = require('./routes/api.js')(io);
-
 app.use('/api/', api);
 
 //keep this last, as it will return 404
