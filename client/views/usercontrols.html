@@ -1,0 +1,38 @@
+<div id="search-overlay" class="container-fluid overlay animation-on" ng-show="expand">
+  <div class="col-xs-3">
+
+  </div>
+  <div class="col-xs-9">
+    <div class="row">
+      <ul class="nav nav-stacked">
+        <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="pointer" role="presentation">
+          <span><img ng-src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<footer>
+<div class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container-fluid">
+        <ul class="nav navbar-nav">
+          <li ng-show="expand" ng-click="expand=false">
+            <a><span class="glyphicon glyphicon-chevron-down"></span></a>
+          </li>
+          <li><a href="mailto:swimmadude66@gmail.com">Contact Us</a></li>
+          <li><a>control</a></li>
+          <li><a>control</a></li>
+          <li><a>control</a></li>
+        </ul>
+
+        <form class="navbar-form navbar-left" role="search">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="button" ng-click="search()">Search</button>
+            </span>
+          </div><!-- /input-group -->
+        </form>
+    </div>
+</div>
+</footer>

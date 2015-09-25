@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
-    <script src="/socket.io/socket.io.js"></script>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="styles/styles.css">
     <!--  Angular and dependencies -->
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
     <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
     <script type="text/javascript" src="bower_components/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
@@ -20,62 +20,15 @@
     <script type="text/javascript" src="services/authservice.js"></script>
     <!--controllers-->
     <script type="text/javascript" src="controllers/radiocontroller.js"></script>
+    <script type="text/javascript" src="controllers/usercontroller.js"></script>
   </head>
   <body ng-controller="PageCtrl">
-    <!--
-    *****************************HEADER*****************************
-    -->
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">YTRadio</a>
-        </div>
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-          <li><a href="#">Link</a></li>
-        </ul>
-        <form class="navbar-form navbar-left" role="search">
-          <div class="form-group">
-            <input type="text" class="form-control" placeholder="Search">
-          </div>
-          <button type="submit" class="btn btn-default">Submit</button>
-        </form>
-      </div><!-- /.container-fluid -->
-    </nav>
-    <!--
-    *****************************HEADER*****************************
-    -->
-    <div class="container-fluid">
-      <div class="row">
-        <theatre></theatre>
-      </div>
-      <div class="row">
-        <div class="col-xs-2">
-          <button type="button" class="btn btn-default" ng-click="skip()">
-            Skip
-          </button>
-        </div>
-        <div class="col-xs-8">
-          <div class="input-group">
-            <span class="input-group-addon">Search</span>
-            <input type="text" class="form-control" placeholder="Search for a video here" ng-model="searchCriteria">
-          </div>
-        </div>
-        <div class="col-xs-2">
-          <button type="button" class="btn btn-default" ng-click="search()">
-            Search
-          </button>
-        </div>
-      </div>
-      <hr>
-      <div class="row">
-        <ul class="nav nav-stacked">
-          <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)"  style="cursor:pointer" role="presentation">
-            <span><img ng-src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
-          </li>
-        </ul>
-      </div>
+
+    <radio-controls></radio-controls>
+    <div class="container-fluid" style="height:100%; overflow:hidden">
+      <theatre></theatre>
     </div>
+    <user-controls></user-controls>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
