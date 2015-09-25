@@ -19,7 +19,7 @@ module.exports= function(io){
 
   function getTimeElapsed(callback){
     var now = new Date().getTime();
-    if(currentVideo && now <= currentVideo.EndTime){
+    if(currentVideo && now < currentVideo.EndTime){
       return callback(Math.ceil((now - currentVideo.StartTime)/1000.0));
     }
     else{
@@ -84,8 +84,10 @@ module.exports= function(io){
   });
 
   router.post('/songend', function(req,res){
-    var elapsed = getTimeElapsed(function(){});
-    return res.send({Success:true});
+    getTimeElapsed(function(elapsed){
+      console.log(elapsed);
+      return res.send({Success:true});
+    });
   });
 
   router.post('/skip', function(req, res){
