@@ -1,0 +1,41 @@
+html,body{
+  height:100%;
+  overflow-y: hidden;
+}
+
+.overlay{
+  height:100%;
+  width:100%;
+  overflow:hidden;
+  position:absolute;
+  z-index:1000;
+  top:0;
+  left:0;
+  color:#FFF;
+  background-color: rgba(64,64,64,0.9);
+}
+
+.pointer{
+  cursor:pointer;
+}
+
+.pointer:hover{
+  background-color: rgba(255,255,255,0.3);
+}
+
+/*Override navbar collapse*/
+.navbar-collapse.collapse {
+display: block!important;
+}
+
+.navbar-nav>li, .navbar-nav {
+float: left !important;
+}
+
+.navbar-nav.navbar-right:last-child {
+margin-right: -15px !important;
+}
+
+.navbar-right {
+float: right!important;
+}
