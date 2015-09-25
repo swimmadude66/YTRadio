@@ -22,24 +22,19 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
     });
   }
 
-  $scope.addToQueue=function(vidinfo){
-    $http.post('/api/radio/queue', vidinfo)
-    .then(function(res){
-      var data = res.data;
-      if(data.Success){
-        console.log('Video Added');
-      }
-    });
-  };
-
   /*
   * Player events
   */
   $scope.$on('youtube.player.ended', function ($event, player) {
-    $http.post('/api/radio/songend')
-    .then(function(res){
-      console.log('sent song-end');
-    });
+    if($scope.playing){
+      $scope.playing = false;
+      setTimeout(function(){
+        $http.post('/api/radio/songend')
+        .then(function(res){
+          console.log('sent song-end');
+        });
+      }, 1000);
+    }
   });
 
   $scope.$on('youtube.player.paused', function ($event, player) {
@@ -67,11 +62,11 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
   });
 
   RadioSocket.on('song_start', function(data){
-    console.log(data);
     if(data.currVid){
       $scope.novid = false;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = 0;
+      $scope.playing= true;
     }
     else{
       $scope.novid = true;
