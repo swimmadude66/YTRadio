@@ -9,6 +9,7 @@
   "author": "",
   "license": "NONE",
   "dependencies": {
+    "async": "^1.4.2",
     "body-parser": "^1.14.0",
     "crypto": "0.0.3",
     "ejs": "^2.3.4",

@@ -1,5 +1,6 @@
 var router = require('express').Router();
 var request = require('request');
+var async = require('async');
 
 var videoqueue = [];
 
@@ -14,7 +15,7 @@ module.exports= function(io){
       var newguy = videoqueue.shift();
       currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
     }
-    io.emit('song_start', {currVid: currentVideo, videoQueue: videoqueue});
+    io.sockets.emit('song_start', {currVid: currentVideo, videoQueue: videoqueue});
   }
 
   function getTimeElapsed(callback){
@@ -28,8 +29,40 @@ module.exports= function(io){
     return callback(0);
   }
 
+  function videoSearch(raw_string, pageToken, callback){
+    var results = [];
+    var more = true;
+    var nextPage = pageToken;
+    async.whilst(
+      function(){return (results.length<25 && more)},
+      function(cb){
+        var search_string = raw_string;
+        if(nextPage){
+          search_string= raw_string+"&pageToken="+nextPage;
+        }
+        request(search_string, function(err, response, body){
+          if(err){
+            return cb(err);
+          }
+          else{
+            var body_obj = JSON.parse(body);
+            results = results.concat(body_obj.items);
+            nextPage = body_obj.nextPageToken;
+            more = !!nextPage;
+            return cb();
+          }
+        });
+      },
+      function(err){
+        if(err){
+          return callback(err, results);
+        }
+        return callback(null, results);
+      }
+    );
+  }
+
   io.on('connect', function(socket){
-    console.log('listener joined');
     getTimeElapsed(function(elapsed){
       socket.emit('join', {videoQueue:videoqueue, currVid:currentVideo, startSeconds: elapsed});
     });
@@ -38,14 +71,12 @@ module.exports= function(io){
   router.get('/search/:query', function(req, res){
     var host = "https://www.googleapis.com/youtube/v3/search?part=id,snippet&type=video&q=";
     var req_string = host + req.params.query+"&key="+global.config.Keys.YoutubeAPI;
-    request(req_string, function(err, response, body){
+    videoSearch(req_string, null, function(err, results){
       if(err){
-        return res.send({Success:false, Error: err});
+        console.log(err);
+        return res.send({Success: false, Error: err});
       }
-      else{
-        var body_obj = JSON.parse(body);
-        return res.send({Success:true, Videos:body_obj.items});
-      }
+      return res.send({Success:true, Videos:results});
     });
   });
 
