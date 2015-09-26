@@ -33,13 +33,31 @@ module.exports= function(io){
   /*
   * Public Methods
   */
-  //TODO: implement signup
+  router.post('/signup', function(req, res){
+    var username = req.body.Username;
+    var email = req.body.Email;
+    var pass = req.body.Password;
+    var salt = uuid.v4();
+    var encpass = encryption.encrypt(salt+"|"+pass);
+    var confirm = uuid.v4();
+    db.query('Insert into users(Username, Email, Password, Confirm)', [username, email, encpass, confirm], function(err, results){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      //send email;
+      return res.send({Success: true, Message: "Confirmation email sent."});
+    });
+  });
 
-  //TODO: implement email verification
   router.get('/verification/:v_key', function(req, res){
-    //lookup user by key, check if email matches
-      //if so: activate user, redirect to login
-      //else: Redirect to signup
+    db.query('Update users set Active=1 where Confirm=?', [req.params.v_key], function(err, res){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success: true});
+    });
   });
 
   router.post('/login', function(req, res){
