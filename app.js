@@ -15,7 +15,6 @@ app.set('views', __dirname + '/client/views');
 app.use(bodyParser.json())
 
 var port = 3000;
-
 var server;
 
 if('SSL' in global.config){
