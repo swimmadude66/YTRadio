@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
+app.controller('RadioCtrl', function ($scope, $http, Socket) {
   $scope.videoID;
   $scope.playerVars = {
     controls: 0,
@@ -7,10 +7,12 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
     iv_load_policy:3,
     modestbranding: 1,
     rel: 0,
+    enablejsapi: 1,
     start: 0
   };
   $scope.queue = [];
   $scope.novid = true;
+  $scope.muted = false;
 
   /*
   * Client Methods
@@ -22,9 +24,26 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
     });
   }
 
+  $scope.toggleMute=function(){
+    if($scope.muted){
+      $scope.ytplayer.unMute();
+      $scope.muted=false;
+    }
+    else{
+      $scope.ytplayer.mute();
+      $scope.muted=true;
+    }
+  }
+
   /*
   * Player events
   */
+  $scope.$on('youtube.player.playing', function ($event, player) {
+    if($scope.muted){
+      $scope.ytplayer.mute();
+    }
+  });
+
   $scope.$on('youtube.player.ended', function ($event, player) {
     if($scope.playing){
       $scope.playing = false;
@@ -45,7 +64,7 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
   * Socket Events
   */
 
-  RadioSocket.on('join', function(data){
+  Socket.on('join', function(data){
     $scope.queue = data.videoQueue;
     if(data.currVid){
       $scope.novid = false;
@@ -57,11 +76,11 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
     }
   });
 
-  RadioSocket.on('queue_updated', function(data){
+  Socket.on('queue_updated', function(data){
     $scope.queue = data;
   });
 
-  RadioSocket.on('song_start', function(data){
+  Socket.on('song_start', function(data){
     if(data.currVid){
       $scope.novid = false;
       $scope.videoID = data.currVid.Info.id.videoId;
@@ -74,14 +93,6 @@ app.controller('RadioCtrl', function ($scope, $http, RadioSocket) {
     }
     $scope.queue = data.videoQueue;
   });
-});
-
-app.factory('RadioSocket', function (socketFactory) {
-  var myIoSocket = io.connect();
-  mySocket = socketFactory({
-    ioSocket: myIoSocket
-  });
-  return mySocket;
 });
 
 app.directive('radioSidebar', function() {
