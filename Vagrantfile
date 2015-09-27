@@ -16,6 +16,9 @@ Vagrant.configure(2) do |config|
     shell.args = %q{/etc/sudoers.d/root_ssh_agent "Defaults env_keep += \"SSH_AUTH_SOCK\""}
   end
 
+  # Transfer files
+  config.vm.provision :file, source: "../scripts/db-setup.sql", destination: "/home/vagrant/bin/db-setup.sql"
+
   # Run scripts
   config.vm.provision :shell, path: "./scripts/environment-setup.sh", privileged: false
 

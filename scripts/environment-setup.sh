@@ -23,6 +23,9 @@ sudo tee -a /etc/mysql/my.cnf > /dev/null <<'EOB'
     password=admin
 EOB
 
+echo "Setting up DB..."
+sudo -u vagrant mysql < /home/vagrant/bin/db-setup.sql
+
 echo "Installing GIT..."
 sudo apt-get install git -y
 
@@ -55,3 +58,6 @@ sudo npm install grunt-cli -g
 
 echo "Setting npm folder permissions..." # required after installing with -g using sudo as first npm install
 sudo chown -R vagrant:vagrant /home/vagrant/.npm/
+
+echo "DONE! :)"
+echo "type: 'vagrant ssh' for SSH access."
