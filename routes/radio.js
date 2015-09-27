@@ -29,7 +29,7 @@ module.exports= function(io){
     return callback(0);
   }
 
-  function videoSearch(raw_string, pageToken, callback){
+  function compileResults(raw_string, pageToken, callback){
     var results = [];
     var more = true;
     var nextPage = pageToken;
@@ -69,9 +69,9 @@ module.exports= function(io){
   });
 
   router.get('/search/:query', function(req, res){
-    var host = "https://www.googleapis.com/youtube/v3/search?part=id,snippet&type=video&q=";
+    var host = "https://www.googleapis.com/youtube/v3/search?part=id,snippet&type=video&videoEmbeddable=true&q=";
     var req_string = host + req.params.query+"&key="+global.config.Keys.YoutubeAPI;
-    videoSearch(req_string, null, function(err, results){
+    compileResults(req_string, null, function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
