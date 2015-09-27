@@ -4,17 +4,6 @@ var encryption = require('../middleware/encryption.js');
 var uuid = require('node-uuid');
 module.exports= function(io){
 
-/*
-  io.on('connect', function(socket){
-    socket.join('radio');
-    socket.on('loggedin', function(){
-      socket.join('chat');
-    });
-    socket.on('loggedout', function(){
-      socket.leave('chat');
-    });
-  });
-*/
   function gen_session(user, callback){
     var sid = uuid.v4();
     var session_block = {
@@ -87,10 +76,24 @@ module.exports= function(io){
     });
   });
 
-
   /*
   * Authentication gateway
   */
+  router.use(function(req, res, next){
+    var authZ = req.headers.Authorization || req.headers.authorization;
+    if(!authZ){
+      return res.send({Success:false, Error:"No valid Auth token"});
+    }
+    db.query("Select * from Sessions where Key = ? and Active=1", [authZ], function(err, results){
+      if(err){
+        return res.send({Success: false, Error: err});
+      }
+      if(!results || results.length <1){
+        return res.send({Success: false, Error: "Invalid Auth!"});
+      }
+      next();
+    });
+  });
 
   /*
   * External Methods
