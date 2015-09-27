@@ -1,36 +1,69 @@
 <div id="search-overlay" class="container-fluid overlay animation-on" ng-show="expand">
-  <div class="col-xs-3">
-
+  <div class="row" style="padding-top:20px; height:75px; background-color:#000;">
+    <div class="col-xs-3">
+      &nbsp;
+    </div>
+    <div class="col-xs-6">
+      <form class="simple-form">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" ng-click="search()">Search</button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <div class="col-xs-3">
+      &nbsp;
+    </div>
   </div>
-  <div class="col-xs-9" style="overflow-y: scroll;">
-    <ul class="nav nav-stacked">
-      <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="pointer" role="presentation">
-        <span><img ng-src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
-      </li>
-    </ul>
+  <div class="row">
+    <div class="col-xs-3">
+
+    </div>
+    <div class="col-xs-9" style="overflow-y: scroll;">
+      <ul class="nav nav-stacked">
+        <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="pointer" role="presentation">
+          <span><img ng-src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
 <footer>
-<div class="navbar navbar-inverse navbar-fixed-bottom">
-    <div class="container-fluid">
-        <ul class="nav navbar-nav">
-          <li ng-show="expand" ng-click="expand=false">
-            <a><span class="glyphicon glyphicon-chevron-down"></span></a>
-          </li>
-          <li><a href="mailto:swimmadude66@gmail.com">Contact Us</a></li>
-          <li><a>control</a></li>
-          <li><a>control</a></li>
-          <li><a>control</a></li>
-        </ul>
-
-        <form class="navbar-form navbar-left" role="search">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria">
-            <span class="input-group-btn">
-              <button class="btn btn-default" type="button" ng-click="search()">Search</button>
-            </span>
-          </div><!-- /input-group -->
-        </form>
-    </div>
-</div>
+  <div class="navbar navbar-inverse navbar-fixed-bottom">
+      <div class="container-fluid">
+        <div class="col-xs-1" ng-click="expand=!expand">
+          <ul class="nav navbar-nav">
+            <li>
+              <a>
+                <span class="glyphicon glyphicon-chevron-down" ng-show="expand"></span>
+                <span class="glyphicon glyphicon-chevron-up" ng-hide="expand"></span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-1">
+          <ul class="nav navbar-nav">
+            <li>
+              <a>Playlist</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-7">
+          <ul class="nav navbar-nav">
+            <li>
+              <a>Next Up</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-3 pull-right">
+          <ul class="nav navbar-nav pull-right">
+            <li class="pull-right">
+              <a class="pull-right">Settings</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+  </div>
 </footer>

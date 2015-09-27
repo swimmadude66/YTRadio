@@ -10,7 +10,6 @@ app.controller('UserCtrl', function ($scope, $http) {
       var data = res.data;
       if(data.Success){
         $scope.searchResults = data.Videos;
-        $scope.expand=true;
       }
     });
   }
