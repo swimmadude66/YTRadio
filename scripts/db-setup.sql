@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS `YTRadio` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 Use `YTRadio`;
 
-CREATE TABLE `Users` (
+CREATE TABLE IF NOT EXISTS `Users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Username` varchar(64) NOT NULL,
   `Email` varchar(128) NOT NULL,
