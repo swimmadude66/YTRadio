@@ -24,7 +24,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
     },
     logIn: function(creds){
       var deferred = $q.defer();
-      if(creds && creds.Email && creds.Password){
+      if(creds && creds.Username && creds.Password){
         $http.post('/api/login', creds)
         .then(function(res){
           var data = res.data;
@@ -46,7 +46,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
     },
     signUp: function(creds){
       var deferred = $q.defer();
-      if(creds && creds.Email && creds.Password){
+      if(creds && creds.Username && creds.Email && creds.Password){
         $http.post('/api/signup', creds)
         .then(function(res){
           var data = res.data;

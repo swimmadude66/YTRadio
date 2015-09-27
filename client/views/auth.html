@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{action}}</h3>
+    </div>
+    <div class="panel-body">
+      <form class="simple-form" method="post" no-validate>
+        <div class="input-group">
+          <span class="input-group-addon">Username</span>
+          <input type="text" class="form-control" placeholder="{{action==='Sign up' ? 'Pick a username' : 'Your Username'}}" ng-model="auth.Username">
+        </div>
+        <div class="input-group" ng-show="action==='Sign up'">
+          <span class="input-group-addon">Email</span>
+          <input type="text" class="form-control" placeholder="Email to confirm your account" ng-model="auth.Email">
+        </div>
+        <div class="input-group">
+          <span class="input-group-addon">Password</span>
+          <input type="text" class="form-control" placeholder="{{action==='Sign up' ? 'Create a Password' : 'Your Password'}}" ng-model="auth.Password">
+        </div>
+        <div class="input-group" ng-show="action==='Sign up'">
+          <span class="input-group-addon">Re-Enter Password</span>
+          <input type="text" class="form-control" placeholder="Just to be safe" ng-model="auth.Password2">
+        </div>
+      </form>
+    </div>
+    <div class="panel-footer">
+      <button type="button" class="btn btn-block">
+        {{action==='Sign up' ? 'Log in instead' : 'Sign up instead'}}
+      </button>
+    </div>
+  </div>
+</div>
