@@ -45,13 +45,16 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
       templateUrl: "views/auth.html",
       controller: "AuthCtrl"
     }).then(function(modal) {
-      //it's a bootstrap element, use 'modal' to show it
       modal.element.modal();
       modal.close.then(function(result) {
-        console.log(result);
+        console.log('modal closed');
       });
     });
   };
+
+  $scope.getUser=function(){
+    return authService.getSession();
+  }
 
 
 }]);

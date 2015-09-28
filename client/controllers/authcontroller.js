@@ -1,5 +1,13 @@
-app.controller('AuthCtrl', function ($scope, $http, authService, close) {
+app.controller('AuthCtrl', function ($scope, $http, $element, authService, close) {
   $scope.action = 'Log in';
+  $scope.signupText = false;
+
+  function closeModal(rval) {
+    //  Manually hide the modal using bootstrap.
+    $element.modal('hide');
+    //  Now close as normal, but give 500ms for bootstrap to animate
+    close(rval, 500);
+  };
 
   $scope.toggleAction=function(){
     if($scope.action ==='Log in'){
@@ -15,7 +23,7 @@ app.controller('AuthCtrl', function ($scope, $http, authService, close) {
       authService.logIn($scope.auth)
       .then(function(session){
           console.log(session);
-          close(session);
+          closeModal(session);
       },function(error){
         $scope.errormessage=error;
       });
@@ -23,14 +31,16 @@ app.controller('AuthCtrl', function ($scope, $http, authService, close) {
     else{
       authService.signUp($scope.auth)
       .then(function(session){
-        console.log(session);
-          close(session);
+          scope.signupText = true;
+          closeModal(session);
       },function(error){
         $scope.errormessage=error;
       });
     }
   }
 });
+
+
 
 app.directive("compareTo", function() {
   return {

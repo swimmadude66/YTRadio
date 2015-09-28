@@ -30,6 +30,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
           var data = res.data;
           if(data.Success){
             session = data.Session;
+            $cookies.put('ytrk_66', session.Key);
             deferred.resolve(session);
           }
           else{
@@ -51,7 +52,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
         .then(function(res){
           var data = res.data;
           if(data.Success){
-            deferred.resolve(data.Success);
+            deferred.resolve(data.Message);
           }
           else{
             deferred.reject(data.Error);

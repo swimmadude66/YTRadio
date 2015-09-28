@@ -9,5 +9,9 @@ module.exports = {
 		//TODO implement Decryption
 		return enctext;
 	},
-  hash:function(){}
+  hash:function(plaintext){
+		var shasum = crypto.createHash('sha256'); //sufficient for now
+		shasum.update(plaintext);
+		return shasum.digest('hex');
+	}
 };
