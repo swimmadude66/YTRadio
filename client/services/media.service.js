@@ -29,7 +29,7 @@ angular.module('YTRadio.Media.service', [])
 				var args = arguments;
 				$rootScope.$apply(function () {
           			if (callback) {
-            			callback.apply(socket, args);
+            			callback.apply(mediaConnection, args);
           			}
         		});
 			});
