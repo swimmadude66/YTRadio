@@ -1,4 +1,4 @@
-app.controller('UserCtrl', ['$scope', '$http', 'ChatServ', function ($scope, $http, ChatServ) {
+app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', 'ChatServ', function ($scope, $http, ModalService, authService, ChatServ) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
@@ -34,6 +34,19 @@ app.controller('UserCtrl', ['$scope', '$http', 'ChatServ', function ($scope, $ht
       if(data.Success){
         console.log('Video Added');
       }
+    });
+  };
+
+  $scope.login=function(){
+    ModalService.showModal({
+      templateUrl: "views/auth.html",
+      controller: "AuthCtrl"
+    }).then(function(modal) {
+      //it's a bootstrap element, use 'modal' to show it
+      modal.element.modal();
+      modal.close.then(function(result) {
+        console.log(result);
+      });
     });
   };
 

@@ -2,8 +2,8 @@ var router = require('express').Router();
 var db = require('../middleware/db.js');
 var encryption = require('../middleware/encryption.js');
 var uuid = require('node-uuid');
-module.exports= function(io){
 
+module.exports= function(io){
   function gen_session(user, callback){
     var sid = uuid.v4();
     var session_block = {
@@ -52,7 +52,7 @@ module.exports= function(io){
   router.post('/login', function(req, res){
     var username = req.body.Username;
     var pass = req.body.Password;
-    db.query('Select * from users where Username = ?', [username], function(err, results){
+    db.query('Select Password, Salt, Role, ID, Username from users where Username = ?', [username], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -61,7 +61,7 @@ module.exports= function(io){
         return res.send({Success:false, Error:"No such username"});
       }
       var user = results[0];
-      var validpass = (encryption.encrypt(user.Salt+"|"+pass) === user.password);
+      var validpass = (encryption.encrypt(user.Salt+"|"+pass) === user.Password);
       if(validpass){
         var public_user = {ID: user.ID, Username: user.Username, Role:user.Role};
         gen_session(public_user, function(err, session){
@@ -69,7 +69,9 @@ module.exports= function(io){
             console.log(err);
             return res.send({Success: false, Error: err});
           }
-          return res.send({Success: true, Session:session});
+          delete user.Password;
+          delete user.Salt;
+          return res.send({Success: true, Session:{Key:session, User:user}});
         });
       }
       return res.send({Success: false, Error: err});

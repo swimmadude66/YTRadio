@@ -1,5 +1,7 @@
 var app = angular.module('YTRadio', [
   'youtube-embed', 
+  'angularModalService',
+  'ngCookies',
   'btford.socket-io',
   'YTRadio.Chat.service',
   'YTRadio.Media.service' ]);
