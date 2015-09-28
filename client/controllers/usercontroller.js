@@ -1,4 +1,4 @@
-app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', 'ChatServ', function ($scope, $http, ModalService, authService, ChatServ) {
+app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', function ($scope, $http, ModalService, authService) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
@@ -13,12 +13,15 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', 'C
   */
   $scope.search=function(){
     $scope.isSearching=true;
+    console.log('searching for ', $scope.searchCriteria);
     $http.get('/api/radio/search/'+$scope.searchCriteria)
     .then(function(res){
       var data = res.data;
       if(data.Success){
         $scope.searchResults = data.Videos;
       }
+    },function(error){
+      console.log(error);
     });
   }
 

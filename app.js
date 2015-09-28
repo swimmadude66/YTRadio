@@ -35,11 +35,6 @@ else{
 // initialize sockets
 var io = require('socket.io')(server);
 
-// get media and chat socket connection managers (`/chat` and `/media` namespaces)
-var chatManager = require('./config/sockets/chat.manager')(io);
-var mediaManager = require('./config/sockets/media.manager')(io);
-
-
 // ROUTES FOR OUR API
 // =============================================================================
 //

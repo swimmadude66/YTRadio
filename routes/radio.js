@@ -8,6 +8,8 @@ var currentVideo = false;
 
 module.exports= function(io){
 
+  var mediaManager = io.of('/media');
+
   function playNextSong(){
     var now = new Date().getTime();
     currentVideo = false;
@@ -15,7 +17,7 @@ module.exports= function(io){
       var newguy = videoqueue.shift();
       currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
     }
-    io.sockets.emit('song_start', {currVid: currentVideo, videoQueue: videoqueue});
+    mediaManager.emit('song_start', {currVid: currentVideo, videoQueue: videoqueue});
   }
 
   function getTimeElapsed(callback){
@@ -62,7 +64,7 @@ module.exports= function(io){
     );
   }
 
-  io.on('connect', function(socket){
+  mediaManager.on('connect', function(socket){
     getTimeElapsed(function(elapsed){
       socket.emit('join', {videoQueue:videoqueue, currVid:currentVideo, startSeconds: elapsed});
     });
@@ -107,7 +109,7 @@ module.exports= function(io){
           playNextSong();
         }
         else{
-          io.sockets.emit('queue_updated', videoqueue);
+          mediaManager.emit('queue_updated', videoqueue);
         }
         return res.send({Success:true});
       }
@@ -116,7 +118,6 @@ module.exports= function(io){
 
   router.post('/songend', function(req,res){
     getTimeElapsed(function(elapsed){
-      console.log(elapsed);
       return res.send({Success:true});
     });
   });

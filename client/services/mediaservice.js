@@ -1,11 +1,4 @@
-/**
- * Media Service
- * Note: this design was taken from: http://www.html5rocks.com/en/tutorials/frameworks/angular-websockets/
- *    I don't quite understand the $rootScope.apply logic, but going to go with it for now
- */
-angular.module('YTRadio.Media.service', [])
-
-.factory('MediaServ', ['$rootScope', function($rootScope) {
+app.factory('mediaService', ['$rootScope', function($rootScope) {
 
 	// setup media connection and namespace
 	var mediaConnection = io.connect('http://127.0.0.1:3000/media');
@@ -24,14 +17,13 @@ angular.module('YTRadio.Media.service', [])
 		},
 		emit: function(event, data, callback) {
 			mediaConnection.emit(event, data, function(){
-
 				// updates templates
 				var args = arguments;
 				$rootScope.$apply(function () {
-          			if (callback) {
-            			callback.apply(mediaConnection, args);
-          			}
-        		});
+    			if (callback) {
+      			callback.apply(mediaConnection, args);
+    			}
+    		});
 			});
 		}
 	}

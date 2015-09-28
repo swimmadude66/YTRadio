@@ -14,6 +14,7 @@ app.controller('AuthCtrl', function ($scope, $http, authService, close) {
     if($scope.action === 'Log in'){
       authService.logIn($scope.auth)
       .then(function(session){
+          console.log(session);
           close(session);
       },function(error){
         $scope.errormessage=error;
@@ -22,6 +23,7 @@ app.controller('AuthCtrl', function ($scope, $http, authService, close) {
     else{
       authService.signUp($scope.auth)
       .then(function(session){
+        console.log(session);
           close(session);
       },function(error){
         $scope.errormessage=error;

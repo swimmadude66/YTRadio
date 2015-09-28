@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($scope, $http, MediaServ) {
+app.controller('RadioCtrl', function ($scope, $http, mediaService) {
   $scope.videoID;
   $scope.playerVars = {
     controls: 0,
@@ -64,7 +64,7 @@ app.controller('RadioCtrl', function ($scope, $http, MediaServ) {
   * Socket Events
   */
 
-  MediaServ.on('join', function(data){
+  mediaService.on('join', function(data){
     $scope.queue = data.videoQueue;
     if(data.currVid){
       $scope.novid = false;
@@ -76,11 +76,11 @@ app.controller('RadioCtrl', function ($scope, $http, MediaServ) {
     }
   });
 
-  MediaServ.on('queue_updated', function(data){
+  mediaService.on('queue_updated', function(data){
     $scope.queue = data;
   });
 
-  MediaServ.on('song_start', function(data){
+  mediaService.on('song_start', function(data){
     if(data.currVid){
       $scope.novid = false;
       $scope.videoID = data.currVid.Info.id.videoId;
