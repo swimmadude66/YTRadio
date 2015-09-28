@@ -8,7 +8,7 @@ angular.module('YTRadio.Media.service', [])
 .factory('MediaServ', ['$rootScope', function($rootScope) {
 
 	// setup media connection and namespace
-	var mediaConnection = io.connect('http://192.168.33.10:3000/media');
+	var mediaConnection = io.connect('http://127.0.0.1:3000/media');
 
 	return {
 

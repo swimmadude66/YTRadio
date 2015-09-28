@@ -8,7 +8,7 @@ angular.module('YTRadio.Chat.service', [])
 .factory('ChatServ', ['$rootScope', function($rootScope) {
 
 	// setup chat connection and namespace
-	var chatConnection = io.connect('http://192.168.33.10:3000/chat');
+	var chatConnection = io.connect('http://127.0.0.1:3000/chat');
 
 	return {
 
