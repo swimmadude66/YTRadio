@@ -1,4 +1,4 @@
-app.controller('UserCtrl', function ($scope, $http, ModalService, authService) {
+app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', 'ChatServ', function ($scope, $http, ModalService, authService, ChatServ) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
@@ -51,4 +51,4 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService) {
   };
 
 
-});
+}]);

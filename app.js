@@ -27,8 +27,18 @@ if('SSL' in global.config){
 else{
   server = http.Server(app);
 }
+
+// SOCKET CONNECTIONS
+// =============================================================================
+//
+
+// initialize sockets
 var io = require('socket.io')(server);
-server.listen(port);
+
+// get media and chat socket connection managers (`/chat` and `/media` namespaces)
+var chatManager = require('./config/sockets/chat.manager')(io);
+var mediaManager = require('./config/sockets/media.manager')(io);
+
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -57,5 +67,8 @@ app.use(function(req, res, next){
 });
 
 
-
+// STARTUP THE SERVER
+// =============================================================================
+//
+server.listen(port);
 console.log('Magic happens on port ' + port);

@@ -1,4 +1,10 @@
-var app = angular.module('YTRadio', ['youtube-embed', 'btford.socket-io', 'angularModalService', 'ngCookies']);
+var app = angular.module('YTRadio', [
+  'youtube-embed', 
+  'angularModalService',
+  'ngCookies',
+  'btford.socket-io',
+  'YTRadio.Chat.service',
+  'YTRadio.Media.service' ]);
 
 app.controller('PageCtrl', function ($scope, $http) {
 
