@@ -7,7 +7,8 @@ angular.module('YTRadio.Chat.service', [])
 
 .factory('ChatServ', ['$rootScope', function($rootScope) {
 
-	var chatConnection = io.connect().of('/chat');
+	// setup chat connection and namespace
+	var chatConnection = io.connect('http://192.168.33.10:3000/chat');
 
 	return {
 
@@ -22,7 +23,7 @@ angular.module('YTRadio.Chat.service', [])
 			});
 		},
 		emit: function(event, data, callback) {
-			chatConnection.emit(event, data, callback){
+			chatConnection.emit(event, data, function(){
 
 				// updates templates
 				var args = arguments;
@@ -31,7 +32,7 @@ angular.module('YTRadio.Chat.service', [])
             			callback.apply(socket, args);
           			}
         		});
-			};
+			});
 		}
 	}
 }]);
