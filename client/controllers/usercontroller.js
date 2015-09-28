@@ -1,4 +1,4 @@
-app.controller('UserCtrl', function ($scope, $http) {
+app.controller('UserCtrl', ['$scope', '$http', 'ChatServ', function ($scope, $http, ChatServ) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
@@ -38,4 +38,4 @@ app.controller('UserCtrl', function ($scope, $http) {
   };
 
 
-});
+}]);
