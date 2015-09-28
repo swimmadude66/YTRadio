@@ -8,7 +8,7 @@ module.exports = function(io){
 
     // connection event
     mediaManager.on('connection', function(socket){
-      console.log('user connected!', socket);  
+      console.log('Media Client Connected :: ' + socket.id);
     });
 
     return mediaManager;

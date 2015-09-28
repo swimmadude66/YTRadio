@@ -5,26 +5,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lifeboat</title>
+
+    <!-- jQuery -->
     <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
     <!-- Bootstrap -->
+    <script type="text/javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+
+    <!-- Styles -->
     <link rel="stylesheet" href="styles/styles.css">
+
     <!--  Angular and dependencies -->
-    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+
+    <!-- libraries -->
     <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
     <script type="text/javascript" src="bower_components/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
     <script type="text/javascript" src="bower_components/angular-socket-io/socket.js"></script>
-    <!--source -->
+
+    <!-- Source -->
     <script type="text/javascript" src="index.js"></script>
-    <!--services-->
+
+    <!-- Services -->
     <script type="text/javascript" src="services/authservice.js"></script>
     <script type="text/javascript" src="services/chat.service.js"></script>
-    <!--controllers-->
+    <script type="text/javascript" src="services/media.service.js"></script>
+
+    <!-- Controllers -->
     <script type="text/javascript" src="controllers/radiocontroller.js"></script>
     <script type="text/javascript" src="controllers/usercontroller.js"></script>
   </head>
+
   <body ng-controller="PageCtrl">
     <radio-controls></radio-controls>
     <theatre></theatre>

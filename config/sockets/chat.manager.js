@@ -8,7 +8,7 @@ module.exports = function(io){
 
     // connection event
     chatManager.on('connection', function(socket){
-      console.log('user connected!', socket);  
+      console.log('Chat Client Connected :: ' + socket.id);
     });
 
     return chatManager;
