@@ -10,12 +10,18 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   }
 
   $scope.sendMessage=function(){
-    chatService.emit('message', encodeURIComponent($scope.messageText.contents));
+    if(messageText.contents.search(/^@[a-zA-Z0-9]+?:/i)>-1){
+      var destuser=messageText.contents.substring(messageText.contents.indexOf("@")+1,messageText.contents.indexOf(":"));
+      chatService.emit('privateMessage', {to: destuser, message: encodeURIComponent($scope.messageText.contents)});
+    }
+    else{
+      chatService.emit('message', encodeURIComponent($scope.messageText.contents));
+    }
     $scope.messageText="";
   }
 
   chatService.on('user_join', function(username){
-    $scope.messages.push({Author:{ID:-1, Username:"Server"}, Class:"info", Message:"User "+username+" just joined."});
+    $scope.messages.push("User "+username+" just joined.");
   });
 
   chatService.on('message', function(payload){
