@@ -22,6 +22,14 @@ app.directive('theatre', function() {
 	}
 });
 
+app.directive('radioSidebar', function() {
+  return {
+    restrict: 'E',
+    controller: 'SidebarCtrl',
+		templateUrl: 'views/sidebar.html'
+	}
+});
+
 app.directive('radioControls', function() {
   return {
     restrict: 'E',

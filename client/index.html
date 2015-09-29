@@ -39,11 +39,21 @@
     <script type="text/javascript" src="controllers/radiocontroller.js"></script>
     <script type="text/javascript" src="controllers/usercontroller.js"></script>
     <script type="text/javascript" src="controllers/authcontroller.js"></script>
+    <script type="text/javascript" src="controllers/sidebarcontroller.js"></script>
   </head>
 
   <body ng-controller="PageCtrl">
     <radio-controls></radio-controls>
-    <theatre></theatre>
+    <div class="container-fluid" style="height:100%; overflow:hidden">
+      <div class="row" style="height:100%;">
+        <div class="col-xs-10" style="padding-left:0px; padding-right:0px; height:100%">
+          <theatre></theatre>
+        </div>
+        <div class="col-xs-2 sidebar" style="height:100%;">
+          <radio-sidebar></radio-sidebar>
+        </div>
+      </div>
+    </div>
     <user-controls></user-controls>
     </script>
   </body>

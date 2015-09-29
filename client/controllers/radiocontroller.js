@@ -94,11 +94,3 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService) {
     $scope.queue = data.videoQueue;
   });
 });
-
-app.directive('radioSidebar', function() {
-  return {
-    restrict: 'E',
-    controller: 'RadioCtrl',
-		templateUrl: 'views/sidebar.html'
-	}
-});

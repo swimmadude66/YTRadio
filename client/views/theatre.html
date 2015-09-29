@@ -1,15 +1,6 @@
-<div class="container-fluid" style="height:100%; overflow:hidden">
-  <div class="row" style="height:100%;">
-    <div class="col-xs-10" style="padding-left:0px; padding-right:0px; height:100%">
-      <div id="screen" style="background:#000000; height:100%; padding-bottom:100px;">
-        <div class="embed-responsive embed-responsive-16by9" ng-hide="novid" style="margin-left: auto; margin-right:auto;">
-          <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
-        </div>
-        <h1 style="position:absolute; top:35%; left:20%" ng-show="novid">No Videos Queued <small>Add a video to get the party rolling!</small></h1>
-      </div>
-    </div>
-    <div class="col-xs-2">
-      <radio-sidebar></radio-sidebar>
-    </div>
+<div id="screen" style="background:#000000; height:100%; padding-bottom:100px;">
+  <div class="embed-responsive embed-responsive-16by9" ng-hide="novid" style="margin-left: auto; margin-right:auto; height:100%; padding-bottom:100px;">
+    <youtube-video video-id="videoID" player-vars="playerVars" player="ytplayer"></youtube-video>
   </div>
+  <h1 style="position:absolute; top:35%; left:20%" ng-show="novid">No Videos Queued <small>Add a video to get the party rolling!</small></h1>
 </div>

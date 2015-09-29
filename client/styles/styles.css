@@ -27,6 +27,31 @@ html,body{
   background-color: rgba(255,255,255,0.3);
 }
 
+.sidebar{
+  padding:0px;
+  background-color: rgba(64,64,64,1);
+  color:#FFF;
+}
+
+.sidebar-btn{
+  border:inset 1px #000;
+}
+
+.sidebar-btn-active{
+  background-color: rgba(255,255,255,0.5);
+}
+
+.queue{
+  width:100%;
+  height:100%;
+}
+
+.queue>.queue-item{
+  min-height:50px;
+  width:100%;
+  padding:2px;
+}
+
 /*Override navbar collapse*/
 .navbar-collapse.collapse {
 display: block!important;
