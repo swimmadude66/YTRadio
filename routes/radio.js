@@ -56,6 +56,7 @@ module.exports= function(io){
         });
       },
       function(err){
+          //maybe filter out the data here?
         if(err){
           return callback(err, results);
         }

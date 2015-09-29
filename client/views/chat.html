@@ -1,0 +1,13 @@
+<div class="container-fluid" style="height:100%">
+  <div class="row" style="height:100%; padding-bottom:50px; margin-bottom:-50px;">
+    <p ng-repeat="message in messages track by $index">{{message}}</p>
+  </div>
+  <div class="row">
+    <div class="input-group" ng-show="getUser()">
+      <input type="text" class="form-control" placeholder="Type here to chat" ng-model="messageText">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="send()" ng-disabled="messageText.length<1">Send</button>
+      </span>
+    </div>
+  </div>
+</div>

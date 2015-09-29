@@ -17,14 +17,15 @@ module.exports = function(io){
       socketIdUserMap[socket.id] = username;
 
       // send join event
-      socket.broadcast.emit('userJoin', username);
+      socket.broadcast.emit('user_join', username);
 
       // send userList to the user who joined
       var userList = [];
-      for(var username in userSocketIdMap) userList.push(username);
+      for(var username in userSocketIdMap){
+          userList.push(username);
+      }
       socket.emit('userList', userList);
-
-      console.log(username + 'joined chat!');
+      console.log(username + ' joined chat!');
     });
 
     // send a message
@@ -36,7 +37,8 @@ module.exports = function(io){
         message: message
       };
 
-      socket.broadcast.emit('message', chatPayload);
+      //socket.broadcast.emit('message', chatPayload);
+      chatManager.emit('message', chatPayload);
 
       console.log('Chat: ', chatPayload.timestamp, chatPayload.sender, chatPayload.message);
     });
@@ -49,31 +51,33 @@ module.exports = function(io){
         timestamp: new Date(),
         message: payload.message
       };
-
-      chatManager.to(userSocketIdMap[payload.to]).emit('privateMessage', privateMessage);
-
-      console.log('Chat-PM: ', privateMessage.timestamp, privateMessage.sender, payload.to, privateMessage.message);
+      if(userSocketIdMap[payload.to]){
+        chatManager.to(userSocketIdMap[payload.to]).emit('privateMessage', privateMessage);
+        console.log('Chat-PM: ', privateMessage.timestamp, privateMessage.sender, payload.to, privateMessage.message);
+      }
     });
 
     socket.on('updateUserList', function(){
       var userList = [];
-      for(var username in userSocketIdMap) userList.push(username);
+      for(var username in userSocketIdMap){
+          userList.push(username);
+      }
       socket.emit('userList', userList);
 
       console.log(socketIdUserMap[socket.id] + 'requested the user list.');
     });
 
     socket.on('disconnect', function(){
-
       // send user left event
-      var username = socketIdUserMap[socket.id];
-      socket.broadcast.emit('userLeft', username);
+      if(socketIdUserMap[socket.id]){
+        var username = socketIdUserMap[socket.id];
+        socket.broadcast.emit('userLeft', username);
+        console.log(username + ' left chat.');
+        console.log('Chat Client Disconnected :: ' + socket.id);
 
-      console.log(username + 'left chat.');
-      console.log('Chat Client Disconnected :: ' + socket.id);
-
-      delete userSocketIdMap[username];
-      delete socketIdUserMap[socket.id];
+        delete userSocketIdMap[username];
+        delete socketIdUserMap[socket.id];
+      }
     });
   });
 }

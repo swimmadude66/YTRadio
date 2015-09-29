@@ -17,7 +17,7 @@ app.directive('queue', function() {
 app.directive('userlist', function() {
   return {
     restrict: 'E',
-    controller: 'UsersCtrl',
+    controller: 'ChatCtrl',
 		templateUrl: 'views/users.html'
 	}
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cookies){
+app.factory('authService', ['$q', '$http','$cookies', 'chatService', function($q, $http, $cookies, chatService){
 
   var session;
   var userinfo;
@@ -13,6 +13,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
       if(data.Success && data.Data){
         session = data.Data.Session;
         userinfo = data.Data.User;
+        chatService.emit('join', userinfo.Username);
       }
     }, function(error){
       console.log(error);
@@ -46,6 +47,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
             session = data.Data.Session;
             userinfo = data.Data.User;
             $cookies.put('ytrk_66', session.Key, {expires: new Date(session.Expires)});
+            chatService.emit('join', userinfo.Username);
             deferred.resolve(session);
           }
           else{
