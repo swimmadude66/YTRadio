@@ -11,7 +11,7 @@ module.exports= function(io){
       User: user,
       Expires: new Date().getTime() + 6*60*60*1000
     };
-    db.query('Insert into `Sessions`(`Key`, `UserID`, `Expires`) Values(?, ?, ?);', [session_block.Key, session_block.User.ID, session_block.Expires], function(err, result){
+    db.query('Insert into Sessions(`Key`, `UserID`, `Expires`) Values(?, ?, ?);', [session_block.Key, session_block.User.ID, session_block.Expires], function(err, result){
       if(err){
         return callback(err);
       }
@@ -29,7 +29,7 @@ module.exports= function(io){
     var salt = uuid.v4();
     var encpass = encryption.hash(salt+"|"+pass);
     var confirm = uuid.v4();
-    db.query('Insert into `Users`(`Username`, `Email`, `Password`, `Salt`, `Confirm`) VALUES(?,?,?,?,?);', [username, email, encpass, salt, confirm], function(err, results){
+    db.query('Insert into Users(`Username`, `Email`, `Password`, `Salt`, `Confirm`) VALUES(?,?,?,?,?);', [username, email, encpass, salt, confirm], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -40,7 +40,7 @@ module.exports= function(io){
   });
 
   router.get('/verification/:v_key', function(req, res){
-    db.query('Update `Users` set `Active`=1 where `Confirm`=?', [req.params.v_key], function(err, result){
+    db.query('Update Users set `Active`=1 where `Confirm`=?', [req.params.v_key], function(err, result){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -52,7 +52,7 @@ module.exports= function(io){
   router.post('/login', function(req, res){
     var username = req.body.Username;
     var pass = req.body.Password;
-    db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from `Users` where `Username` = ?', [username], function(err, results){
+    db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from Users where `Username` = ?', [username], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -76,12 +76,28 @@ module.exports= function(io){
           delete user.Password;
           delete user.Salt;
           console.log(user);
-          return res.send({Success: true, Session:{Key:session, User:user}});
+          return res.send({Success: true, Data:{Session:session, User:user}});
         });
       }
       else{
           return res.send({Success: false, Error: 'Incorrect Password'});
       }
+    });
+  });
+
+  router.get('/auth/:sessionID', function(req, res){
+    var sid = req.params.sessionID;
+    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key`, Sessions.`Expires` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+    db.query(keylookup, [sid], function(err, results){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      if(results.length<1){
+        return res.send({Success:false, Error:"Invlaid SessionID"});
+      }
+      var uinfo = results[0];
+      return res.send({Success: true, Data:{Session:{Key:uinfo.Key, Expires:uinfo.Expires}, User:{Username: uinfo.Username, ID: uinfo.ID, Role: uinfo.Role}}});
     });
   });
 
@@ -94,7 +110,7 @@ module.exports= function(io){
     if(!authZ){
       return res.send({Success:false, Error:"No valid Auth token"});
     }
-    db.query("Select * from `Sessions` where `Key` = ? and `Active`=1", [authZ], function(err, results){
+    db.query("Select * from Sessions where `Key` = ? and `Active`=1", [authZ], function(err, results){
       if(err){
         return res.send({Success: false, Error: err});
       }

@@ -3,14 +3,28 @@
 app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cookies){
 
   var session;
+  var userinfo;
   var auth_cookie = $cookies.get('ytrk_66');
-	if(auth_cookie){
-	   session = auth_cookie;
-	}
+
+  if(auth_cookie){
+    $http.get('/api/auth/'+auth_cookie)
+    .then(function(res){
+      var data = res.data;
+      if(data.Success && data.Data){
+        session = data.Data.Session;
+        userinfo = data.Data.User;
+      }
+    }, function(error){
+      console.log(error);
+    });
+  }
 
   return {
-    getSession: function(){
+    getSession:function(){
       return session;
+    },
+    getUser:function(){
+      return userinfo;
     },
     hasAccess: function(){
       var deferred = $q.defer();
@@ -29,8 +43,9 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
         .then(function(res){
           var data = res.data;
           if(data.Success){
-            session = data.Session;
-            $cookies.put('ytrk_66', session.Key);
+            session = data.Data.Session;
+            userinfo = data.Data.User;
+            $cookies.put('ytrk_66', session.Key, {expires: new Date(session.Expires)});
             deferred.resolve(session);
           }
           else{
@@ -69,6 +84,7 @@ app.factory('authService', ['$q', '$http','$cookies', function($q, $http, $cooki
     logOut: function(){
       $cookies.remove('ytrk_66');
       auth_cookie = null;
+      userinfo=null;
       session = null;
     }
   }

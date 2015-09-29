@@ -8,6 +8,9 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
     }
   };
   $scope.playlist={Name:"Default", Active:true, Contents:[]};
+
+  $scope.userData;
+
   /*
   * Client Methods
   */
@@ -46,14 +49,12 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
       controller: "AuthCtrl"
     }).then(function(modal) {
       modal.element.modal();
-      modal.close.then(function(result) {
-        console.log('modal closed');
-      });
+      modal.close.then(function(result) {});
     });
   };
 
   $scope.getUser=function(){
-    return authService.getSession();
+    return authService.getUser();
   }
 
 
