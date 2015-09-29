@@ -9,8 +9,8 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
     return authService.getUser();
   }
 
-  $scope.send=function(){
-    chatService.emit('message', encodeURIComponent($scope.messageText));
+  $scope.sendMessage=function(){
+    chatService.emit('message', encodeURIComponent($scope.messageText.contents));
     $scope.messageText="";
   }
 

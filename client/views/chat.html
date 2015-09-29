@@ -3,11 +3,8 @@
     <p ng-repeat="message in messages track by $index">{{message}}</p>
   </div>
   <div class="row">
-    <div class="input-group" ng-show="getUser()">
-      <input type="text" class="form-control" placeholder="Type here to chat" ng-model="messageText">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button" ng-click="send()" ng-disabled="messageText.length<1">Send</button>
-      </span>
-    </div>
+    <form ng-submit="sendMessage()">
+      <input type="text" class="form-control" placeholder="type here to chat" ng-model="messageText.contents">
+    </form>
   </div>
 </div>
