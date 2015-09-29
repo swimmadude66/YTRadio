@@ -126,5 +126,8 @@ module.exports= function(io){
   */
   router.use('/radio/', require('./radio.js')(io));
 
+  // start chat api
+  require('./chat.js')(io);
+
   return router;
 }
