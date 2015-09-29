@@ -4,6 +4,11 @@ var app = angular.module('YTRadio', [
   'ngCookies',
   'btford.socket-io']);
 
+app.config(['$httpProvider', function($httpProvider) {
+  $httpProvider.interceptors.push('httpRequestInterceptor');
+}]);
+
+
 app.controller('PageCtrl', function ($scope, $http) {
 
 
@@ -31,4 +36,14 @@ app.directive('userControls', function() {
     controller: 'UserCtrl',
 		templateUrl: 'views/usercontrols.html'
 	}
+});
+
+app.factory('httpRequestInterceptor', function ($cookies) {
+  return {
+    request: function(config){
+      var auth_token = $cookies.get('ytrk_66') || "";
+      config.headers['Authorization'] = auth_token;
+      return config;
+    }
+  };
 });

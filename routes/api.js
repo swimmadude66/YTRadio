@@ -104,7 +104,7 @@ module.exports= function(io){
   /*
   * Authentication gateway
   */
-/*
+
   router.use(function(req, res, next){
     var authZ = req.headers.Authorization || req.headers.authorization;
     if(!authZ){
@@ -120,7 +120,7 @@ module.exports= function(io){
       next();
     });
   });
-*/
+
   /*
   * External Methods
   */
