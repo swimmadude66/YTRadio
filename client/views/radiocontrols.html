@@ -3,9 +3,11 @@
     <a class="navbar-brand" href="/">YTRadio</a>
     <ul class="nav navbar-nav">
     </ul>
-    <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()">
-        <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
-        <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
-    </button>
+    <div id="controls" ng-show="getUser()">
+      <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()">
+          <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
+          <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
+      </button>
+    </div>
   </div>
 </nav>

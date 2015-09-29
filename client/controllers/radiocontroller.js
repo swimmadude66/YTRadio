@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($scope, $http, mediaService) {
+app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) {
   $scope.videoID;
   $scope.playerVars = {
     controls: 0,
@@ -33,6 +33,10 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService) {
       $scope.ytplayer.mute();
       $scope.muted=true;
     }
+  }
+
+  $scope.getUser=function(){
+    return authService.getUser();
   }
 
   /*

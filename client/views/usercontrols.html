@@ -1,4 +1,4 @@
-<div id="search-overlay" class="container-fluid overlay animation-on" ng-show="expand">
+<div id="search-overlay" class="container-fluid overlay animation-on" ng-show="expand && getUser()">
   <div class="row" style="padding-top:20px; height:75px; background-color:#000;">
     <div class="col-xs-3">
       &nbsp;
@@ -49,7 +49,7 @@
 <footer>
   <div class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container-fluid">
-        <div class="col-xs-1" ng-click="expand=!expand">
+        <div class="col-xs-1" ng-click="expand=!expand" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
               <a>
@@ -59,14 +59,14 @@
             </li>
           </ul>
         </div>
-        <div class="col-xs-1">
+        <div class="col-xs-1" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
               <a>{{playlist.Name}}</a>
             </li>
           </ul>
         </div>
-        <div class="col-xs-9">
+        <div class="col-xs-9" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
               <a>{{playlist.Contents[0].snippet.title || 'No song left in playlist'}}</a>

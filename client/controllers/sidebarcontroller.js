@@ -1,6 +1,9 @@
-app.controller('SidebarCtrl', function ($scope, $http) {
+app.controller('SidebarCtrl', function ($scope, $http, authService) {
   $scope.activeTab=0;
 
+  $scope.getUser=function(){
+    return authService.getUser();
+  }
 });
 
 app.directive('queue', function() {
