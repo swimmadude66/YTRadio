@@ -36,7 +36,7 @@ module.exports = function(io){
         message: message
       };
 
-      socket.emit('message', chatPayload);
+      socket.broadcast.emit('message', chatPayload);
 
       console.log('Chat: ', chatPayload.timestamp, chatPayload.sender, chatPayload.message);
     });
