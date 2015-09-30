@@ -19,7 +19,9 @@ module.exports = function(io){
         anon_listeners ++;
       }
     }
-    userList.push('Plus ' + anon_listeners + ' anonymous guests');
+    if(anon_listeners > 0){
+      userList.push('Plus ' + anon_listeners + ' anonymous guests');
+    }
     chatManager.emit('userList', userList);
   }
 
