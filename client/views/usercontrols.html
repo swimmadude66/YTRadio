@@ -27,7 +27,10 @@
       </ul>
     </div>
     <div class="col-xs-6" style="height:100%; overflow-y: scroll;">
-      <div id="search-results" ng-hide="!isSearching">
+      <div id="loadingbar" ng-show="isLoading">
+        <img src="images/loading.gif" alt="loading"/>
+      </div>
+      <div id="search-results" ng-hide="!isSearching || isLoading">
         <h2>Results</h2>
         <hr>
         <ul class="nav nav-stacked" >

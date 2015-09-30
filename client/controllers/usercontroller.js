@@ -1,7 +1,8 @@
-app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', function ($scope, $http, ModalService, authService) {
+app.controller('UserCtrl', function ($scope, $http, ModalService, authService, toastr) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
+  $scope.isLoading = false;
   $scope.playlists={
     'Default':{
       Name:"Default", Active:true, Contents:[]
@@ -16,6 +17,7 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
   */
   $scope.search=function(){
     $scope.isSearching=true;
+    $scope.isLoading = true;
     console.log('searching for ', $scope.searchCriteria);
     $http.get('/api/radio/search/'+$scope.searchCriteria)
     .then(function(res){
@@ -23,7 +25,9 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
       if(data.Success){
         $scope.searchResults = data.Videos;
       }
+      $scope.isLoading = false;
     },function(error){
+      $scope.isLoading = false;
       console.log(error);
     });
   }
@@ -34,6 +38,7 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
   }
 
   $scope.addToQueue=function(vidinfo){
+    toastr.success('Song Added');
     vidinfo.DJ = authService.getUser().Username;
     $http.post('/api/radio/queue', vidinfo)
     .then(function(res){
@@ -63,4 +68,4 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
   }
 
 
-}]);
+});

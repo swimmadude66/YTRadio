@@ -20,6 +20,7 @@
     "angular-modal-service": "~0.6.9",
     "angular-scroll-glue": "~2.0.6",
     "angular-socket-io": "~0.7.0",
+    "angular-toastr": "~1.5.0",
     "angular-youtube-mb": "~1.1.0",
     "bootstrap": "~3.3.5",
     "jquery": "~2.1.4"

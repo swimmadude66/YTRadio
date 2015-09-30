@@ -3,7 +3,8 @@ var app = angular.module('YTRadio', [
   'angularModalService',
   'ngCookies',
   'btford.socket-io',
-  'luegg.directives']);
+  'luegg.directives',
+  'toastr']);
 
 app.config(['$httpProvider', function($httpProvider) {
   $httpProvider.interceptors.push('httpRequestInterceptor');
