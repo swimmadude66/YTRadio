@@ -7,8 +7,11 @@ module.exports = function(io){
 
   function updateUserList(){
     var userList = [];
-    for(var username in userSocketIdMap){
+    for(var socket in socketIdUserMap){
+      var username = socketIdUserMap[socket];
+      if(userList.indexOf(username) === -1){
         userList.push(username);
+      }
     }
     chatManager.emit('userList', userList);
   }
