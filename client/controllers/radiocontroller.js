@@ -1,6 +1,7 @@
 app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) {
   $scope.videoID;
   $scope.videoInfo;
+  $scope.playing = false;
   $scope.playerVars = {
     controls: 0,
     autoplay: 1,
@@ -87,6 +88,7 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
       $scope.videoInfo = data.currVid;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = data.startSeconds;
+      $scope.playing=true;
     }
     else{
       $scope.novid = true;
