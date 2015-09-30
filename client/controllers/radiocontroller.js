@@ -21,7 +21,7 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   */
   $scope.canSkip=function(){
     var u = authService.getUser();
-    if(u && (u.Role === 'ADMIN' || $scope.videoInfo.DJ === u.Username)){
+    if((u && u.Role === 'ADMIN') ||($scope.videoInfo && $scope.videoInfo.DJ === u.Username)){
       return true;
     }
     return false;
