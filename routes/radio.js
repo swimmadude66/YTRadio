@@ -88,7 +88,6 @@ module.exports= function(io){
     if(!videoinfo){
       return res.send({Success:false, Error: "No video info included"});
     }
-    //TODO sign with submitter ID
     var id = videoinfo.id.videoId;
     var qstring = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+id+"&key="+global.config.Keys.YoutubeAPI;
     request(qstring, function(err, response, body){

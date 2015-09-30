@@ -1,5 +1,6 @@
 app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) {
   $scope.videoID;
+  $scope.videoInfo;
   $scope.playerVars = {
     controls: 0,
     autoplay: 1,
@@ -17,7 +18,18 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   /*
   * Client Methods
   */
+  $scope.canSkip=function(){
+    var u = authService.getUser();
+    if(u && (u.Role === 'ADMIN' || $scope.videoInfo.DJ === u.Username)){
+      return true;
+    }
+    return false;
+  }
+
   $scope.skip = function(){
+    if(!canSkip()){
+      return;
+    }
     $http.post('/api/radio/skip', {videoID: $scope.videoID})
     .then(function(res){
       console.log('skipping');
@@ -72,6 +84,7 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
     $scope.queue = data.videoQueue;
     if(data.currVid){
       $scope.novid = false;
+      $scope.videoInfo = data.currVid;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = data.startSeconds;
     }
@@ -87,12 +100,14 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   mediaService.on('song_start', function(data){
     if(data.currVid){
       $scope.novid = false;
+      $scope.videoInfo = data.currVid;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = 0;
       $scope.playing= true;
     }
     else{
       $scope.novid = true;
+      $scope.videoInfo = null;
       $scope.videoID = null;
     }
     $scope.queue = data.videoQueue;

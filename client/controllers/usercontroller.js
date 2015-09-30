@@ -34,6 +34,7 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
   }
 
   $scope.addToQueue=function(vidinfo){
+    vidinfo.DJ = authService.getUser().Username;
     $http.post('/api/radio/queue', vidinfo)
     .then(function(res){
       var data = res.data;
