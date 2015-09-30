@@ -61,7 +61,6 @@ module.exports= function(io){
         return res.send({Success:false, Error:"No such username"});
       }
       var user = results[0];
-      console.log(user);
       if(user.Active == 0){
         return res.send({Success:false, Error:"Account is not active"});
       }
