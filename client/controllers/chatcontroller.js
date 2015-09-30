@@ -11,7 +11,6 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   $scope.sendMessage=function(){
     if($scope.messageText && $scope.messageText.contents && $scope.messageText.contents.trim().length>0){
       chatService.emit('messageToServer', encodeURIComponent($scope.messageText.contents));
-      console.log('sent message');
       $scope.messageText.contents="";
     }
   }
@@ -21,7 +20,6 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   });
 
   chatService.on('messageFromServer', function(payload){
-    console.log('message from server', payload);
     $scope.messages.push({Author: payload.sender, Message:decodeURIComponent(payload.message)});
   });
 
