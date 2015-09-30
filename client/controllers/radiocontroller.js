@@ -28,9 +28,10 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   }
 
   $scope.skip = function(){
-    if(!canSkip()){
+    if(!$scope.canSkip()){
       return;
     }
+    console.log('Skipping');
     $http.post('/api/radio/skip', {videoID: $scope.videoID})
     .then(function(res){
       console.log('skipping');
