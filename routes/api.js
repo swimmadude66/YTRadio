@@ -109,13 +109,16 @@ module.exports= function(io){
     if(!authZ){
       return res.send({Success:false, Error:"No valid Auth token"});
     }
-    db.query("Select * from Sessions where `Key` = ? and `Active`=1", [authZ], function(err, results){
+    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key`, Sessions.`Expires` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+    db.query(keylookup, [authZ], function(err, results){
       if(err){
         return res.send({Success: false, Error: err});
       }
       if(!results || results.length <1){
         return res.send({Success: false, Error: "Invalid Auth!"});
       }
+      var user=results[0];
+      res.local.usersession = user;
       next();
     });
   });

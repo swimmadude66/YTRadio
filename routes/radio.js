@@ -124,9 +124,13 @@ module.exports= function(io){
 
   router.post('/skip', function(req, res){
     var skipped = false;
-    if(req.body.videoID === currentVideo.Info.id.videoId){
-      skipped = true;
-      playNextSong();
+    if(currentVideo){
+      if(res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ){
+        if(req.body.videoID === currentVideo.Info.id.videoId){
+          skipped = true;
+          playNextSong();
+        }
+      }
     }
     return res.send({Success: skipped});
   });
