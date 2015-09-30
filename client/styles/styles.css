@@ -52,6 +52,10 @@ html,body{
   padding:2px;
 }
 
+.chatmessage{
+  word-wrap: break-word;
+}
+
 /*Override navbar collapse*/
 .navbar-collapse.collapse {
 display: block!important;
