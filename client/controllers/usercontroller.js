@@ -19,7 +19,8 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, t
     $scope.isSearching=true;
     $scope.isLoading = true;
     console.log('searching for ', $scope.searchCriteria);
-    $http.get('/api/radio/search/'+$scope.searchCriteria)
+    var cleancrit = encodeURIComponent($scope.searchCriteria)
+    $http.get('/api/radio/search/'+cleancrit)
     .then(function(res){
       var data = res.data;
       if(data.Success){
