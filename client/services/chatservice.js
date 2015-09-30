@@ -6,7 +6,6 @@ app.factory('chatService', ['$rootScope', function($rootScope){
 	return {
 		on: function(event, callback){
 			chatConnection.on(event, function(){
-				// updates templates
 				var args = arguments;
 				$rootScope.$apply(function(){
 					callback.apply(chatConnection, args);
@@ -15,7 +14,6 @@ app.factory('chatService', ['$rootScope', function($rootScope){
 		},
 		emit: function(event, data, callback) {
 			chatConnection.emit(event, data, function(){
-				// updates templates
 				var args = arguments;
 				$rootScope.$apply(function () {
 	  			if (callback) {
