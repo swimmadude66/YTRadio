@@ -1,6 +1,6 @@
 <div class="container-fluid" style="height:100%">
   <div class="col-xs-12" style="height:90%; padding-bottom:10px;">
-    <div class="row-fluid" style="height:100%; padding-bottom:50px; margin-bottom:-50px; overflow-y:scroll;" scroll-glue>
+    <div class="row-fluid" style="height:100%; overflow-y:scroll;" scroll-glue>
       <p ng-repeat="message in messages track by $index" ng-attr-id="{{$index===messages.length-1 ? 'bottom' : 'message-$index'}}">
           <b>{{message.Author}}:</b> {{message.Message}}
       </p>

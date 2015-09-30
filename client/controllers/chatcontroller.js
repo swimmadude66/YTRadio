@@ -12,7 +12,7 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
     if($scope.messageText && $scope.messageText.contents && $scope.messageText.contents.trim().length>0){
       chatService.emit('messageToServer', encodeURIComponent($scope.messageText.contents));
       console.log('sent message');
-      $scope.messageText="";
+      $scope.messageText.contents="";
     }
   }
 
