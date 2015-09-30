@@ -6,7 +6,7 @@
       </p>
     </div>
   </div>
-  <div class="row-fluid">
+  <div class="row-fluid" ng-show="getUser()">
     <form ng-submit="sendMessage()">
       <input type="text" class="form-control" placeholder="type here to chat" ng-model="messageText.contents">
     </form>
