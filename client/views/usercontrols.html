@@ -4,9 +4,9 @@
       &nbsp;
     </div>
     <div class="col-xs-6">
-      <form class="simple-form">
+      <form class="simple-form" ng-submit="search()">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria">
+          <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria.query">
           <span class="input-group-btn">
             <button class="btn btn-default" type="button" ng-click="search()">Search</button>
           </span>
