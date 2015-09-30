@@ -29,7 +29,7 @@ module.exports= function(io){
     var salt = uuid.v4();
     var encpass = encryption.hash(salt+"|"+pass);
     var confirm = uuid.v4();
-    db.query('Insert into Users(`Username`, `Email`, `Password`, `Salt`, `Confirm`) VALUES(?,?,?,?,?);', [username, email, encpass, salt, confirm], function(err, results){
+    db.query('Insert into Users(`Username`, `Email`, `Password`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,1);', [username, email, encpass, salt, confirm], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
