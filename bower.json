@@ -18,6 +18,7 @@
     "angular": "~1.4.6",
     "angular-cookies": "~1.4.6",
     "angular-modal-service": "~0.6.9",
+    "angular-scroll-glue": "~2.0.6",
     "angular-socket-io": "~0.7.0",
     "angular-youtube-mb": "~1.1.0",
     "bootstrap": "~3.3.5",

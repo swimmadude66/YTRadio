@@ -1,8 +1,12 @@
 <div class="container-fluid" style="height:100%">
-  <div class="row" style="height:100%; padding-bottom:50px; margin-bottom:-50px;">
-    <p ng-repeat="message in messages track by $index">{{message}}</p>
+  <div class="col-xs-12" style="height:90%; padding-bottom:10px;">
+    <div class="row-fluid" style="height:100%; padding-bottom:50px; margin-bottom:-50px; overflow-y:scroll;" scroll-glue>
+      <p ng-repeat="message in messages track by $index" ng-attr-id="{{$index===messages.length-1 ? 'bottom' : 'message-$index'}}">
+          <b>{{message.Author}}:</b> {{message.Message}}
+      </p>
+    </div>
   </div>
-  <div class="row">
+  <div class="row-fluid">
     <form ng-submit="sendMessage()">
       <input type="text" class="form-control" placeholder="type here to chat" ng-model="messageText.contents">
     </form>

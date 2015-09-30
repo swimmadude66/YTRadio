@@ -2,7 +2,8 @@ var app = angular.module('YTRadio', [
   'youtube-embed',
   'angularModalService',
   'ngCookies',
-  'btford.socket-io']);
+  'btford.socket-io',
+  'luegg.directives']);
 
 app.config(['$httpProvider', function($httpProvider) {
   $httpProvider.interceptors.push('httpRequestInterceptor');

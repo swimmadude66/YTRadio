@@ -66,20 +66,20 @@
             </li>
           </ul>
         </div>
-        <div class="col-xs-9" ng-show="getUser()">
+        <div class="col-xs-7" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
               <a>{{playlist.Contents[0].snippet.title || 'No song left in playlist'}}</a>
             </li>
           </ul>
         </div>
-        <div class="col-xs-1 pull-right">
-          <ul class="nav navbar-nav pull-right">
+        <div class="col-xs-3 pull-right">
+          <ul class="nav navbar-nav pull-right" style="float:right!important;">
             <li class="pull-right text-right" ng-click="login()" ng-hide="getUser()">
               <a class="pull-right text-right">Log in/Sign up</a>
             </li>
-            <li class="pull-right text-right" ng-click="openSettings()" ng-show="getUser().Username">
-              <a class="pull-right text-right">{{getUser().Username}}</a>
+            <li class="pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">
+              <a class="pull-right text-right">Logged in as {{getUser().Username}}, Log Out?</a>
             </li>
           </ul>
         </div>

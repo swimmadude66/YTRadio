@@ -53,6 +53,10 @@ app.controller('UserCtrl', ['$scope', '$http', 'ModalService', 'authService', fu
     });
   };
 
+  $scope.logOut=function(){
+    authService.logOut();
+  }
+
   $scope.getUser=function(){
     return authService.getUser();
   }

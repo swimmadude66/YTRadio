@@ -5,6 +5,14 @@ module.exports = function(io){
 
   var chatManager = io.of('/chat');
 
+  function updateUserList(){
+    var userList = [];
+    for(var username in userSocketIdMap){
+        userList.push(username);
+    }
+    chatManager.emit('userList', userList);
+  }
+
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
@@ -20,23 +28,18 @@ module.exports = function(io){
       socket.broadcast.emit('user_join', username);
 
       // send userList to the user who joined
-      var userList = [];
-      for(var username in userSocketIdMap){
-          userList.push(username);
-      }
-      socket.emit('userList', userList);
+      updateUserList();
       console.log(username + ' joined chat!');
     });
 
     // send a message
-    socket.on('message', function(message){
+    socket.on('sent_message', function(message){
 
       var chatPayload = {
         sender: socketIdUserMap[socket.id],
         timestamp: new Date(),
         message: message
       };
-
       //socket.broadcast.emit('message', chatPayload);
       chatManager.emit('message', chatPayload);
 
@@ -52,19 +55,28 @@ module.exports = function(io){
         message: payload.message
       };
       if(userSocketIdMap[payload.to]){
-        chatManager.to(userSocketIdMap[payload.to]).emit('privateMessage', privateMessage);
+        chatManager.to(userSocketIdMap[payload.to]).emit('private_message', privateMessage);
         console.log('Chat-PM: ', privateMessage.timestamp, privateMessage.sender, payload.to, privateMessage.message);
       }
     });
 
     socket.on('updateUserList', function(){
-      var userList = [];
-      for(var username in userSocketIdMap){
-          userList.push(username);
-      }
-      socket.emit('userList', userList);
-
+      updateUserList();
       console.log(socketIdUserMap[socket.id] + 'requested the user list.');
+    });
+
+    socket.on('leave', function(){
+      if(socketIdUserMap[socket.id]){
+        var username = socketIdUserMap[socket.id];
+        socket.broadcast.emit('userLeft', username);
+        console.log(username + ' left chat.');
+        console.log('Chat Client Disconnected :: ' + socket.id);
+
+        delete userSocketIdMap[username];
+        delete socketIdUserMap[socket.id];
+
+        updateUserList();
+      }
     });
 
     socket.on('disconnect', function(){
@@ -77,6 +89,8 @@ module.exports = function(io){
 
         delete userSocketIdMap[username];
         delete socketIdUserMap[socket.id];
+
+        updateUserList();
       }
     });
   });

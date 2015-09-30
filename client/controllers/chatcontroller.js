@@ -1,7 +1,7 @@
 app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   $scope.users=[];
   $scope.messages=[];
-
+  $scope.online_users=[];
   $scope.messageText="";
 
 
@@ -10,14 +10,11 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   }
 
   $scope.sendMessage=function(){
-    if(messageText.contents.search(/^@[a-zA-Z0-9]+?:/i)>-1){
-      var destuser=messageText.contents.substring(messageText.contents.indexOf("@")+1,messageText.contents.indexOf(":"));
-      chatService.emit('privateMessage', {to: destuser, message: encodeURIComponent($scope.messageText.contents)});
+    if($scope.messageText && $scope.messageText.contents && $scope.messageText.contents.trim().length>0){
+      chatService.emit('sent_message', encodeURIComponent($scope.messageText.contents));
+      console.log('sent message');
+      $scope.messageText="";
     }
-    else{
-      chatService.emit('message', encodeURIComponent($scope.messageText.contents));
-    }
-    $scope.messageText="";
   }
 
   chatService.on('user_join', function(username){
@@ -25,7 +22,12 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   });
 
   chatService.on('message', function(payload){
-    $scope.messages.push(payload.sender+": " + decodeURIComponent(payload.message));
+    console.log('message recv');
+    $scope.messages.push({Author: payload.sender, Message:decodeURIComponent(payload.message)});
+  });
+
+  chatService.on('userList', function(userlist){
+    $scope.online_users = userlist;
   });
 
 });

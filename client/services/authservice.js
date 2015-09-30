@@ -86,8 +86,10 @@ app.factory('authService', ['$q', '$http','$cookies', 'chatService', function($q
     logOut: function(){
       $cookies.remove('ytrk_66');
       auth_cookie = null;
+      chatService.emit('leave');
       userinfo=null;
       session = null;
+
     }
   }
 }]);
