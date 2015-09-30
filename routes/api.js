@@ -118,7 +118,7 @@ module.exports= function(io){
         return res.send({Success: false, Error: "Invalid Auth!"});
       }
       var user=results[0];
-      res.local.usersession = user;
+      res.locals.usersession = user;
       next();
     });
   });
