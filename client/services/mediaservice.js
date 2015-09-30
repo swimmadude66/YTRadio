@@ -1,30 +1,11 @@
-app.factory('mediaService', ['$rootScope', function($rootScope) {
+app.factory('mediaService', ['$rootScope', 'socketFactory', function($rootScope, socketFactory) {
 
-	// setup media connection and namespace
-	var mediaConnection = io.connect('http://127.0.0.1:3000/media');
+	var mediaIo = io.connect('http://127.0.0.1:3000/media');
 
-	return {
+	var mediaConnection = socketFactory({
+		ioSocket: mediaIo
+	});
 
-		on: function(event, callback){
-			mediaConnection.on(event, function(){
+	return mediaConnection;
 
-				// updates templates
-				var args = arguments;
-				$rootScope.$apply(function(){
-					callback.apply(mediaConnection, args);
-				});
-			});
-		},
-		emit: function(event, data, callback) {
-			mediaConnection.emit(event, data, function(){
-				// updates templates
-				var args = arguments;
-				$rootScope.$apply(function () {
-    			if (callback) {
-      			callback.apply(mediaConnection, args);
-    			}
-    		});
-			});
-		}
-	}
 }]);

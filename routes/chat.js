@@ -32,15 +32,15 @@ module.exports = function(io){
     });
 
     // send a message
-    socket.on('message', function(message){
+    socket.on('messageToServer', function(message){
 
       var chatPayload = {
         sender: socketIdUserMap[socket.id],
         timestamp: new Date(),
         message: message
       };
-      socket.emit('message', chatPayload);
-      //chatManager.emit('message', chatPayload);
+      //socket.broadcast.emit('messageFromServer', chatPayload);
+      chatManager.emit('messageFromServer', chatPayload);
 
       console.log('Chat: ', chatPayload.timestamp, chatPayload.sender, chatPayload.message);
     });
