@@ -7,12 +7,19 @@ module.exports = function(io){
 
   function updateUserList(){
     var userList = [];
+    var anon_listeners = 0;
     for(var socket in socketIdUserMap){
       var username = socketIdUserMap[socket];
-      if(userList.indexOf(username) === -1){
-        userList.push(username);
+      if(username){
+        if(userList.indexOf(username) === -1){
+          userList.push(username);
+        }
+      }
+      else{
+        anon_listeners ++;
       }
     }
+    userList.push('Plus ' + anon_listeners + ' anonymous guests');
     chatManager.emit('userList', userList);
   }
 
