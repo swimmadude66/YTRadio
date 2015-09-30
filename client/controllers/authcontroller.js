@@ -1,6 +1,7 @@
 app.controller('AuthCtrl', function ($scope, $http, $element, authService, close) {
   $scope.action = 'Log in';
   $scope.signupText = false;
+  $scope.isLoading = false;
 
   function closeModal(rval) {
     //  Manually hide the modal using bootstrap.
@@ -19,21 +20,25 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
   };
 
   $scope.submit=function(){
+    $scope.isLoading = true;
     if($scope.action === 'Log in'){
       authService.logIn($scope.auth)
       .then(function(session){
           console.log(session);
+          $scope.isLoading = false;
           closeModal(session);
       },function(error){
+        $scope.isLoading = false;
         $scope.errormessage=error;
       });
     }
     else{
       authService.signUp($scope.auth)
       .then(function(session){
-          scope.signupText = true;
-          closeModal(session);
+          $scope.isLoading = false;
+          $scope.signupText = true;
       },function(error){
+        $scope.isLoading = false;
         $scope.errormessage=error;
       });
     }
