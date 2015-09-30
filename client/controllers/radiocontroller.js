@@ -86,7 +86,7 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
     $scope.queue = data.videoQueue;
     if(data.currVid){
       $scope.novid = false;
-      $scope.videoInfo = data.currVid;
+      $scope.videoInfo = data.currVid.Info;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = data.startSeconds;
       $scope.playing=true;
@@ -103,7 +103,7 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   mediaService.on('song_start', function(data){
     if(data.currVid){
       $scope.novid = false;
-      $scope.videoInfo = data.currVid;
+      $scope.videoInfo = data.currVid.Info;
       $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = 0;
       $scope.playing= true;
