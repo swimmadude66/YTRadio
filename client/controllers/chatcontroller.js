@@ -15,6 +15,10 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
     }
   }
 
+  chatService.on('motd', function(message){
+    $scope.messages.push({Author: "MotD", Message:message});
+  });
+
   chatService.on('user_join', function(username){
     $scope.messages.push({Author: "Server", Message:"User "+username+" just joined."});
   });

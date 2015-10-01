@@ -1,5 +1,7 @@
+var fs = require('fs');
 var userSocketIdMap = {}; // dictionary of username:socketId
 var socketIdUserMap = {}; // dictionary of socketId:username
+
 
 module.exports = function(io){
 
@@ -28,6 +30,9 @@ module.exports = function(io){
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
+    socketIdUserMap[socket.id] = null;
+
+    socket.emit('motd', 'Welcome to Lifeboat');
 
     // join the chatroom
     socket.on('join', function(username){
