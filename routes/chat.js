@@ -79,11 +79,13 @@ module.exports = function(io){
     socket.on('leave', function(){
       if(socketIdUserMap[socket.id]){
         var username = socketIdUserMap[socket.id];
-        socket.broadcast.emit('userLeft', username);
+        socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
         console.log('Chat Client Disconnected :: ' + socket.id);
 
-        delete userSocketIdMap[username];
+        if(userSocketIdMap[username] === socket.id){
+          delete userSocketIdMap[username];
+        }
         delete socketIdUserMap[socket.id];
 
         updateUserList();
@@ -94,11 +96,13 @@ module.exports = function(io){
       // send user left event
       if(socketIdUserMap[socket.id]){
         var username = socketIdUserMap[socket.id];
-        socket.broadcast.emit('userLeft', username);
+        socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
         console.log('Chat Client Disconnected :: ' + socket.id);
 
-        delete userSocketIdMap[username];
+        if(userSocketIdMap[username] === socket.id){
+          delete userSocketIdMap[username];
+        }
         delete socketIdUserMap[socket.id];
 
         updateUserList();

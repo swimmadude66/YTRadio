@@ -19,6 +19,10 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
     $scope.messages.push({Author: "Server", Message:"User "+username+" just joined."});
   });
 
+  chatService.on('user_left', function(username){
+    $scope.messages.push({Author: "Server", Message:"User "+username+" jumped ship."});
+  });
+
   chatService.on('messageFromServer', function(payload){
     $scope.messages.push({Author: payload.sender, Message:decodeURIComponent(payload.message)});
   });
