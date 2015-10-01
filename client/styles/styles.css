@@ -76,23 +76,28 @@ float: right!important;
 /*no more ugly scrollbar*/
 
 ::-webkit-scrollbar {
+  display:none;
 	width: 8px;
 }
 ::-webkit-scrollbar-button {
+  display:none;
 	width: 8px;
 	height:5px;
 }
 ::-webkit-scrollbar-track {
+  display:none;
 	background:#eee;
 	border: thin solid lightgray;
 	box-shadow: 0px 0px 3px #dfdfdf inset;
 	border-radius:10px;
 }
 ::-webkit-scrollbar-thumb {
+  display:none;
 	background:#999;
 	border: thin solid gray;
 	border-radius:10px;
 }
 ::-webkit-scrollbar-thumb:hover {
+  display:none;
 	background:#7d7d7d;
 }
