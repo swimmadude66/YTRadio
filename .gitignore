@@ -3,3 +3,4 @@ client/bower_components/
 config.json
 *.vagrant
 *.sql
+npm-debug.log
