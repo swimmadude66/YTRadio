@@ -34,14 +34,14 @@
         <h2>Results</h2>
         <hr>
         <ul class="nav nav-stacked" >
-          <li ng-repeat="result in searchResults track by $index" ng-click="addToQueue(result)" class="pointer" role="presentation">
+          <li ng-repeat="result in searchResults track by $index" ng-click="addToPlaylist(result)" class="pointer" role="presentation">
             <span><img ng-src="{{result.snippet.thumbnails.default.url}}"></img>{{result.snippet.title}}<span>
           </li>
         </ul>
       </div>
       <div id="playlist-items" ng-hide="isSearching">
         <ul class="nav nav-stacked" >
-          <li ng-repeat="item in playlist.Contents track by $index" class="pointer" role="presentation">
+          <li ng-repeat="item in playlists[playlistName].Contents track by $index" class="pointer" role="presentation">
             <span><img ng-src="{{item.snippet.thumbnails.default.url}}"></img>{{item.snippet.title}}<span>
           </li>
         </ul>
@@ -65,14 +65,23 @@
         <div class="col-xs-1" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
-              <a>{{playlist.Name}}</a>
+              <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !inQueue, 'btn-danger': inQueue}" ng-click="joinLeaveQueue()">
+                {{inQueue ? 'Leave Queue' : 'Join Queue'}}
+              </button>
             </li>
           </ul>
         </div>
-        <div class="col-xs-7" ng-show="getUser()">
+        <div class="col-xs-1" ng-show="getUser()">
           <ul class="nav navbar-nav">
             <li>
-              <a>{{playlist.Contents[0].snippet.title || 'No song left in playlist'}}</a>
+              <a class="pointer">{{playlistName}}</a>
+            </li>
+          </ul>
+        </div>
+        <div class="col-xs-6" ng-show="getUser()">
+          <ul class="nav navbar-nav">
+            <li>
+              <a>{{playlists[playlistName].Contents[0].snippet.title || 'No song left in playlist'}}</a>
             </li>
           </ul>
         </div>

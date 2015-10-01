@@ -1,5 +1,5 @@
 <ul class="nav nav-stacked queue">
-  <li ng-repeat="video in queue track by $index" class="nav nav-stacked queue-item" style="cursor:pointer" role="presentation">
-    {{video.snippet.title}}
+  <li ng-repeat="video in getQueue() track by $index" class="nav nav-stacked queue-item" style="cursor:pointer" role="presentation">
+    {{video.DJ}} - {{video.snippet.title}}
   </li>
 </ul>

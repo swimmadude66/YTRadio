@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) {
+app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, authService) {
   $scope.videoID;
   $scope.videoInfo;
   $scope.playing = false;
@@ -12,13 +12,18 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
     enablejsapi: 1,
     start: 0
   };
-  $scope.queue = [];
   $scope.novid = true;
   $scope.muted = false;
+
+  $scope.queue = [];
 
   /*
   * Client Methods
   */
+  $scope.getQueue=function(){
+    return $scope.queue;
+  }
+
   $scope.canSkip=function(){
     var u = authService.getUser();
     if((u && u.Role === 'ADMIN') ||($scope.videoInfo && $scope.videoInfo.DJ === u.Username)){
@@ -31,7 +36,6 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
     if(!$scope.canSkip()){
       return;
     }
-    console.log('Skipping');
     $http.post('/api/radio/skip', {videoID: $scope.videoID})
     .then(function(res){
       console.log('skipping');
@@ -83,7 +87,6 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
   */
 
   mediaService.on('join', function(data){
-    $scope.queue = data.videoQueue;
     if(data.currVid){
       $scope.novid = false;
       $scope.videoInfo = data.currVid.Info;
@@ -98,9 +101,11 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
 
   mediaService.on('queue_updated', function(data){
     $scope.queue = data;
+    $rootScope.$broadcast('queue_updated', data);
   });
 
   mediaService.on('song_start', function(data){
+    $scope.$emit('song_end', $scope.videoInfo);
     if(data.currVid){
       $scope.novid = false;
       $scope.videoInfo = data.currVid.Info;
@@ -113,6 +118,5 @@ app.controller('RadioCtrl', function ($scope, $http, mediaService, authService) 
       $scope.videoInfo = null;
       $scope.videoID = null;
     }
-    $scope.queue = data.videoQueue;
   });
 });

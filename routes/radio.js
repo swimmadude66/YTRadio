@@ -17,7 +17,8 @@ module.exports= function(io){
       var newguy = videoqueue.shift();
       currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
     }
-    mediaManager.emit('song_start', {currVid: currentVideo, videoQueue: videoqueue});
+    mediaManager.emit('queue_updated', videoqueue);
+    mediaManager.emit('song_start', {currVid: currentVideo});
   }
 
   function getTimeElapsed(callback){
@@ -67,7 +68,8 @@ module.exports= function(io){
 
   mediaManager.on('connect', function(socket){
     getTimeElapsed(function(elapsed){
-      socket.emit('join', {videoQueue:videoqueue, currVid:currentVideo, startSeconds: elapsed});
+      mediaManager.emit('queue_updated', videoqueue);
+      socket.emit('join', {currVid:currentVideo, startSeconds: elapsed});
     });
   });
 
@@ -104,13 +106,12 @@ module.exports= function(io){
           durationmillis += parseInt(durationparts[i].substring(0,durationparts[i].length-1)*mults[3-i]);
         }
         videoinfo.Duration = durationmillis;
+        videoinfo.DJ = res.locals.usersession.Username;
         videoqueue.push(videoinfo);
         if(!currentVideo){
           playNextSong();
         }
-        else{
-          mediaManager.emit('queue_updated', videoqueue);
-        }
+        mediaManager.emit('queue_updated', videoqueue);
         return res.send({Success:true});
       }
     });
