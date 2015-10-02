@@ -128,6 +128,49 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     });
   }
 
+  $scope.removeFromPlaylist=function(ind){
+    var item = $scope.playlists[$scope.playlistName].Contents[ind];
+    $scope.playlists[$scope.playlistName].Contents.splice(ind, 1);
+    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+      var data = res.data;
+      if(data.Success){     
+      }
+      else{
+        console.log(data.Error);
+      }
+    });
+  }
+
+  $scope.moveUp=function(ind){
+    var item = $scope.playlists[$scope.playlistName].Contents[ind];
+    $scope.playlists[$scope.playlistName].Contents.splice(ind, 1);
+    $scope.playlists[$scope.playlistName].Contents.unshift(item);
+    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+      var data = res.data;
+      if(data.Success){
+
+      }
+      else{
+        console.log(data.Error);
+      }
+    });
+  }
+
+  $scope.moveDown=function(ind){
+    var item = $scope.playlists[$scope.playlistName].Contents[ind];
+    $scope.playlists[$scope.playlistName].Contents.splice(ind, 1);
+    $scope.playlists[$scope.playlistName].Contents.push(item);
+    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+      var data = res.data;
+      if(data.Success){
+
+      }
+      else{
+        console.log(data.Error);
+      }
+    });
+  }
+
   $scope.joinLeaveQueue=function(){
     if($scope.inQueue){
       $scope.inQueue = false;

@@ -35,7 +35,13 @@
         <hr>
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in searchResults track by $index" ng-click="addToPlaylist(item)" class="pointer" role="presentation">
-            <span><img ng-src="{{item.Thumbnails.default.url}}"></img>   {{item.Title}}</span><span class="pull-right" style="margin-top:30px;">{{item.FormattedTime}}</span>
+            <span>
+              <img ng-src="{{item.Thumbnails.default.url}}"></img>
+              {{item.Title}}
+            </span>
+            <span class="pull-right" style="margin-top:30px;">
+              {{item.FormattedTime}}
+            </span>
           </li>
         </ul>
       </div>
@@ -43,8 +49,23 @@
         <h2>{{playlistName}}</h2>
         <hr>
         <ul class="nav nav-stacked" >
-          <li ng-repeat="item in playlists[playlistName].Contents track by $index" class="pointer" role="presentation">
-            <span><img ng-src="{{item.Thumbnails.default.url}}"></img>   {{item.Title}}</span><span class="pull-right" style="margin-top:30px;">{{item.FormattedTime}}</span>
+          <li ng-repeat="item in playlists[playlistName].Contents track by $index" role="presentation">
+            <span>
+              <img ng-src="{{item.Thumbnails.default.url}}"></img>
+              {{item.Title}}
+            </span>
+            <span class="pull-right" style="margin-top:30px;">&nbsp;
+              <button type="button" class="btn btn-primary" ng-click="moveUp($index)" ng-hide="$first">
+                <span class="glyphicon glyphicon-arrow-up"></span>
+              </button>&nbsp;
+              <button type="button" class="btn btn-primary" ng-click="moveDown($index)" ng-hide="$last">
+                <span class="glyphicon glyphicon-arrow-down"></span>
+              </button>&nbsp;
+              <button type="button" class="btn btn-danger" ng-click="removeFromPlaylist($index)">
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>&nbsp;
+              {{item.FormattedTime}}
+            </span>
           </li>
         </ul>
       </div>
@@ -93,7 +114,8 @@
               <a class="pull-right text-right">Log in/Sign up</a>
             </li>
             <li class="pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">
-              <a class="pull-right text-right">Logged in as {{getUser().Username}}, Log Out?</a>
+              <span class="navbar-text">Logged in as {{getUser().Username}}</span>
+              <a class="pull-right text-right"> Log Out?</a>
             </li>
           </ul>
         </div>
