@@ -37,8 +37,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       return;
     }
     var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
-    if(queue.indexOf(vidinfo) > -1){
+    if($scope.queue.indexOf(vidinfo) > -1){
       $scope.adding=false;
+      $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
       return;
     }
     $http.post('/api/radio/queue', vidinfo)
