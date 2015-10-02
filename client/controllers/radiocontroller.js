@@ -1,5 +1,4 @@
 app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, authService) {
-  $scope.videoID;
   $scope.videoInfo;
   $scope.playing = false;
   $scope.playerVars = {
@@ -36,7 +35,7 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
     if(!$scope.canSkip()){
       return;
     }
-    $http.post('/api/radio/skip', {videoID: $scope.videoID})
+    $http.post('/api/radio/skip', {videoID: $scope.videoInfo.ID})
     .then(function(res){
       console.log('skipping');
     });
@@ -90,7 +89,6 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
     if(data.currVid){
       $scope.novid = false;
       $scope.videoInfo = data.currVid.Info;
-      $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = data.startSeconds;
       $scope.playing=true;
     }
@@ -109,14 +107,12 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
     if(data.currVid){
       $scope.novid = false;
       $scope.videoInfo = data.currVid.Info;
-      $scope.videoID = data.currVid.Info.id.videoId;
       $scope.playerVars.start = 0;
       $scope.playing= true;
     }
     else{
       $scope.novid = true;
       $scope.videoInfo = null;
-      $scope.videoID = null;
     }
   });
 });

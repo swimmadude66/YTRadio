@@ -57,7 +57,6 @@ module.exports= function(io){
         });
       },
       function(err){
-          //maybe filter out the data here?
         if(err){
           return callback(err, results);
         }
@@ -81,7 +80,55 @@ module.exports= function(io){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      return res.send({Success:true, Videos:results});
+      var ids = "";
+      var cleanvids = {};
+      results.forEach(function(result){
+        var body = {
+          ID: result.id.videoId,
+          Title: result.snippet.title,
+          Poster: result.snippet.channelTitle,
+          Thumbnails: result.snippet.thumbnails
+        };
+        cleanvids[body.ID] = body;
+        ids += body.ID+",";
+      });
+      ids = ids.substring(0,ids.length-1);
+      var qstring = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+ids+"&key="+global.config.Keys.YoutubeAPI;
+      compileResults(qstring, null, function(err, innerresults){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
+        var full_list = [];
+        innerresults.forEach(function(ir){
+          var duration = ir.contentDetails.duration;
+          var durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
+          var durationmillis = 0;
+          var mults = [1000, 60000, 60*60000, 24*60*60000];
+          for(var i=durationparts.length-1; i>=0; i--){
+            durationmillis += parseInt(durationparts[i].substring(0,durationparts[i].length-1)*mults[3-i]);
+          }
+          cleanvids[ir.id].Duration = durationmillis;
+          var minutes = Math.floor((durationmillis/1000)/60);
+          var seconds = (durationmillis/1000)%60;
+          var normtime = "";
+          if(minutes>60){
+            normtime = Math.floor(minutes/60) +":"
+            minutes = minutes%60;
+            if(minutes < 10){
+              minutes = "0"+minutes;
+            }
+          }
+          normtime += minutes + ":";
+          if(seconds < 10){
+            normtime += "0";
+          }
+          normtime += seconds;
+          cleanvids[ir.id].FormattedTime = normtime;
+          full_list.push(cleanvids[ir.id]);
+        });
+        return res.send({Success:true, Videos:full_list});
+      });
     });
   });
 
@@ -90,31 +137,13 @@ module.exports= function(io){
     if(!videoinfo){
       return res.send({Success:false, Error: "No video info included"});
     }
-    var id = videoinfo.id.videoId;
-    var qstring = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+id+"&key="+global.config.Keys.YoutubeAPI;
-    request(qstring, function(err, response, body){
-      if(err){
-        return res.send({Success:false, Error: err});
-      }
-      else{
-        var body_obj = JSON.parse(body);
-        var duration = body_obj.items[0].contentDetails.duration;
-        var durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
-        var durationmillis = 0;
-        var mults = [1000, 60000, 60*60000, 24*60*60000];
-        for(var i=durationparts.length-1; i>=0; i--){
-          durationmillis += parseInt(durationparts[i].substring(0,durationparts[i].length-1)*mults[3-i]);
-        }
-        videoinfo.Duration = durationmillis;
-        videoinfo.DJ = res.locals.usersession.Username;
-        videoqueue.push(videoinfo);
-        if(!currentVideo){
-          playNextSong();
-        }
-        mediaManager.emit('queue_updated', videoqueue);
-        return res.send({Success:true});
-      }
-    });
+    videoinfo.DJ = res.locals.usersession.Username;
+    videoqueue.push(videoinfo);
+    if(!currentVideo){
+      playNextSong();
+    }
+    mediaManager.emit('queue_updated', videoqueue);
+    return res.send({Success:true});
   });
 
   router.post('/songend', function(req,res){
@@ -127,7 +156,7 @@ module.exports= function(io){
     var skipped = false;
     if(currentVideo){
       if(res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ){
-        if(req.body.videoID === currentVideo.Info.id.videoId){
+        if(req.body.videoID === currentVideo.Info.ID){
           skipped = true;
           playNextSong();
         }
