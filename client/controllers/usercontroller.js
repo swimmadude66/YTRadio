@@ -37,6 +37,10 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       return;
     }
     var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
+    if(queue.indexOf(vidinfo) > -1){
+      $scope.adding=false;
+      return;
+    }
     $http.post('/api/radio/queue', vidinfo)
     .then(function(res){
       var data = res.data;
@@ -110,6 +114,10 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
 
   $scope.addToPlaylist=function(vidinfo){
     if(!vidinfo){
+      return;
+    }
+    if($scope.playlists[$scope.playlistName].Contents.indexOf(vidinfo) > -1){
+      toastr.error('Song already exists in playlist');
       return;
     }
     toastr.success('Song Added to Playlist: ' + $scope.playlistName);
