@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, authService) {
+app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, mediaService, authService) {
   $scope.videoInfo;
   $scope.playing = false;
   $scope.playerVars = {
@@ -15,6 +15,12 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
   $scope.muted = false;
 
   $scope.queue = [];
+
+  $scope.timer;
+  $scope.timeRemaining = "00:00";
+
+  $scope.premuteVolume=100;
+  $scope.volume = 100;
 
   /*
   * Client Methods
@@ -44,16 +50,30 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
   $scope.toggleMute=function(){
     if($scope.muted){
       $scope.ytplayer.unMute();
+      $scope.volume = $scope.premuteVolume;
       $scope.muted=false;
     }
     else{
       $scope.ytplayer.mute();
       $scope.muted=true;
+      $scope.premuteVolume=$scope.volume;
+      $scope.volume=0;
     }
+  }
+
+  $scope.setVolume=function(){
+    $scope.ytplayer.setVolume($scope.volume);
   }
 
   $scope.getUser=function(){
     return authService.getUser();
+  }
+
+  $scope.getProgressPercent=function(){
+    if(!$scope.playing || ! $scope.ytplayer){
+      return 0;
+    }
+    return ($scope.ytplayer.getCurrentTime()/$scope.ytplayer.getDuration())*100;
   }
 
   /*
@@ -63,9 +83,31 @@ app.controller('RadioCtrl', function ($rootScope, $scope, $http, mediaService, a
     if($scope.muted){
       $scope.ytplayer.mute();
     }
+    $scope.timer=$interval(function(){
+      var currtime = Math.floor($scope.ytplayer.getCurrentTime());
+      var trem = "";
+      var minutes = Math.floor(currtime/60);
+      var seconds = currtime%60;
+      if(minutes > 60){
+        trem += Math.floor(minutes/60) +":"
+        minutes = minutes%60;
+        if(minutes<10){
+          minutes = "0"+minutes;
+        }
+      }
+      trem += minutes +":"
+      if(seconds < 10){
+        trem += 0;
+      }
+      trem += seconds;
+      $scope.timeRemaining = trem;
+    }, 1000);
   });
 
   $scope.$on('youtube.player.ended', function ($event, player) {
+    if($scope.timer){
+      $interval.cancel($scope.timer);
+    }
     if($scope.playing){
       $scope.playing = false;
       setTimeout(function(){

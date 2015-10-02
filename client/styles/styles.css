@@ -57,6 +57,7 @@ html,body{
   word-wrap: break-word;
 }
 
+
 /*Override navbar collapse*/
 .navbar-collapse.collapse {
 display: block!important;

@@ -1,16 +1,41 @@
 <nav class="navbar navbar-inverse" style="margin-bottom:0px; border-radius:0px;">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">YTRadio</a>
-    <ul class="nav navbar-nav">
-    </ul>
-    <div id="controls" ng-show="playing">
-      <button type="button" class="btn navbar-btn btn-danger pull-right" ng-click="skip()" ng-disabled="!canSkip()">
-          Skip
-      </button>
-      <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()">
-          <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
-          <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
-      </button>
+    <a class="navbar-brand">YTRadio</a>
+    <div class="col-xs-1">
+      <ul class="nav navbar-nav">
+        <li ng-show="playing">
+          <button type="button" class="btn navbar-btn btn-danger" ng-click="skip()" ng-disabled="!canSkip()">
+              Skip
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div class="col-xs-6" id="songinfo">
+      <ul class="nav navbar-nav" ng-show="playing">
+        <li><span class="navbar-text">{{videoInfo.Title}}</span></li>
+      </ul>
+    </div>
+    <div class="col-xs-2">
+      <ul class="nav navbar-nav pull-right" ng-show="playing">
+        <li><span class="navbar-text">{{timeRemaining}}/{{videoInfo.FormattedTime}}</span></li>
+      </ul>
+    </div>
+    <div class="col-xs-2 pull-right">
+      <div class="pull-right" ng-show="playing">
+        <ul class="nav navbar-nav">
+          <li>
+            <form class="navbar-form">
+              <input class="form-control" type="range" ng-model="volume" ng-change="setVolume()" style="height: 10px; padding-top: 0px; background-color: rgba(66, 123, 208, 0.31); margin-top:6px;"/>
+            </form>
+          </li>
+          <li>
+            <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()">
+              <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
+              <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
+            </button>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
