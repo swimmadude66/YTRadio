@@ -20,9 +20,12 @@
   <div class="row" style="height:100%; padding-bottom:125px;">
     <div class="col-xs-3">
       <h2>Playlists</h2>
-      <ul class="playlist-list">
-        <li class="playlist-tab" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)">
-          {{playlist.Name}}
+      <hr>
+      <ul class="nav nav-stacked playlist-list">
+        <li class="playlist-tab pointer" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)">
+          <h4>
+            {{playlist.Name}}
+          </h4>
         </li>
       </ul>
     </div>
@@ -50,7 +53,7 @@
         <hr>
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in playlists[playlistName].Contents track by $index" role="presentation">
-            <span>
+            <span style="text-overflow:elipses;">
               <img ng-src="{{item.Thumbnails.default.url}}"></img>
               {{item.Title}}
             </span>
