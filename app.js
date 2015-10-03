@@ -14,19 +14,26 @@ app.use(express.static(path.join(__dirname, 'client')));
 app.set('views', __dirname + '/client/views');
 app.use(bodyParser.json())
 
-var port = 3000;
+var httpport = 8080;
+var httpsport = 3000;
 var server;
+var isHTTPS = false;
 
 if('SSL' in global.config){
   var config = {
     key: fs.readFileSync(global.config.SSL.keyfile),
    cert: fs.readFileSync(global.config.SSL.certfile)
   };
+  http.createServer(function (req, res) {
+    res.redirect("https://" + req.host + req.url);
+  }).listen(8080);
   server = https.createServer(config, app);
+  isHTTPS = true;
 }
 else{
   server = http.Server(app);
 }
+var port = (isHTTPS ? httpsport : httpport);
 
 // SOCKET CONNECTIONS
 // =============================================================================
