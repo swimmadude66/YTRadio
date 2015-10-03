@@ -24,9 +24,11 @@ if('SSL' in global.config){
     key: fs.readFileSync(global.config.SSL.keyfile),
    cert: fs.readFileSync(global.config.SSL.certfile)
   };
-  http.createServer(function (req, res) {
-    res.redirect("https://" + req.host + req.url);
-  }).listen(8080);
+  var redir = express();
+  redir.get('*', function(req, res){
+    return res.redirect("https://" + req.host + req.url);
+  });
+  http.createServer(redir).listen(8080);
   server = https.createServer(config, app);
   isHTTPS = true;
 }
