@@ -12,7 +12,7 @@ module.exports = function(io){
     var anon_listeners = 0;
     for(var socket in socketIdUserMap){
       var username = socketIdUserMap[socket];
-      if(username != 'guest'){
+      if(username){
         if(userList.indexOf(username) === -1){
           userList.push(username);
         }
@@ -30,7 +30,7 @@ module.exports = function(io){
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
-    socketIdUserMap[socket.id] = 'guest';
+    socketIdUserMap[socket.id] = false;
 
     socket.emit('motd', 'Welcome to Lifeboat');
 
@@ -90,7 +90,7 @@ module.exports = function(io){
         if(userSocketIdMap[username] === socket.id){
           delete userSocketIdMap[username];
         }
-        socketIdUserMap[socket.id] = 'guest';
+        socketIdUserMap[socket.id] = false;
 
         updateUserList();
       }
@@ -104,7 +104,7 @@ module.exports = function(io){
       // - delete from socketIdUserMap
       // - delete from userSocketIdMap
 
-      if(socketIdUserMap[socket.id] != 'guest'){
+      if(socketIdUserMap[socket.id]){
         var username = socketIdUserMap[socket.id];
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
@@ -113,7 +113,7 @@ module.exports = function(io){
           delete userSocketIdMap[username];
         }
       } 
-      else if(socketIdUserMap[socket.id] === 'guest'){
+      else if(socketIdUserMap[socket.id] === false){
         console.log('guest left chat.');
         delete socketIdUserMap[socket.id];
       }
