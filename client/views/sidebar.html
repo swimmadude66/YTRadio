@@ -1,19 +1,19 @@
-<div class="container-fluid sidebar" style="height:100%;">
-  <div class="row" style="margin-left:0px;">
-   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===0}" ng-click="activeTab=0">
-     <h1><span class="glyphicon glyphicon-user"></span></h1>
-   </div>
-   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===1}" ng-click="activeTab=1">
-     <h1><span class="glyphicon glyphicon-list"></span></h1>
-   </div>
-   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===2}" ng-click="activeTab=2">
-     <h1><span class="glyphicon glyphicon-envelope"></span></h1>
-   </div>
-   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===3}" ng-click="activeTab=3">
-     <h1><span class="glyphicon glyphicon-option-horizontal"></span></h1>
-   </div>
-  </div>
-  <div class="row-fluid" style="height:100%; padding-bottom:175px;">
+<div class="sidebar animation-on">
+  <nav class="tabs">
+     <a href="javascript:void(0);" ng-class="{'sidebar-btn-active':activeTab===0}" ng-click="activeTab=0">
+       <span class="glyphicon glyphicon-user"></span>
+     </a>
+     <a href="javascript:void(0);" ng-class="{'sidebar-btn-active':activeTab===1}" ng-click="activeTab=1">
+       <span class="glyphicon glyphicon-list"></span>
+     </a>
+     <a href="javascript:void(0);" ng-class="{'sidebar-btn-active':activeTab===2}" ng-click="activeTab=2">
+       <span class="glyphicon glyphicon-envelope"></span>
+     </a>
+     <a href="javascript:void(0);" ng-class="{'sidebar-btn-active':activeTab===3}" ng-click="activeTab=3">
+       <span class="glyphicon glyphicon-option-horizontal"></span>
+     </a>
+  </nav>
+  <div class="row-fluid">
     <userlist ng-hide="activeTab!==0"></userlist>
     <queue ng-hide="activeTab!==1"></queue>
     <chat ng-hide="activeTab!==2"></chat>
