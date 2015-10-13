@@ -30,7 +30,7 @@ module.exports = function(io){
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
-    socketIdUserMap[socket.id] = null;
+    socketIdUserMap[socket.id] = false;
 
     socket.emit('motd', 'Welcome to Lifeboat');
 
@@ -86,32 +86,39 @@ module.exports = function(io){
         var username = socketIdUserMap[socket.id];
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
-        console.log('Chat Client Disconnected :: ' + socket.id);
-
+        
         if(userSocketIdMap[username] === socket.id){
           delete userSocketIdMap[username];
         }
-        delete socketIdUserMap[socket.id];
+        socketIdUserMap[socket.id] = false;
 
         updateUserList();
       }
     });
 
     socket.on('disconnect', function(){
-      // send user left event
+
+      // if guest
+      // - delete from socketIdUserMap
+      // if user
+      // - delete from socketIdUserMap
+      // - delete from userSocketIdMap
+
       if(socketIdUserMap[socket.id]){
         var username = socketIdUserMap[socket.id];
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
-        console.log('Chat Client Disconnected :: ' + socket.id);
-
+        delete socketIdUserMap[socket.id];
         if(userSocketIdMap[username] === socket.id){
           delete userSocketIdMap[username];
         }
+      } 
+      else if(socketIdUserMap[socket.id] === false){
+        console.log('guest left chat.');
         delete socketIdUserMap[socket.id];
-
-        updateUserList();
       }
+        console.log('Chat Client Disconnected :: ' + socket.id);
+        updateUserList();
     });
   });
 }
