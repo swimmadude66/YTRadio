@@ -41,7 +41,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     if(!$scope.canSkip()){
       return;
     }
-    $http.post('/api/radio/skip', {videoID: $scope.videoInfo.ID})
+    $http.post('/api/radio/skip', {PlaybackID: $scope.videoInfo.PlaybackID})
     .then(function(res){
       console.log('skipping');
     });
@@ -83,6 +83,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     if($scope.muted){
       $scope.ytplayer.mute();
     }
+    $scope.ytplayer.setVolume($scope.volume);
     $scope.timer=$interval(function(){
       var currtime = Math.floor($scope.ytplayer.getCurrentTime());
       var trem = "";

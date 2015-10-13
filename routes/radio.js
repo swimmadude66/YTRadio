@@ -1,5 +1,6 @@
 var router = require('express').Router();
 var request = require('request');
+var uuid = require('node-uuid');
 var async = require('async');
 
 var videoqueue = [];
@@ -15,6 +16,7 @@ module.exports= function(io){
     currentVideo = false;
     if(videoqueue.length>0){
       var newguy = videoqueue.shift();
+      newguy.PlaybackID = uuid.v4();
       currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
     }
     mediaManager.emit('queue_updated', videoqueue);
@@ -156,7 +158,7 @@ module.exports= function(io){
     var skipped = false;
     if(currentVideo){
       if(res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ){
-        if(req.body.videoID === currentVideo.Info.ID){
+        if(req.body.PlaybackID === currentVideo.Info.PlaybackID){
           skipped = true;
           playNextSong();
         }
