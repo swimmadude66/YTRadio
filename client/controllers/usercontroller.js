@@ -21,7 +21,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }
     $http.get('/api/playlists').then(function(res){
       var data = res.data;
-      console.log(data);
       if(data.Success){
         $scope.playlists = data.Playlists;
         for(pl in data.Playlists){
@@ -211,4 +210,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.getUser=function(){
     return authService.getUser();
   }
+
+  $scope.$on('session_resume', function(){
+    fetch_playlist();
+  });
+
 });

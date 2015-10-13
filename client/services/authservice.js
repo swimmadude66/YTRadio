@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('authService', ['$q', '$http','$cookies', 'chatService', function($q, $http, $cookies, chatService){
+app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService', function($rootScope, $q, $http, $cookies, chatService){
 
   var session;
   var userinfo;
@@ -14,6 +14,7 @@ app.factory('authService', ['$q', '$http','$cookies', 'chatService', function($q
         session = data.Data.Session;
         userinfo = data.Data.User;
         chatService.emit('join', userinfo.Username);
+        $rootScope.$broadcast('session_resume');
       }
     }, function(error){
       console.log(error);
@@ -29,7 +30,7 @@ app.factory('authService', ['$q', '$http','$cookies', 'chatService', function($q
     },
     hasAccess: function(){
       var deferred = $q.defer();
-      if(!!session){
+      if(!!userinfo){
         deferred.resolve(true);
       }
       else{
