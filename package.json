@@ -2,20 +2,26 @@
   "name": "YTRadio",
   "version": "1.0.0",
   "description": "distributed internet radio",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swimmadude66/YTRadio"
+  },
+  "bugs": {
+    "url": "https://github.com/swimmadude66/YTRadio/issues"
+  },
+  "homepage": "https://github.com/swimmadude66/YTRadio",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "node_modules/bower/bin/bower install"
   },
-  "author": "",
-  "license": "NONE",
+  "author": "swimmadude66",
+  "license": "MIT",
   "dependencies": {
     "async": "^1.4.2",
     "body-parser": "^1.14.0",
-    "crypto": "0.0.3",
     "ejs": "^2.3.4",
     "express": "^4.13.3",
-    "fs": "0.0.2",
     "mysql": "^2.9.0",
     "node-uuid": "^1.4.3",
     "request": "^2.63.0",
