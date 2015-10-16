@@ -8,10 +8,9 @@ module.exports= function(io){
     var sid = uuid.v4();
     var session_block = {
       Key: sid,
-      User: user,
-      Expires: new Date().getTime() + 6*60*60*1000
+      User: user
     };
-    db.query('Insert into Sessions(`Key`, `UserID`, `Expires`) Values(?, ?, ?);', [session_block.Key, session_block.User.ID, session_block.Expires], function(err, result){
+    db.query('Insert into Sessions(`Key`, `UserID`) Values(?, ?);', [session_block.Key, session_block.User.ID], function(err, result){
       if(err){
         return callback(err);
       }
@@ -86,7 +85,7 @@ module.exports= function(io){
 
   router.get('/auth/:sessionID', function(req, res){
     var sid = req.params.sessionID;
-    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key`, Sessions.`Expires` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
     db.query(keylookup, [sid], function(err, results){
       if(err){
         console.log(err);
@@ -96,7 +95,7 @@ module.exports= function(io){
         return res.send({Success:false, Error:"Invlaid SessionID"});
       }
       var uinfo = results[0];
-      return res.send({Success: true, Data:{Session:{Key:uinfo.Key, Expires:uinfo.Expires}, User:{Username: uinfo.Username, ID: uinfo.ID, Role: uinfo.Role}}});
+      return res.send({Success: true, Data:{Session:{Key:uinfo.Key}, User:{Username: uinfo.Username, ID: uinfo.ID, Role: uinfo.Role}}});
     });
   });
 
@@ -109,7 +108,7 @@ module.exports= function(io){
     if(!authZ){
       return res.send({Success:false, Error:"No valid Auth token"});
     }
-    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key`, Sessions.`Expires` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
     db.query(keylookup, [authZ], function(err, results){
       if(err){
         return res.send({Success: false, Error: err});
