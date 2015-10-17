@@ -81,33 +81,36 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   */
   $scope.$on('youtube.player.playing', function ($event, player) {
     if($scope.muted){
-      $scope.ytplayer.mute();
+      player.mute();
     }
-    $scope.ytplayer.setVolume($scope.volume);
-    $scope.timer=$interval(function(){
-      var currtime = Math.floor($scope.ytplayer.getCurrentTime());
-      var trem = "";
-      var minutes = Math.floor(currtime/60);
-      var seconds = currtime%60;
-      if(minutes > 60){
-        trem += Math.floor(minutes/60) +":"
-        minutes = minutes%60;
-        if(minutes<10){
-          minutes = "0"+minutes;
+    player.setVolume($scope.volume);
+    if(!$scope.timer){
+      $scope.timer=$interval(function(){
+        var currtime = Math.floor(player.getCurrentTime());
+        var trem = "";
+        var minutes = Math.floor(currtime/60);
+        var seconds = currtime%60;
+        if(minutes > 60){
+          trem += Math.floor(minutes/60) +":"
+          minutes = minutes%60;
+          if(minutes<10){
+            minutes = "0"+minutes;
+          }
         }
-      }
-      trem += minutes +":"
-      if(seconds < 10){
-        trem += 0;
-      }
-      trem += seconds;
-      $scope.timeRemaining = trem;
-    }, 1000);
+        trem += minutes +":"
+        if(seconds < 10){
+          trem += 0;
+        }
+        trem += seconds;
+        $scope.timeRemaining = trem;
+      }, 1000);
+    }
   });
 
   $scope.$on('youtube.player.ended', function ($event, player) {
     if($scope.timer){
       $interval.cancel($scope.timer);
+      $scope.timer = false;
     }
     if($scope.playing){
       $scope.playing = false;
@@ -131,7 +134,14 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   mediaService.on('join', function(data){
     if(data.currVid){
       $scope.novid = false;
-      $scope.videoInfo = data.currVid.Info;
+      if($scope.ytplayer && $scope.ytplayer.clearVideo){
+        $scope.ytplayer.clearVideo();
+        $scope.ytplayer.cueVideoById(data.currVid.Info.ID);
+        $scope.ytplayer.playVideo();
+      }
+      else{
+        $scope.videoInfo = data.currVid.Info;
+      }
       $scope.playerVars.start = data.startSeconds;
       $scope.playing=true;
     }
@@ -146,10 +156,16 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   });
 
   mediaService.on('song_start', function(data){
-    $scope.$emit('song_end', $scope.videoInfo);
     if(data.currVid){
       $scope.novid = false;
-      $scope.videoInfo = data.currVid.Info;
+      if($scope.ytplayer && $scope.ytplayer.clearVideo){
+        $scope.ytplayer.clearVideo();
+        $scope.ytplayer.cueVideoById(data.currVid.Info.ID);
+        $scope.ytplayer.playVideo();
+      }
+      else{
+        $scope.videoInfo = data.currVid.Info;
+      }
       $scope.playerVars.start = 0;
       $scope.playing= true;
     }
