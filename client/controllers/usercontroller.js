@@ -133,7 +133,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       return;
     }
     toastr.success('Song Added to Playlist: ' + $scope.playlistName);
-    $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
+    $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
       console.log('playlist updated');
     });
