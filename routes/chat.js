@@ -22,9 +22,16 @@ module.exports = function(io){
       }
     }
     if(anon_listeners > 0){
-      userList.push('Plus ' + anon_listeners + ' anonymous guests');
+      var anon_string = anon_listeners + ' Anonymous guest';
+      if(anon_listeners > 1){
+        anon_string +='s';
+      }
+      if(userList.length > 0){
+        anon_string = 'Plus ' + anon_string;
+      }
+      userList.push(anon_string);
     }
-    chatManager.emit('userList', userList);
+    io.emit('userList', userList);
   }
 
   // connection event
@@ -89,7 +96,7 @@ module.exports = function(io){
         var username = socketIdUserMap[socket.id];
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
-        
+
         if(userSocketIdMap[username] === socket.id){
           delete userSocketIdMap[username];
         }
@@ -100,28 +107,18 @@ module.exports = function(io){
     });
 
     socket.on('disconnect', function(){
-
-      // if guest
-      // - delete from socketIdUserMap
-      // if user
-      // - delete from socketIdUserMap
-      // - delete from userSocketIdMap
-
       if(socketIdUserMap[socket.id]){
+        // if user
         var username = socketIdUserMap[socket.id];
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
-        delete socketIdUserMap[socket.id];
         if(userSocketIdMap[username] === socket.id){
-          delete userSocketIdMap[username];
+          delete userSocketIdMap[username]; // - delete from userSocketIdMap
         }
-      } 
-      else if(socketIdUserMap[socket.id] === false){
-        console.log('guest left chat.');
-        delete socketIdUserMap[socket.id];
       }
-        console.log('Chat Client Disconnected :: ' + socket.id);
-        updateUserList();
+      delete socketIdUserMap[socket.id]; // - delete from socketIdUserMap
+      console.log('Chat Client Disconnected :: ' + socket.id);
+      updateUserList();
     });
   });
 }

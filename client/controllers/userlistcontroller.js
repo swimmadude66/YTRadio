@@ -1,23 +1,13 @@
-app.controller('UserListCtrl', function ($scope, chatService) {
+app.controller('UserListCtrl', function ($scope, rootService) {
   $scope.online_users=[];
 
-  chatService.on('userList', function(userlist){
+  rootService.on('userList', function(userlist){
     $scope.online_users = userlist;
   });
 
   // makes sure all socket event listeners are removed after controller is destroyed
   $scope.$on('$destroy', function (event){
-    chatService.removeAllListeners();
+    rootService.removeAllListeners();
   });
 
 });
-
-/*
-app.directive('chatmessage', function() {
-  return {
-    restrict: 'E',
-    controller: 'ChatCtrl',
-		templateUrl: 'views/chatmessage.html'
-	}
-});
-*/
