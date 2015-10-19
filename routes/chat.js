@@ -34,6 +34,9 @@ module.exports = function(io){
 
     socket.emit('motd', 'Welcome to Lifeboat');
 
+    // update/send userList when guest joins (on socket connection and before user join)
+    updateUserList();
+
     // join the chatroom
     socket.on('join', function(username){
 
