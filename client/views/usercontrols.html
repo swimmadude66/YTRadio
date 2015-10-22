@@ -39,7 +39,7 @@
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in searchResults track by $index" ng-click="addToPlaylist(item)" class="pointer" role="presentation">
             <span>
-              <img ng-src="{{item.Thumbnails.default.url}}"></img>
+              <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               {{item.Title}}
             </span>
             <span class="pull-right" style="margin-top:30px;">
@@ -54,7 +54,7 @@
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in playlists[playlistName].Contents track by $index" role="presentation">
             <span style="text-overflow:elipses;">
-              <img ng-src="{{item.Thumbnails.default.url}}"></img>
+              <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               {{item.Title}}
             </span>
             <span class="pull-right" style="margin-top:30px;">&nbsp;
