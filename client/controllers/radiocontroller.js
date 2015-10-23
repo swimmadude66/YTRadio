@@ -51,13 +51,13 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   $scope.toggleMute=function(){
     if($scope.muted){
       $scope.ytplayer.unMute();
+      $scope.muted = false;
       $scope.volume = $scope.premuteVolume;
-      $scope.muted=false;
     }
     else{
       $scope.ytplayer.mute();
       $scope.muted=true;
-      $scope.premuteVolume=$scope.volume;
+      $scope.premuteVolume = $scope.volume;
       $scope.volume=0;
     }
   }
@@ -84,7 +84,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     if($scope.muted){
       $scope.ytplayer.mute();
     }
-    $scope.ytplayer.setVolume($scope.volume);
+    $scope.ytplayer.setVolume($scope.muted ? $scope.premuteVolume : $scope.volume);
     $scope.timer=$interval(function(){
       var currtime = Math.floor($scope.ytplayer.getCurrentTime());
       var trem = "";

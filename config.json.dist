@@ -5,8 +5,9 @@
   },
   "DB":{
     "host" : "localhost",
-     "user": "YourSAUser",
+    "user": "YourSAUser",
     "password": "SAPassword",
-    "port": portNumber
+    "port": portNumber,
+    "database": "YourDatabase"
   }
 }
