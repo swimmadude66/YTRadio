@@ -77,7 +77,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     var present = false;
     var uname = authService.getUser().Username;
     $scope.queue.forEach(function(q_item){
-      if(!q_item.DJ || q_item.DJ.toLowerCase() === uname.toLowerCase()){
+      if(!q_item.DJ || q_item.DJ.Username.toLowerCase() === uname.toLowerCase()){
         present = true;
       }
     });
