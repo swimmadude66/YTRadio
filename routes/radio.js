@@ -3,6 +3,8 @@ var request = require('request');
 var uuid = require('node-uuid');
 var async = require('async');
 
+var ytapi = require('tools/YTAPI.js');
+
 var videoqueue = [];
 
 var currentVideo = false;
@@ -34,39 +36,6 @@ module.exports= function(io){
     return callback(0);
   }
 
-  function compileResults(raw_string, pageToken, callback){
-    var results = [];
-    var more = true;
-    var nextPage = pageToken;
-    async.whilst(
-      function(){return (results.length<25 && more)},
-      function(cb){
-        var search_string = raw_string;
-        if(nextPage){
-          search_string= raw_string+"&pageToken="+nextPage;
-        }
-        request(search_string, function(err, response, body){
-          if(err){
-            return cb(err);
-          }
-          else{
-            var body_obj = JSON.parse(body);
-            results = results.concat(body_obj.items);
-            nextPage = body_obj.nextPageToken;
-            more = !!nextPage;
-            return cb();
-          }
-        });
-      },
-      function(err){
-        if(err){
-          return callback(err, results);
-        }
-        return callback(null, results);
-      }
-    );
-  }
-
   mediaManager.on('connect', function(socket){
     getTimeElapsed(function(elapsed){
       mediaManager.emit('queue_updated', videoqueue);
@@ -77,7 +46,7 @@ module.exports= function(io){
   router.get('/search/:query', function(req, res){
     var host = "https://www.googleapis.com/youtube/v3/search?part=id,snippet&type=video&videoEmbeddable=true&q=";
     var req_string = host + req.params.query+"&key="+global.config.Keys.YoutubeAPI;
-    compileResults(req_string, null, function(err, results){
+    ytapi.compileResults(req_string, null, function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -96,7 +65,7 @@ module.exports= function(io){
       });
       ids = ids.substring(0,ids.length-1);
       var qstring = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+ids+"&key="+global.config.Keys.YoutubeAPI;
-      compileResults(qstring, null, function(err, innerresults){
+      ytapi.compileResults(qstring, null, function(err, innerresults){
         if(err){
           console.log(err);
           return res.send({Success: false, Error: err});
