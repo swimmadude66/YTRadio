@@ -57,6 +57,13 @@ html,body{
   word-wrap: break-word;
 }
 
+.volumebar{
+  height: 10px;
+  padding-top: 0px;
+  background-color: rgba(66, 123, 208, 0.31);
+  margin-top:6px;
+}
+
 
 /*Override navbar collapse*/
 .navbar-collapse.collapse {
