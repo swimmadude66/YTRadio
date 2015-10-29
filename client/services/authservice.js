@@ -47,7 +47,9 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
           if(data.Success){
             session = data.Data.Session;
             userinfo = data.Data.User;
-            $cookies.put('ytrk_66', session.Key);
+            var future = new Date().getTime()+(52*7*24*60*60000);
+            var eDate = new Date(future);
+            $cookies.put('ytrk_66', session.Key, {expires: eDate, });
             chatService.emit('join', userinfo.Username);
             deferred.resolve(session);
           }
