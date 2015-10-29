@@ -37,7 +37,7 @@ module.exports = function(io){
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
-    socketIdUserMap[socket.id] = false;
+    socketIdUserMap[socket.id] = null;
 
     socket.emit('motd', 'Welcome to Lifeboat');
 
@@ -46,9 +46,11 @@ module.exports = function(io){
 
     // join the chatroom
     socket.on('join', function(username){
-
+      if(!username in userSocketIdMap){
+        userSocketIdMap[username] = [];
+      }
       // add to maps
-      userSocketIdMap[username] = socket.id;
+      userSocketIdMap[username].push(socket.id);
       socketIdUserMap[socket.id] = username;
 
       // send join event
@@ -88,37 +90,42 @@ module.exports = function(io){
 
     socket.on('updateUserList', function(){
       updateUserList();
-      console.log(socketIdUserMap[socket.id] + 'requested the user list.');
     });
 
     socket.on('leave', function(){
       if(socketIdUserMap[socket.id]){
         var username = socketIdUserMap[socket.id];
-        socket.broadcast.emit('user_left', username);
-        console.log(username + ' left chat.');
-
-        if(userSocketIdMap[username] === socket.id){
-          delete userSocketIdMap[username];
+        var socks = userSocketIdMap[username];
+        var i = socks.indexOf(socket.id);
+        if(i>-1){
+          socks.splice(i,1);
         }
-        socketIdUserMap[socket.id] = false;
-
+        if(socks.length<1){
+          socket.broadcast.emit('user_left', username);
+          console.log(username + ' left chat.');
+          delete userSocketIdMap[username];
+          socketIdUserMap[socket.id] = null;
+        }
         updateUserList();
       }
     });
 
     socket.on('disconnect', function(){
       if(socketIdUserMap[socket.id]){
-        // if user
         var username = socketIdUserMap[socket.id];
-        socket.broadcast.emit('user_left', username);
-        console.log(username + ' left chat.');
-        if(userSocketIdMap[username] === socket.id){
-          delete userSocketIdMap[username]; // - delete from userSocketIdMap
+        var socks = userSocketIdMap[username];
+        var i = socks.indexOf(socket.id);
+        if(i>-1){
+          socks.splice(i,1);
         }
+        if(socks.length<1){
+          socket.broadcast.emit('user_left', username);
+          console.log(username + ' left chat.');
+          delete userSocketIdMap[username];
+          delete socketIdUserMap[socket.id];
+        }
+        updateUserList();
       }
-      delete socketIdUserMap[socket.id]; // - delete from socketIdUserMap
-      console.log('Chat Client Disconnected :: ' + socket.id);
-      updateUserList();
     });
   });
 }
