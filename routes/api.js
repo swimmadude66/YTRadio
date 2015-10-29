@@ -125,6 +125,7 @@ module.exports= function(io){
   /*
   * External Methods
   */
+  router.use('/search/', require('./search.js'));
   router.use('/radio/', require('./radio.js')(io));
   router.use('/playlists/', require('./playlists.js')(io));
 

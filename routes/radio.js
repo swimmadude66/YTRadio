@@ -1,10 +1,7 @@
 var router = require('express').Router();
 var db = require('../middleware/db.js');
-var request = require('request');
 var uuid = require('node-uuid');
 var async = require('async');
-
-var ytapi = require('./tools/YTAPI.js');
 
 var videoqueue = [];
 
@@ -54,66 +51,6 @@ module.exports= function(io){
     getTimeElapsed(function(elapsed){
       mediaManager.emit('queue_updated', videoqueue);
       socket.emit('join', {currVid:currentVideo, startSeconds: elapsed});
-    });
-  });
-
-  router.get('/search/:query', function(req, res){
-    var host = "https://www.googleapis.com/youtube/v3/search?part=id,snippet&type=video&videoEmbeddable=true&q=";
-    var req_string = host + req.params.query+"&key="+global.config.Keys.YoutubeAPI;
-    ytapi.compileResults(req_string, null, function(err, results){
-      if(err){
-        console.log(err);
-        return res.send({Success: false, Error: err});
-      }
-      var ids = "";
-      var cleanvids = {};
-      results.forEach(function(result){
-        var body = {
-          ID: result.id.videoId,
-          Title: result.snippet.title,
-          Poster: result.snippet.channelTitle,
-          Thumbnails: result.snippet.thumbnails
-        };
-        cleanvids[body.ID] = body;
-        ids += body.ID+",";
-      });
-      ids = ids.substring(0,ids.length-1);
-      var qstring = "https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id="+ids+"&key="+global.config.Keys.YoutubeAPI;
-      ytapi.compileResults(qstring, null, function(err, innerresults){
-        if(err){
-          console.log(err);
-          return res.send({Success: false, Error: err});
-        }
-        var full_list = [];
-        innerresults.forEach(function(ir){
-          var duration = ir.contentDetails.duration;
-          var durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
-          var durationmillis = 0;
-          var mults = [1000, 60000, 60*60000, 24*60*60000];
-          for(var i=durationparts.length-1; i>=0; i--){
-            durationmillis += parseInt(durationparts[i].substring(0,durationparts[i].length-1)*mults[3-i]);
-          }
-          cleanvids[ir.id].Duration = durationmillis;
-          var minutes = Math.floor((durationmillis/1000)/60);
-          var seconds = (durationmillis/1000)%60;
-          var normtime = "";
-          if(minutes>60){
-            normtime = Math.floor(minutes/60) +":"
-            minutes = minutes%60;
-            if(minutes < 10){
-              minutes = "0"+minutes;
-            }
-          }
-          normtime += minutes + ":";
-          if(seconds < 10){
-            normtime += "0";
-          }
-          normtime += seconds;
-          cleanvids[ir.id].FormattedTime = normtime;
-          full_list.push(cleanvids[ir.id]);
-        });
-        return res.send({Success:true, Videos:full_list});
-      });
     });
   });
 
