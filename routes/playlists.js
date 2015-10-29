@@ -1,7 +1,7 @@
 var router = require('express').Router();
 var db = require('../middleware/db.js');
 var async = require('async');
-var ytapi = require('./tools/ytapi.js');
+var ytapi = require('./tools/YTAPI.js');
 
 module.exports= function(io){
 
