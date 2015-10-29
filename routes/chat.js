@@ -49,16 +49,14 @@ module.exports = function(io){
     socket.on('join', function(username){
       if(!(username in userSocketIdMap)){
         userSocketIdMap[username] = [];
+        socket.broadcast.emit('user_join', username);
+        console.log(username + ' joined chat!');
       }
       // add to maps
       userSocketIdMap[username].push(socket.id);
       socketIdUserMap[socket.id] = username;
-
-      // send join event
-      socket.broadcast.emit('user_join', username);
       // send userList to the user who joined
       updateUserList();
-      console.log(username + ' joined chat!');
       recentMessages.forEach(function(rnode){
         socket.emit('messageFromServer', rnode);
       });
