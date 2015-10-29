@@ -24,7 +24,6 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
     if($scope.action === 'Log in'){
       authService.logIn($scope.auth)
       .then(function(session){
-          console.log(session);
           $scope.isLoading = false;
           closeModal(session);
       },function(error){
