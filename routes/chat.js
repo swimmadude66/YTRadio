@@ -2,6 +2,7 @@ var fs = require('fs');
 var userSocketIdMap = {}; // dictionary of username:socketId
 var socketIdUserMap = {}; // dictionary of socketId:username
 
+var recentMessages = [];
 
 module.exports = function(io){
 
@@ -58,19 +59,24 @@ module.exports = function(io){
       // send userList to the user who joined
       updateUserList();
       console.log(username + ' joined chat!');
+      recentMessages.forEach(function(rnode){
+        socket.emit('messageFromServer', rnode);
+      });
     });
 
     // send a message
     socket.on('messageToServer', function(message){
-
       var chatPayload = {
         sender: socketIdUserMap[socket.id],
         timestamp: new Date(),
         message: message
       };
-      //socket.broadcast.emit('messageFromServer', chatPayload);
       chatManager.emit('messageFromServer', chatPayload);
-
+      //add message to recent list
+      recentMessages.push(chatPayload);
+      if(recentMessages.length > 10){
+        recentMessages.shift();
+      }
       console.log('Chat: ', chatPayload.timestamp, chatPayload.sender, chatPayload.message);
     });
 
