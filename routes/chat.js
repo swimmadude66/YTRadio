@@ -46,7 +46,7 @@ module.exports = function(io){
 
     // join the chatroom
     socket.on('join', function(username){
-      if(!username in userSocketIdMap){
+      if(!(username in userSocketIdMap)){
         userSocketIdMap[username] = [];
       }
       // add to maps
@@ -104,10 +104,10 @@ module.exports = function(io){
           socket.broadcast.emit('user_left', username);
           console.log(username + ' left chat.');
           delete userSocketIdMap[username];
-          socketIdUserMap[socket.id] = null;
         }
-        updateUserList();
       }
+      socketIdUserMap[socket.id] = null;
+      updateUserList();
     });
 
     socket.on('disconnect', function(){
@@ -122,10 +122,10 @@ module.exports = function(io){
           socket.broadcast.emit('user_left', username);
           console.log(username + ' left chat.');
           delete userSocketIdMap[username];
-          delete socketIdUserMap[socket.id];
         }
-        updateUserList();
       }
+      delete socketIdUserMap[socket.id];
+      updateUserList();
     });
   });
 }
