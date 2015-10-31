@@ -47,52 +47,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       $scope.isAdding = false;
       return;
     }
-    var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
-    if($scope.queue.indexOf(vidinfo) > -1){
-      $scope.adding=false;
-      $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
-      return;
-    }
-    $http.post('/api/radio/queue', vidinfo)
-    .then(function(res){
-      var data = res.data;
-      if(data.Success){
-        $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
-        $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(){
-          callback();
-          $scope.isAdding = false;
-        });
-      }
-      else{
-        $scope.isAdding = false;
-        callback(data.Error);
-      }
-    }, function(err){
-      $scope.isAdding = false;
-      callback(err);
-    });
-  };
-
-  function checkPresence(){
-    var present = false;
-    var uname = authService.getUser().Username;
-    $scope.queue.forEach(function(q_item){
-      if(!q_item.DJ || q_item.DJ.Username.toLowerCase() === uname.toLowerCase()){
-        present = true;
-      }
-    });
-    return present;
-  }
-
-  function addToQueue_user(callback){
-    if($scope.playlists[$scope.playlistName].Contents.length <1){
-      $scope.isAdding = false;
-      return;
-    }
-    if(checkPresence_user()){
-      $scope.isAdding = false;
-      return;
-    }
     $http.post('/api/radio/queue')
     .then(function(res){
       var data = res.data;
@@ -109,7 +63,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     });
   }
 
-  function checkPresence_user(){
+  function checkPresence(){
     var present = false;
     var uname = authService.getUser().Username;
     if(!uname){
@@ -132,9 +86,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     if(!$scope.inQueue || $scope.isAdding){
       return;
     }
-    if(!checkPresence_user()){
+    if(!checkPresence()){
       $scope.isAdding = true;
-      addToQueue_user(function(err){
+      addToQueue(function(err){
         return;
       });
     }
@@ -272,7 +226,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }
     else{
       $scope.inQueue = true;
-      addToQueue_user(function(err){});
+      addToQueue(function(err){});
     }
   }
 
