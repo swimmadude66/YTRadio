@@ -100,10 +100,18 @@ module.exports= function(io){
   });
 
   /*
+  * Has 1 public method, so it has a separate Auth gateway inside
+  */
+  router.use('/radio/', require('./radio.js')(io));
+
+  /*
   * Authentication gateway
   */
 
   router.use(function(req, res, next){
+    if(res.locals.usersession){
+      return next();
+    }
     var authZ = req.headers.Authorization || req.headers.authorization;
     if(!authZ){
       return res.send({Success:false, Error:"No valid Auth token"});
@@ -126,10 +134,7 @@ module.exports= function(io){
   * External Methods
   */
   router.use('/search/', require('./search.js'));
-  router.use('/radio/', require('./radio.js')(io));
   router.use('/playlists/', require('./playlists.js')(io));
-
-  // start chat api
   require('./chat.js')(io);
 
   return router;
