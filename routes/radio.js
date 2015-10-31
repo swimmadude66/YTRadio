@@ -20,7 +20,6 @@ module.exports= function(io){
     }
     currentVideo = false;
     if(userQueue.length>0){
-      console.log('popping queue');
       currDJ = userQueue.shift();
       FETCHING=true;
       mediaManager.emit('nextSong_fetch', currDJ);
@@ -66,6 +65,25 @@ module.exports= function(io){
   router.post('/songend', function(req,res){
     getTimeElapsed(function(elapsed){
       return res.send({Success:true});
+    });
+  });
+
+  router.use(function(req, res, next){
+    var authZ = req.headers.Authorization || req.headers.authorization;
+    if(!authZ){
+      return res.send({Success:false, Error:"No valid Auth token"});
+    }
+    var keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+    db.query(keylookup, [authZ], function(err, results){
+      if(err){
+        return res.send({Success: false, Error: err});
+      }
+      if(!results || results.length <1){
+        return res.send({Success: false, Error: "Invalid Auth!"});
+      }
+      var user=results[0];
+      res.locals.usersession = user;
+      next();
     });
   });
 
