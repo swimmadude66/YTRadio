@@ -84,16 +84,83 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     return present;
   }
 
+  function addToQueue_user(callback){
+    if($scope.playlists[$scope.playlistName].Contents.length <1){
+      $scope.isAdding = false;
+      return;
+    }
+    if(checkPresence_user()){
+      $scope.isAdding = false;
+      return;
+    }
+    $http.post('/api/radio/queue')
+    .then(function(res){
+      var data = res.data;
+      if(data.Success){
+          $scope.isAdding = false;
+      }
+      else{
+        $scope.isAdding = false;
+        callback(data.Error);
+      }
+    }, function(err){
+      $scope.isAdding = false;
+      callback(err);
+    });
+  }
+
+  function checkPresence_user(){
+    var present = false;
+    var uname = authService.getUser().Username;
+    if(!uname){
+      return true;
+    }
+    $scope.queue.forEach(function(q_item){
+      if(q_item.toLowerCase() === uname.toLowerCase()){
+        present = true;
+      }
+    });
+    return present;
+  }
 
   $scope.$on('queue_updated', function(event, queue){
     $scope.queue = queue;
+    var user = authService.getUser();
+    if(user && queue.indexOf(user.Username)>-1){
+      $scope.inQueue = true;
+    }
     if(!$scope.inQueue || $scope.isAdding){
       return;
     }
-    if(!checkPresence()){
+    if(!checkPresence_user()){
       $scope.isAdding = true;
-      addToQueue(function(err){
+      addToQueue_user(function(err){
         return;
+      });
+    }
+  });
+
+  mediaService.on('nextSong_fetch', function(nextDJ){
+    console.log('next song requested');
+    var user = authService.getUser();
+    if(user && user.Username === nextDJ){
+      var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
+      console.log(vidinfo);
+      $http.post('/api/radio/fetchResponse', vidinfo).then(function(res){
+        var data = res.data;
+        if(data.Success){
+          $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
+          $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(){
+            console.log('Next Song Sent');
+          });
+        }
+        else{
+          $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
+          console.log(data.Error);
+        }
+      }, function(err){
+        $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
+        console.log(err);
       });
     }
   });
@@ -185,10 +252,28 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.joinLeaveQueue=function(){
     if($scope.inQueue){
       $scope.inQueue = false;
-      return;
+      var user = authService.getUser();
+      if(user){
+        console.log('exiting queue');
+        $http.delete('/api/radio/queue/'+user.Username).then(function(res){
+          var data = res.data;
+          if(data.Success){
+            return;
+          }
+          else{
+            console.log(data.Error);
+            return;
+          }
+        }, function(err){
+          console.log(err);
+          return;
+        });
+      }
     }
-    $scope.inQueue = true;
-    addToQueue(function(err){});
+    else{
+      $scope.inQueue = true;
+      addToQueue_user(function(err){});
+    }
   }
 
   $scope.login=function(){
