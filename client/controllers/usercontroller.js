@@ -52,6 +52,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       var data = res.data;
       if(data.Success){
           $scope.isAdding = false;
+        }, function(err){
+          console.log(err);
+          callback();
+          $scope.isAdding = false;
+        });
       }
       else{
         $scope.isAdding = false;
@@ -106,6 +111,8 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
           $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
           $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(){
             console.log('Next Song Sent');
+          },function(err){
+            console.log(err);
           });
         }
         else{
