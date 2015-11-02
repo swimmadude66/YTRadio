@@ -61,6 +61,10 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
         $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(){
           callback();
           $scope.isAdding = false;
+        }, function(err){
+          console.log(err);
+          callback();
+          $scope.isAdding = false;
         });
       }
       else{
