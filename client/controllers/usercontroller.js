@@ -85,6 +85,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       return;
     }
     addToQueue(function(err){
+      if(err){
+        console.log(err);
+      }
       return;
     });
   });
@@ -244,7 +247,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }
     else{
       $scope.inQueue = true;
-      addToQueue(function(err){});
+      addToQueue(function(err){
+        if(err){
+          console.log(err);
+        }
+      });
     }
   }
 

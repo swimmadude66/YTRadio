@@ -128,7 +128,7 @@ module.exports= function(io){
 
   router.post('/queue', function(req, res){
     if(userQueue.indexOf(res.locals.usersession.Username)>-1){
-      return res.send({Success:false, Error:"Already present in queue"});
+      return res.send({Success:true});
     }
     if(directory.getsockets(res.locals.usersession.Username).length<1){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"})
