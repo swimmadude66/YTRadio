@@ -1,6 +1,5 @@
 var fs = require('fs');
-var userSocketIdMap = {}; // dictionary of username:socketId
-var socketIdUserMap = {}; // dictionary of socketId:username
+var directory = require('../middleware/userdirectory.js');
 
 var recentMessages = [];
 
@@ -11,8 +10,8 @@ module.exports = function(io){
   function updateUserList(){
     var userList = [];
     var anon_listeners = 0;
-    for(var socket in socketIdUserMap){
-      var username = socketIdUserMap[socket];
+    for(var socket in directory.getsockets()){
+      var username = directory.getusername(socket);
       if(username){
         if(userList.indexOf(username) === -1){
           userList.push(username);
@@ -38,23 +37,19 @@ module.exports = function(io){
   // connection event
   chatManager.on('connection', function(socket){
     console.log('Chat Client Connected :: ' + socket.id);
-    socketIdUserMap[socket.id] = null;
-
+    directory.connect(socket.id);
     socket.emit('motd', 'Welcome to Lifeboat');
-
     // update/send userList when guest joins (on socket connection and before user join)
     updateUserList();
 
     // join the chatroom
     socket.on('join', function(username){
-      if(!(username in userSocketIdMap)){
-        userSocketIdMap[username] = [];
+      if(!(username in directory.getusers())){
         socket.broadcast.emit('user_join', username);
         console.log(username + ' joined chat!');
       }
       // add to maps
-      userSocketIdMap[username].push(socket.id);
-      socketIdUserMap[socket.id] = username;
+      var socks = directory.join(socket.id, username);
       // send userList to the user who joined
       updateUserList();
       recentMessages.forEach(function(rnode){
@@ -65,7 +60,7 @@ module.exports = function(io){
     // send a message
     socket.on('messageToServer', function(message){
       var chatPayload = {
-        sender: socketIdUserMap[socket.id],
+        sender: directory.getusername(socket.id),
         timestamp: new Date(),
         message: message
       };
@@ -82,12 +77,14 @@ module.exports = function(io){
     socket.on('privateMessage', function(payload){
 
       var privateMessage = {
-        sender: socketIdUserMap[socket.id],
+        sender: directory.getusername(socket.id),
         timestamp: new Date(),
         message: payload.message
       };
-      if(userSocketIdMap[payload.to]){
-        chatManager.to(userSocketIdMap[payload.to]).emit('private_message', privateMessage);
+      if(directory.getsockets(payload.to)){
+        directory.getsockets(payload.to).forEach(function(rec){
+          chatManager.to(rec).emit('private_message', privateMessage);
+        });
         console.log('Chat-PM: ', privateMessage.timestamp, privateMessage.sender, payload.to, privateMessage.message);
       }
     });
@@ -97,38 +94,25 @@ module.exports = function(io){
     });
 
     socket.on('leave', function(){
-      if(socketIdUserMap[socket.id]){
-        var username = socketIdUserMap[socket.id];
-        var socks = userSocketIdMap[username];
-        var i = socks.indexOf(socket.id);
-        if(i>-1){
-          socks.splice(i,1);
-        }
-        if(socks.length<1){
-          socket.broadcast.emit('user_left', username);
-          console.log(username + ' left chat.');
-          delete userSocketIdMap[username];
-        }
+      var username = directory.getusername(socket.id);
+      if(!username){
+        return;
       }
-      socketIdUserMap[socket.id] = null;
+      if(directory.leave(socket.id)){
+        socket.broadcast.emit('user_left', username);
+        console.log(username + ' left chat.');
+      }
       updateUserList();
     });
 
     socket.on('disconnect', function(){
-      if(socketIdUserMap[socket.id]){
-        var username = socketIdUserMap[socket.id];
-        var socks = userSocketIdMap[username];
-        var i = socks.indexOf(socket.id);
-        if(i>-1){
-          socks.splice(i,1);
-        }
-        if(socks.length<1){
+      var username = directory.getusername(socket.id);
+      if(directory.disconnect(socket.id)){
+        if(username){
           socket.broadcast.emit('user_left', username);
           console.log(username + ' left chat.');
-          delete userSocketIdMap[username];
         }
       }
-      delete socketIdUserMap[socket.id];
       updateUserList();
     });
   });
