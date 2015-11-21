@@ -182,15 +182,17 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   $scope.removeFromPlaylist=function(ind){
-    var item = $scope.playlists[$scope.playlistName].Contents[ind];
-    $scope.playlists[$scope.playlistName].Contents.splice(ind, 1);
-    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+    var item = $scope.playlists[$scope.playlistName].Contents.splice(ind, 1)[0];
+    $http.post('/api/playlists/removeItem', {PlaylistName: $scope.playlistName, VideoID: item.ID}).then(function(res){
       var data = res.data;
       if(data.Success){
+        console.log('Playlist updated');
       }
       else{
         console.log(data.Error);
       }
+    }, function(err){
+      console.log(err);
     });
   }
 
