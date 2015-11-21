@@ -23,8 +23,8 @@ module.exports= function(io){
         songs = songs.concat(contents.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default:{url:"images/nothumbnail.jpg"}}), x.FormattedTime, x.Duration]));
         var i =0;
         contents.forEach(function(c){
-          plmap.push([pid, c.ID, contents[(i+1)%contents.length].ID, i===0]);
-          i ++;
+          plmap.push([pid, c.ID, i]);
+          i++;
         });
       });
       db.query("INSERT INTO `videos` (`videoID`, `Title`, `Poster`,  `Thumbnails`, `FormattedTime`, `Duration`) VALUES" + db.escape(songs) + "ON DUPLICATE KEY UPDATE `videoID`=`videoID`;", function(err, results2){
@@ -32,7 +32,7 @@ module.exports= function(io){
           console.log(err);
           return res.send({Success: false, Error: err});
         }
-        db.query("Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Next`, `isHead`) VALUES " + db.escape(plmap) + " ON DUPLICATE KEY UPDATE `ID`=`ID`;", function(err, results3){
+        db.query("Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES " + db.escape(plmap) + " ON DUPLICATE KEY UPDATE `ID`=`ID`;", function(err, results3){
           if(err){
             console.log(err);
             return res.send({Success: false, Error: err});
