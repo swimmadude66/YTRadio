@@ -72,7 +72,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   function checkPresence(){
     var uname = (authService.getUser() || {Username:null}).Username;
     if(!uname){
-      return true;
+      return false;
     }
     return ($scope.queue.indexOf(uname) > -1);
   }
