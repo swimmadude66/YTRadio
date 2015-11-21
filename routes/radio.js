@@ -1,4 +1,5 @@
 var router = require('express').Router();
+var directory = require('../middleware/userdirectory.js');
 var db = require('../middleware/db.js');
 var uuid = require('node-uuid');
 var async = require('async');
@@ -21,12 +22,16 @@ module.exports= function(io){
     currentVideo = false;
     if(userQueue.length>0){
       currDJ = userQueue.shift();
-      FETCHING=true;
-      mediaManager.emit('nextSong_fetch', currDJ);
-      fetchTimer = setTimeout(function(){
-        console.log('request timed out, trying next user...');
+      var socks = directory.getsockets(currDJ);
+      if(socks.length<1){
         playNextSong();
-      }, 2000);
+      }
+      else{
+        FETCHING=true;
+        socks.forEach(function(socket){
+          mediaManager.to(socket).emit('nextSong_fetch');
+        });
+      }
     }
     else{
       mediaManager.emit('queue_updated', userQueue);
@@ -51,7 +56,6 @@ module.exports= function(io){
       if(err){
         console.log(err);
       }
-      console.log('Saved to History');
     });
   }
 
@@ -59,6 +63,19 @@ module.exports= function(io){
     getTimeElapsed(function(elapsed){
       mediaManager.emit('queue_updated', userQueue);
       socket.emit('join', {currVid:currentVideo, startSeconds: elapsed});
+    });
+
+    socket.on('nextSong_response', function(songdata){
+      if(FETCHING){
+        FETCHING=false;
+        var newguy = songdata;
+        newguy.PlaybackID = uuid.v4();
+        newguy.DJ = directory.getuser(socket.id);
+        var now = new Date().getTime();
+        currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
+        mediaManager.emit('queue_updated', userQueue);
+        mediaManager.emit('song_start', {currVid: currentVideo});
+      }
     });
   });
 
@@ -85,25 +102,6 @@ module.exports= function(io){
       res.locals.usersession = user;
       next();
     });
-  });
-
-  router.post('/fetchResponse', function(req,res){
-    if(FETCHING && res.locals.usersession.Username === currDJ){
-      if(fetchTimer){
-        clearTimeout(fetchTimer);
-      }
-      var newguy = req.body;
-      newguy.PlaybackID = uuid.v4();
-      newguy.DJ = res.locals.usersession;
-      var now = new Date().getTime();
-      currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
-      mediaManager.emit('queue_updated', userQueue);
-      mediaManager.emit('song_start', {currVid: currentVideo});
-      return res.send({Success:true});
-    }
-    else{
-      return res.send({Success:false, Error:"You are not the requested DJ"});
-    }
   });
 
   router.post('/queue', function(req, res){
