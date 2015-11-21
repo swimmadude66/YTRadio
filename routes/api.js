@@ -20,7 +20,7 @@ module.exports= function(io){
       results.forEach(function(pl){
         var pid = pl.ID;
         var contents = JSON.parse(pl.ContentsJSON);
-        songs = songs.concat(contents.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {}), x.FormattedTime, x.Duration]));
+        songs = songs.concat(contents.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default:{url:"images/nothumbnail.jpg"}}), x.FormattedTime, x.Duration]));
         var i =0;
         contents.forEach(function(c){
           plmap.push([pid, c.ID, contents[(i+1)%contents.length].ID, i===0]);

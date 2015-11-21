@@ -97,7 +97,8 @@ module.exports= function(io){
             Active: result.Active
           }
         }
-        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:JSON.parse(result.Thumbnails||{}), FormattedTime:result.FormattedTime, Duration:result.Duration});
+        var thumbs = JSON.parse(result.Thumbnails);
+        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration});
       });
       return res.send({Success: true, Playlists: playlists});
     });
@@ -105,7 +106,7 @@ module.exports= function(io){
 
   router.get('/:name', function(req, res){
     var name = req.params.name;
-    db.query('Select * from `Playlists` where `Owner` = ? AND `Name`=?;', [res.locals.usersession.ID, name], function(err, results){
+    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `videos`.* from `Playlists` join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ? AND `Name`=?;', [res.locals.usersession.ID, name], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -116,9 +117,10 @@ module.exports= function(io){
       var result = results[0];
       var playlist = {
         Name: result.Name,
-        Contents: JSON.parse(result.ContentsJSON),
+        Contents: [],
         Active: result.Active
       }
+      playlist.Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:JSON.parse(result.Thumbnails||{}), FormattedTime:result.FormattedTime, Duration:result.Duration});
       return res.send({Success: true, Playlist: playlist});
     });
   });
