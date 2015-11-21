@@ -13,7 +13,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.queue =[];
   $scope.isAdding = false;
   $scope.userData;
-  $scope.initqfetch=false;
   fetch_playlist();
 
   function fetch_playlist(){
@@ -55,16 +54,20 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $http.post('/api/radio/queue')
     .then(function(res){
       var data = res.data;
+      console.log(data);
       if(data.Success){
         $scope.isAdding = false;
         return callback();
       }
       else{
         $scope.isAdding = false;
+        $scope.inQueue=false;
+        toastr.error(data.Error, 'Could not join Queue');
         return callback(data.Error);
       }
     }, function(err){
       $scope.isAdding = false;
+      $scope.inQueue=false;
       return callback(err);
     });
   }
@@ -79,10 +82,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
 
   $scope.$on('queue_updated', function(event, queue){
     $scope.queue = queue;
-    if(!$scope.initqfetch){
-      $scope.inQueue=checkPresence();
-      $scope.initqfetch=true;
-    }
     if(!$scope.inQueue || $scope.isAdding){
       return;
     }

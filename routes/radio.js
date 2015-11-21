@@ -82,7 +82,7 @@ module.exports= function(io){
       var username = (directory.getuser(socket.id)||{Username:null}).Username;
       if(username){
         var i = userQueue.indexOf(username);
-        if(i <-1){
+        if(i >-1){
           userQueue.splice(i,1);
           mediaManager.emit('queue_updated', userQueue);
         }
@@ -93,7 +93,7 @@ module.exports= function(io){
       var username = (directory.getuser(socket.id)||{Username:null}).Username;
       if(username){
         var i = userQueue.indexOf(username);
-        if(i <-1){
+        if(i >-1){
           userQueue.splice(i,1);
           mediaManager.emit('queue_updated', userQueue);
         }
@@ -127,7 +127,12 @@ module.exports= function(io){
   });
 
   router.post('/queue', function(req, res){
-    console.log(res.locals.usersession.Username, 'joined the queue');
+    if(userQueue.indexOf(res.locals.usersession.Username)>-1){
+      return res.send({Success:false, Error:"Already present in queue"});
+    }
+    if(directory.getsockets(res.locals.usersession.Username).length<1){
+      return res.send({Success:false, Error:"No known sockets. Please Re-Login"})
+    }
     userQueue.push(res.locals.usersession.Username);
     mediaManager.emit('queue_updated', userQueue);
     if(!currentVideo){
