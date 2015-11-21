@@ -69,18 +69,52 @@ module.exports= function(io){
     var name = req.body.Name;
     var contents = req.body.Contents;
     var active = req.body.Active;
-    var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `ContentsJSON` = VALUES(`ContentsJSON`), `Active`=VALUES(`Active`);"
-    db.query(sql, [res.locals.usersession.ID, name, JSON.stringify(contents), active], function(err, result){
+    db.query('Select ID from `Playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.ID], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      return res.send({Success: true});
+      if(results.length<1){
+        return res.send({Success: false, Error: 'No such playlist'});
+      }
+      var plid = results[0].ID;
+      var sql = "Update `Playlists` SET `Active`= ? where `ID`=?;"
+      db.query(sql, [active, plid], function(err, result){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
+        var contentmap = [];
+        var i =0;
+        contents.forEach(function(c){
+          contentmap.push([plid, c.ID, i]);
+          i++;
+        });
+        db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(contentmap) +' ON DUPLICATE KEY UPDATE `Order`=VALUES(`Order`);', function(err, result2){
+          if(err){
+            console.log(err);
+            return res.send({Success: false, Error: err});
+          }
+          return res.send({Success: true});
+        });
+      });
+    });
+  });
+
+  router.post('/removeItem', function(req, res){
+    var plname = req.body.PlaylistName;
+    var vid = req.body.VideoID;
+    db.query('Delete from `playlistcontents` where `PlaylistID`=(select ID from `playlists` where `Name`=? and `Owner`=?) and `VideoID`=?', [plname, res.locals.usersession.ID, vid], function(err, result){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success:true});
     });
   });
 
   router.get('/', function(req, res){
-    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `videos`.* from `Playlists` join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ?;', [res.locals.usersession.ID], function(err, results){
+    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `playlistcontents`.`Order`, `videos`.* from `Playlists` join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ?;', [res.locals.usersession.ID], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -98,8 +132,11 @@ module.exports= function(io){
           }
         }
         var thumbs = JSON.parse(result.Thumbnails);
-        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration});
+        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration, Order: result.Order});
       });
+      for(pl in playlists){
+        playlists[pl].Contents.sort((a,b)=>a.Order-b.Order);
+      }
       return res.send({Success: true, Playlists: playlists});
     });
   });
@@ -114,25 +151,41 @@ module.exports= function(io){
       if(results.length < 1){
         return res.send({Success: true, Playlist: {Name: "Default", Contents:[], Active:true}});
       }
-      var result = results[0];
-      var playlist = {
-        Name: result.Name,
-        Contents: [],
-        Active: result.Active
+      var playlists = {};
+      results.forEach(function(result){
+        if(!(result.Name in playlists)){
+          playlists[result.Name] = {
+            Name: result.Name,
+            Contents: [],
+            Active: result.Active
+          }
+        }
+        var thumbs = JSON.parse(result.Thumbnails);
+        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration});
+      });
+      for(pl in playlists){
+        playlists[pl].Contents.sort((a,b)=>a.Order-b.Order);
       }
-      playlist.Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:JSON.parse(result.Thumbnails||{}), FormattedTime:result.FormattedTime, Duration:result.Duration});
-      return res.send({Success: true, Playlist: playlist});
+      return res.send({Success: true, Playlist: playlists[name]});
     });
   });
 
   router.delete('/:name', function(req, res){
     var name = req.params.name;
-    db.query('Delete from `Playlists` where `Name`=? AND `Owner`=?;', [name, res.locals.usersession.ID], function(err, result){
+    var contentd = 'Delete from `playlistcontents` Where playlistID=(Select ID from playlists where Name=? and Owner=?);'
+    var pdelete = 'Delete from playlists where Name=? and Owner=?;'
+    db.query(contentd, [name, res.locals.usersession.ID], function(err, result){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      return res.send({Success: true});
+      db.query(pdelete, [name, res.locals.usersession.ID], function(err, result2){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
+        return res.send({Success: true});
+      });
     });
   });
 
@@ -143,16 +196,28 @@ module.exports= function(io){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `ContentsJSON` = VALUES(`ContentsJSON`);"
-      db.query(sql, [res.locals.usersession.ID, name, JSON.stringify(contents), false], function(err, result){
+      var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);"
+      db.query(sql, [res.locals.usersession.ID, name, JSON.stringify([]), false], function(err, result){
         if(err){
           console.log(err);
           return res.send({Success: false, Error: err});
         }
-        return res.send({Success: true});
+        var plid = result.insertId;
+        var plcontents = [];
+        var i =0;
+        contents.forEach(function(c){
+          plcontents.push([plid, c.ID, i]);
+          i++;
+        });
+        db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(plcontents) + ' ON DUPLICATE KEY UPDATE `ID`=`ID`;', function(err, result2){
+          if(err){
+            console.log(err);
+            return res.send({Success: false, Error: err});
+          }
+          return res.send({Success: true});
+        });
       });
     });
-
   });
 
   return router;
