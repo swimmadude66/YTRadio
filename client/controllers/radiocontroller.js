@@ -9,6 +9,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     iv_load_policy:3,
     modestbranding: 1,
     rel: 0,
+    disablekb: 1,
     enablejsapi: 1,
     start: 0
   };
@@ -114,14 +115,12 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
       $interval.cancel($scope.timer);
     }
     $scope.timeRemaining = "00:00";
-    if($scope.playing){
-      setTimeout(function(){
-        $http.post('/api/radio/songend')
-        .then(function(res){
-          console.log('sent song-end');
-        });
-      }, 1500);
-    }
+    setTimeout(function(){
+      $http.post('/api/radio/songend')
+      .then(function(res){
+        console.log('sent song-end');
+      });
+    }, 1000);
   });
 
   $scope.$on('youtube.player.paused', function ($event, player) {
