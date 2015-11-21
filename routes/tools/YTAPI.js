@@ -1,6 +1,6 @@
+var db = require('../../middleware/db.js');
 var request = require('request');
 var async = require('async');
-
 
 module.exports={
   compileResults: function (raw_string, pageToken, maxResults, callback){
@@ -74,6 +74,14 @@ module.exports={
       normtime += seconds;
       cleanvids[ir.id].FormattedTime = normtime;
       full_list.push(cleanvids[ir.id]);
+    });
+    var nestedlists = full_list.map(x => [x.ID, x.Title, x.Poster, x.FormattedTime, x.Duration]);
+    var song_collate = "INSERT INTO `videos` (`videoID`, `Title`, `Poster`,  `FormattedTime`, `Duration`) VALUES" + db.escape(nestedlists) + "ON DUPLICATE KEY UPDATE `videoID`=`videoID`;"
+    db.query(song_collate, function(err, result){
+      if(err){
+        console.log(err);
+      }
+      console.log('saved search results');
     });
     return callback(null, full_list);
   }
