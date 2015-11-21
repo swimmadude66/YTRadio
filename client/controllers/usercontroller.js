@@ -51,20 +51,16 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     .then(function(res){
       var data = res.data;
       if(data.Success){
-          $scope.isAdding = false;
-        }, function(err){
-          console.log(err);
-          callback();
-          $scope.isAdding = false;
-        });
+        $scope.isAdding = false;
+        return callback();
       }
       else{
         $scope.isAdding = false;
-        callback(data.Error);
+        return callback(data.Error);
       }
     }, function(err){
       $scope.isAdding = false;
-      callback(err);
+      return callback(err);
     });
   }
 
@@ -163,7 +159,14 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     toastr.success('Song Added to Playlist: ' + $scope.playlistName);
     $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
-      console.log('playlist updated');
+      if(res.data.Success){
+        console.log('playlist updated');
+      }
+      else{
+        console.log(res.data.Error);
+      }
+    }, function(err){
+      console.log(err);
     });
   }
 
