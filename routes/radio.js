@@ -77,6 +77,28 @@ module.exports= function(io){
         mediaManager.emit('song_start', {currVid: currentVideo});
       }
     });
+
+    socket.on('leave', function(){
+      var username = (directory.getuser(socket.id)||{Username:null}).Username;
+      if(username){
+        var i = userQueue.indexOf(username);
+        if(i <-1){
+          userQueue.splice(i,1);
+          mediaManager.emit('queue_updated', userQueue);
+        }
+      }
+    });
+
+    socket.on('disconnect', function(){
+      var username = (directory.getuser(socket.id)||{Username:null}).Username;
+      if(username){
+        var i = userQueue.indexOf(username);
+        if(i <-1){
+          userQueue.splice(i,1);
+          mediaManager.emit('queue_updated', userQueue);
+        }
+      }
+    });
   });
 
   router.post('/songend', function(req,res){
