@@ -31,6 +31,9 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   }
 
   $scope.canSkip=function(){
+    if(!$scope.playing){
+      return false;
+    }
     var u = authService.getUser();
     if((u && u.Role === 'ADMIN') || (u && $scope.videoInfo && $scope.videoInfo.DJ.Username === u.Username)){
       return true;
@@ -110,14 +113,14 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     if($scope.timer){
       $interval.cancel($scope.timer);
     }
+    $scope.timeRemaining = "00:00";
     if($scope.playing){
-      $scope.playing = false;
       setTimeout(function(){
         $http.post('/api/radio/songend')
         .then(function(res){
           console.log('sent song-end');
         });
-      }, 1000);
+      }, 1500);
     }
   });
 
@@ -169,6 +172,8 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
       if($scope.ytplayer && $scope.ytplayer.stopVideo){
         $scope.ytplayer.stopVideo();
       }
+      $scope.timeRemaining='0:00';
+      $scope.playing=false;
     }
   });
 });

@@ -1,20 +1,21 @@
 <nav class="navbar navbar-inverse" style="margin-bottom:0px; border-radius:0px;">
   <div class="container-fluid">
     <a class="navbar-brand">YTRadio</a>
-    <div class="col-xs-6" id="songinfo">
-      <ul class="nav navbar-nav" ng-show="playing">
+    <div class="col-xs-6" id="songinfo" ng-show="playing">
+      <ul class="nav navbar-nav">
+        <li><span class="navbar-text">DJ: {{videoInfo.DJ.Username}}</span></li>
         <li><span class="navbar-text">{{videoInfo.Title}}</span></li>
       </ul>
     </div>
-    <div class="col-xs-2">
-      <ul class="nav navbar-nav pull-right" ng-show="playing">
+    <div class="col-xs-2" ng-show="playing">
+      <ul class="nav navbar-nav pull-right">
         <li><span class="navbar-text">{{timeRemaining}}/{{videoInfo.FormattedTime}}</span></li>
       </ul>
     </div>
-    <div class="col-xs-2 pull-right">
-      <div class="pull-right" ng-show="playing">
+    <div class="col-xs-2 pull-right" ng-show="playing">
+      <div class="pull-right">
         <ul class="nav navbar-nav">
-          <li ng-show="playing" style="margin-right:50px; margin-left:-50px;">
+          <li style="margin-right:50px; margin-left:-50px;">
             <button type="button" class="btn navbar-btn btn-danger" ng-click="skip()" ng-disabled="!canSkip()">
                 Skip
             </button>
