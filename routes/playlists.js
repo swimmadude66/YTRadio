@@ -80,7 +80,7 @@ module.exports= function(io){
   });
 
   router.get('/', function(req, res){
-    db.query('Select * from `Playlists` where Owner = ?;', [res.locals.usersession.ID], function(err, results){
+    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `videos`.* from `Playlists` join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ?;', [res.locals.usersession.ID], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -90,11 +90,14 @@ module.exports= function(io){
       }
       var playlists = {};
       results.forEach(function(result){
-        playlists[result.Name] = {
-          Name: result.Name,
-          Contents: JSON.parse(result.ContentsJSON),
-          Active: result.Active
+        if(!(result.Name in playlists)){
+          playlists[result.Name] = {
+            Name: result.Name,
+            Contents: [],
+            Active: result.Active
+          }
         }
+        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:JSON.parse(result.Thumbnails||{}), FormattedTime:result.FormattedTime, Duration:result.Duration});
       });
       return res.send({Success: true, Playlists: playlists});
     });
