@@ -54,7 +54,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $http.post('/api/radio/queue')
     .then(function(res){
       var data = res.data;
-      console.log(data);
       if(data.Success){
         $scope.isAdding = false;
         return callback();
