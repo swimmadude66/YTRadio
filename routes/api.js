@@ -4,6 +4,46 @@ var encryption = require('../middleware/encryption.js');
 var uuid = require('node-uuid');
 
 module.exports= function(io){
+
+  /*
+  Temporary script to convert playlist format
+  */
+
+  router.get('/convert', function(req, res){
+    db.query('Select * from `playlists`;', function(err, results){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      var songs = [];
+      var plmap = [];
+      results.forEach(function(pl){
+        var pid = pl.ID;
+        var contents = JSON.parse(pl.ContentsJSON);
+        songs = songs.concat(contents.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {}), x.FormattedTime, x.Duration]));
+        var i =0;
+        contents.forEach(function(c){
+          plmap.push([pid, c.ID, contents[(i+1)%contents.length].ID, i===0]);
+          i ++;
+        });
+      });
+      db.query("INSERT INTO `videos` (`videoID`, `Title`, `Poster`,  `Thumbnails`, `FormattedTime`, `Duration`) VALUES" + db.escape(songs) + "ON DUPLICATE KEY UPDATE `videoID`=`videoID`;", function(err, results2){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
+        db.query("Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Next`, `isHead`) VALUES " + db.escape(plmap) + " ON DUPLICATE KEY UPDATE `ID`=`ID`;", function(err, results3){
+          if(err){
+            console.log(err);
+            return res.send({Success: false, Error: err});
+          }
+          return res.send({Success:true});
+        });
+      });
+    });
+  });
+
+  /*------------------*/
   function gen_session(user, callback){
     var sid = uuid.v4();
     var session_block = {
