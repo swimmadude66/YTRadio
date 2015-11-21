@@ -55,6 +55,7 @@ html,body{
 
 .chatmessage{
   word-wrap: break-word;
+  border-top: 2px dotted grey;
 }
 
 .volumebar{
