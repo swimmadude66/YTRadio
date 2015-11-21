@@ -89,6 +89,7 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
     logOut: function(){
       $cookies.remove('ytrk_66');
       auth_cookie = null;
+      mediaService.emit('leave');
       chatService.emit('leave');
       userinfo=null;
       session = null;
