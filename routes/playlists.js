@@ -69,7 +69,7 @@ module.exports= function(io){
     var name = req.body.Name;
     var contents = req.body.Contents;
     var active = req.body.Active;
-    var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `ContentsJSON` = VALUES(`ContentsJSON`);"
+    var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE `ContentsJSON` = VALUES(`ContentsJSON`), `Active`=VALUES(`Active`);"
     db.query(sql, [res.locals.usersession.ID, name, JSON.stringify(contents), active], function(err, result){
       if(err){
         console.log(err);

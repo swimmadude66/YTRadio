@@ -13,6 +13,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.queue =[];
   $scope.isAdding = false;
   $scope.userData;
+  $scope.initqfetch=false;
   fetch_playlist();
 
   function fetch_playlist(){
@@ -24,8 +25,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       if(data.Success){
         $scope.playlists = data.Playlists;
         for(pl in data.Playlists){
-          if(pl.Active){
-            $scope.playlistName = pl.Name;
+          console.log(pl);
+          if(data.Playlists[pl].Active){
+            $scope.playlistName = data.Playlists[pl].Name;
             break;
           }
         }
@@ -39,8 +41,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   function addToQueue(callback){
+    $scope.isAdding = true;
     if($scope.playlists[$scope.playlistName].Contents.length <1){
       $scope.isAdding = false;
+      toastr.error('No song in selected playlist');
+      $scope.inQueue = false;
       return;
     }
     if(checkPresence()){
@@ -65,61 +70,40 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   function checkPresence(){
-    var present = false;
-    var uname = authService.getUser().Username;
+    var uname = (authService.getUser() || {Username:null}).Username;
     if(!uname){
       return true;
     }
-    $scope.queue.forEach(function(q_item){
-      if(q_item.toLowerCase() === uname.toLowerCase()){
-        present = true;
-      }
-    });
-    return present;
+    return ($scope.queue.indexOf(uname) > -1);
   }
 
   $scope.$on('queue_updated', function(event, queue){
     $scope.queue = queue;
-    var user = authService.getUser();
-    if(user && queue.indexOf(user.Username)>-1){
-      $scope.inQueue = true;
+    if(!$scope.initqfetch){
+      $scope.inQueue=checkPresence();
+      $scope.initqfetch=true;
     }
     if(!$scope.inQueue || $scope.isAdding){
       return;
     }
-    if(!checkPresence()){
-      $scope.isAdding = true;
-      addToQueue(function(err){
-        return;
-      });
-    }
+    addToQueue(function(err){
+      return;
+    });
   });
 
-  mediaService.on('nextSong_fetch', function(nextDJ){
-    console.log('next song requested');
-    var user = authService.getUser();
-    if(user && user.Username === nextDJ){
-      var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
-      console.log(vidinfo);
-      $http.post('/api/radio/fetchResponse', vidinfo).then(function(res){
-        var data = res.data;
-        if(data.Success){
-          $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
-          $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(){
-            console.log('Next Song Sent');
-          },function(err){
-            console.log(err);
-          });
-        }
-        else{
-          $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
-          console.log(data.Error);
-        }
-      }, function(err){
-        $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
-        console.log(err);
-      });
-    }
+  mediaService.on('nextSong_fetch', function(){
+    var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
+    mediaService.emit('nextSong_response', vidinfo);
+    $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
+    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+      var data = res.data;
+      if(data.Success){}
+      else{
+        console.log(data.Error);
+      }
+    },function(err){
+      console.log(err);
+    });
   });
 
   /*
@@ -144,8 +128,34 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   $scope.viewPlaylist=function(name){
+    var oldpl = null;
+    if($scope.playlistName && $scope.playlistName!==name){
+      $scope.playlists[$scope.playlistName].Active=false;
+      oldpl = $scope.playlistName;
+    }
     $scope.playlistName=name;
+    $scope.playlists[$scope.playlistName].Active=true;
     $scope.isSearching = false;
+    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+      var data = res.data;
+      if(data.Success){
+        console.log('new playlist activated')
+        if(oldpl){
+          $http.post('/api/playlists/update', $scope.playlists[oldpl]).then(function(res){
+            var data = res.data;
+            if(data.Success){
+              console.log('old playlist deactivated');
+            }
+            else{
+              console.log(data.Error);
+            }
+          });
+        }
+      }
+      else{
+        console.log(data.Error);
+      }
+    });
   }
 
   $scope.addToPlaylist=function(vidinfo){
@@ -261,6 +271,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   $scope.$on('session_resume', function(){
+    console.log('resuming session in progress');
     fetch_playlist();
   });
 
