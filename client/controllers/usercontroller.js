@@ -24,7 +24,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       if(data.Success){
         $scope.playlists = data.Playlists;
         for(pl in data.Playlists){
-          console.log(pl);
           if(data.Playlists[pl].Active){
             $scope.playlistName = data.Playlists[pl].Name;
             break;
@@ -203,11 +202,13 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
       var data = res.data;
       if(data.Success){
-
+        console.log('Playlist updated');
       }
       else{
         console.log(data.Error);
       }
+    }, function(err){
+      console.log(err);
     });
   }
 
@@ -218,11 +219,13 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
       var data = res.data;
       if(data.Success){
-
+        console.log('Playlist updated');
       }
       else{
         console.log(data.Error);
       }
+    }, function(err){
+      console.log(err);
     });
   }
 
