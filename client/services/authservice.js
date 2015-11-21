@@ -13,7 +13,7 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
       if(data.Success && data.Data){
         session = data.Data.Session;
         userinfo = data.Data.User;
-        chatService.emit('join', userinfo.Username);
+        chatService.emit('join', userinfo);
         $rootScope.$broadcast('session_resume');
       }
     }, function(error){
@@ -49,8 +49,8 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
             userinfo = data.Data.User;
             var future = new Date().getTime()+(52*7*24*60*60000);
             var eDate = new Date(future);
-            $cookies.put('ytrk_66', session.Key, {expires: eDate, });
-            chatService.emit('join', userinfo.Username);
+            $cookies.put('ytrk_66', session.Key, {expires: eDate});
+            chatService.emit('join', userinfo);
             deferred.resolve(session);
           }
           else{
@@ -92,7 +92,6 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
       chatService.emit('leave');
       userinfo=null;
       session = null;
-
     }
   }
 }]);

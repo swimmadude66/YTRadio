@@ -11,7 +11,7 @@ module.exports = function(io){
     var userList = [];
     var anon_listeners = 0;
     for(var socket in directory.getsockets()){
-      var username = directory.getusername(socket);
+      var username = (directory.getuser(socket)||{Username:null}).Username;
       if(username){
         if(userList.indexOf(username) === -1){
           userList.push(username);
@@ -43,13 +43,13 @@ module.exports = function(io){
     updateUserList();
 
     // join the chatroom
-    socket.on('join', function(username){
-      if(!(username in directory.getusers())){
-        socket.broadcast.emit('user_join', username);
-        console.log(username + ' joined chat!');
+    socket.on('join', function(user){
+      if(!(user.Username in directory.getusers())){
+        socket.broadcast.emit('user_join', user.Username);
+        console.log(user.Username + ' joined chat!');
       }
       // add to maps
-      var socks = directory.join(socket.id, username);
+      var socks = directory.join(socket.id, user);
       // send userList to the user who joined
       updateUserList();
       recentMessages.forEach(function(rnode){
@@ -60,7 +60,7 @@ module.exports = function(io){
     // send a message
     socket.on('messageToServer', function(message){
       var chatPayload = {
-        sender: directory.getusername(socket.id),
+        sender: directory.getuser(socket.id).Username,
         timestamp: new Date(),
         message: message
       };
@@ -77,7 +77,7 @@ module.exports = function(io){
     socket.on('privateMessage', function(payload){
 
       var privateMessage = {
-        sender: directory.getusername(socket.id),
+        sender: directory.getuser(socket.id).Username,
         timestamp: new Date(),
         message: payload.message
       };
@@ -94,11 +94,11 @@ module.exports = function(io){
     });
 
     socket.on('leave', function(){
-      var username = directory.getusername(socket.id);
-      if(!username){
-        return;
-      }
       if(directory.leave(socket.id)){
+        var username = (directory.getuser(socket)||{Username:null}).Username;
+        if(!username){
+          return;
+        }
         socket.broadcast.emit('user_left', username);
         console.log(username + ' left chat.');
       }
@@ -106,7 +106,7 @@ module.exports = function(io){
     });
 
     socket.on('disconnect', function(){
-      var username = directory.getusername(socket.id);
+      var username = (directory.getuser(socket)||{Username:null}).Username;
       if(directory.disconnect(socket.id)){
         if(username){
           socket.broadcast.emit('user_left', username);

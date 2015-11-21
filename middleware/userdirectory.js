@@ -8,8 +8,8 @@ module.exports = {
 	},
   disconnect: function(socketid){
     if(sockettouser[socketid]){
-      var username = sockettouser[socketid];
-      var socks = usertosocket[username];
+      var user = sockettouser[socketid];
+      var socks = usertosocket[user.Username];
       var i = socks.indexOf(socketid);
       if(i>-1){
         socks.splice(i,1);
@@ -17,23 +17,23 @@ module.exports = {
       var last = false;
       if(socks.length<1){
         last = true;
-        delete usertosocket[username];
+        delete usertosocket[user.Username];
       }
     }
     delete sockettouser[socketid];
     return last;
   },
-  join: function(socketid, username){
-    if(!(username in usertosocket)){
-      usertosocket[username] = [];
+  join: function(socketid, user){
+    if(!(user.Username in usertosocket)){
+      usertosocket[user.Username] = [];
     }
-    usertosocket[username].push(socketid);
-    sockettouser[socketid] = username;
+    usertosocket[user.Username].push(socketid);
+    sockettouser[socketid] = user;
 		return sockettouser;
 	},
   leave:function(socketid){
     if(sockettouser[socketid]){
-      var username = sockettouser[socketid];
+      var username = sockettouser[socketid].Username || null;
       var socks = usertosocket[username];
       var i = socks.indexOf(socketid);
       if(i>-1){
@@ -59,7 +59,7 @@ module.exports = {
       return [];
     }
   },
-  getusername: function(socketid){
+  getuser: function(socketid){
     if(socketid in sockettouser){
       return sockettouser[socketid];
     }
