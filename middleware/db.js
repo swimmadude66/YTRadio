@@ -29,5 +29,8 @@ module.exports = {
 	      callback(null, results);
 	    });
 		});
+	},
+	escape: function(arg){
+		return mysql.escape(arg);
 	}
 };
