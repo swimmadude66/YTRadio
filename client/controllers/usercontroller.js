@@ -166,10 +166,10 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       toastr.error('Song already exists in playlist');
       return;
     }
-    toastr.success('Song Added to Playlist: ' + $scope.playlistName);
     $scope.playlists[$scope.playlistName].Contents.unshift(vidinfo);
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
       if(res.data.Success){
+        toastr.success('Song Added to Playlist: ' + $scope.playlistName);
         console.log('playlist updated');
       }
       else{
