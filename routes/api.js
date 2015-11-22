@@ -8,6 +8,7 @@ module.exports= function(io){
   /*
   Temporary script to convert playlist format
   */
+  /*
 
   router.get('/convert', function(req, res){
     db.query('Select * from `playlists`;', function(err, results){
@@ -42,7 +43,7 @@ module.exports= function(io){
       });
     });
   });
-
+  */
   /*------------------*/
   function gen_session(user, callback){
     var sid = uuid.v4();
