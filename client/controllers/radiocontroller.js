@@ -2,6 +2,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   $scope.videoInfo;
   $scope.playerInfo;
   $scope.playing = false;
+  $scope.playbackID=null;
   $scope.playerVars = {
     controls: 0,
     autoplay: 1,
@@ -116,9 +117,18 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     }
     $scope.timeRemaining = "00:00";
     setTimeout(function(){
-      $http.post('/api/radio/songend')
+      $http.post('/api/radio/songend', {PlaybackID: $scope.playbackID})
       .then(function(res){
+        var data = res.data;
         console.log('sent song-end');
+        if(data.Success){
+          //it worked
+        }
+        else{
+          console.log(data.Error);
+        }
+      }, function(err){
+        console.log(err);
       });
     }, 1000);
   });
@@ -135,7 +145,8 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     if(data.currVid){
       $scope.novid = false;
       $scope.playerInfo = data.currVid.Info;
-	  $scope.videoInfo = data.currVid.Info;
+      $scope.playbackID = data.currVid.Info.PlaybackID;
+	    $scope.videoInfo = data.currVid.Info;
       $scope.playerVars.start = data.startSeconds;
       $scope.playing = true;
     }
@@ -152,6 +163,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   mediaService.on('song_start', function(data){
     if(data.currVid){
       $scope.novid = false;
+      $scope.playbackID = data.currVid.Info.PlaybackID;
       if($scope.ytplayer && $scope.ytplayer.clearVideo){
         $scope.ytplayer.clearVideo();
         $scope.ytplayer.cueVideoById(data.currVid.Info.ID);

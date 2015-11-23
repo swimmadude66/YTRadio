@@ -102,6 +102,9 @@ module.exports= function(io){
   });
 
   router.post('/songend', function(req,res){
+    if(currentVideo && currentVideo.Info.PlaybackID !== req.body.PlaybackID){
+      return res.send({Success: false, Error: 'Current video does not match ID'});
+    }
     getTimeElapsed(function(elapsed){
       return res.send({Success:true});
     });
