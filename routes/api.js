@@ -45,6 +45,7 @@ module.exports= function(io){
   });
   */
   /*------------------*/
+
   function gen_session(user, callback){
     var sid = uuid.v4();
     var session_block = {
@@ -75,7 +76,13 @@ module.exports= function(io){
         return res.send({Success: false, Error: err});
       }
       //send email;
-      return res.send({Success: true, Message: "Confirmation email sent."});
+      db.query("Insert into Playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select ID from Users where Username=?), 'Default', '[]', 0);", [username], function(err, result){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
+        return res.send({Success: true, Message: "Confirmation email sent."});
+      });
     });
   });
 
