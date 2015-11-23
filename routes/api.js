@@ -4,43 +4,6 @@ var encryption = require('../middleware/encryption.js');
 var uuid = require('node-uuid');
 
 module.exports= function(io){
-
-  /*
-  Temporary script to create default Playlists
-  */
-
-  router.get('/defplaylist', function(req, res){
-    db.query('Select Users.ID, Users.Username, Playlists.Name from Users left join playlists on Owner=Users.ID;', function(err, results){
-      if(err){
-        console.log(err);
-        return res.send({Success: false, Error: err});
-      }
-      var users= {};
-      results.forEach(function(r){
-        if(!(r.ID in users)){
-          users[r.ID] = false;
-        }
-        if(r.Name === 'Default'){
-          users[r.ID] = true;
-        }
-      });
-      var pldata = [];
-      for(user in users){
-        if(!users[user]){
-          pldata.push([user, 'Default', '[]', '1']);
-        }
-      }
-      db.query('Insert into playlists (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ' + db.escape(pldata) + ' ON DUPLICATE KEY UPDATE `ID`=`ID`;', function(err, result){
-        if(err){
-          console.log(err);
-          return res.send({Success: false, Error: err});
-        }
-        return res.send({Success: true});
-      });
-    })
-  });
-  /*------------------*/
-
   function gen_session(user, callback){
     var sid = uuid.v4();
     var session_block = {
