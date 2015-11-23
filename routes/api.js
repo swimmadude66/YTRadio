@@ -6,44 +6,39 @@ var uuid = require('node-uuid');
 module.exports= function(io){
 
   /*
-  Temporary script to convert playlist format
+  Temporary script to create default Playlists
   */
-  /*
 
-  router.get('/convert', function(req, res){
-    db.query('Select * from `playlists`;', function(err, results){
+  router.get('/defplaylist', function(req, res){
+    db.query('Select Users.ID, Users.Username, Playlists.Name from Users left join playlists on Owner=Users.ID;', function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      var songs = [];
-      var plmap = [];
-      results.forEach(function(pl){
-        var pid = pl.ID;
-        var contents = JSON.parse(pl.ContentsJSON);
-        songs = songs.concat(contents.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default:{url:"images/nothumbnail.jpg"}}), x.FormattedTime, x.Duration]));
-        var i =0;
-        contents.forEach(function(c){
-          plmap.push([pid, c.ID, i]);
-          i++;
-        });
+      var users= {};
+      results.forEach(function(r){
+        if(!(r.ID in users)){
+          users[r.ID] = false;
+        }
+        if(r.Name === 'Default'){
+          users[r.ID] = true;
+        }
       });
-      db.query("INSERT INTO `videos` (`videoID`, `Title`, `Poster`,  `Thumbnails`, `FormattedTime`, `Duration`) VALUES" + db.escape(songs) + "ON DUPLICATE KEY UPDATE `videoID`=`videoID`;", function(err, results2){
+      var pldata = [];
+      for(user in users){
+        if(!users[user]){
+          pldata.push([user, 'Default', '[]', '1']);
+        }
+      }
+      db.query('Insert into playlists (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ' + db.escape(pldata) + ' ON DUPLICATE KEY UPDATE `ID`=`ID`;', function(err, result){
         if(err){
           console.log(err);
           return res.send({Success: false, Error: err});
         }
-        db.query("Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES " + db.escape(plmap) + " ON DUPLICATE KEY UPDATE `ID`=`ID`;", function(err, results3){
-          if(err){
-            console.log(err);
-            return res.send({Success: false, Error: err});
-          }
-          return res.send({Success:true});
-        });
+        return res.send({Success: true});
       });
-    });
+    })
   });
-  */
   /*------------------*/
 
   function gen_session(user, callback){
