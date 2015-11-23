@@ -76,7 +76,10 @@ module.exports={
       full_list.push(cleanvids[ir.id]);
     });
     var nestedlists = full_list.map(x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default:{url:"images/nothumbnail.jpg"}}), x.FormattedTime, x.Duration]);
-    var song_collate = "INSERT INTO `videos` (`videoID`, `Title`, `Poster`, `Thumbnails`, `FormattedTime`, `Duration`) VALUES" + db.escape(nestedlists) + "ON DUPLICATE KEY UPDATE `videoID`=`videoID`;"
+    if(nestedlists.length<1){
+      return callback('No Songs mapped');
+    }
+    var song_collate = "INSERT INTO `videos` (`videoID`, `Title`, `Poster`, `Thumbnails`, `FormattedTime`, `Duration`) VALUES " + db.escape(nestedlists) + " ON DUPLICATE KEY UPDATE `videoID`=`videoID`;"
     db.query(song_collate, function(err, result){
       if(err){
         console.log(err);
