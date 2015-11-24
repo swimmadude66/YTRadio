@@ -9,13 +9,17 @@ var userQueue = [];
 var currentVideo = false;
 var currDJ = null;
 var FETCHING = false;
+var ENDCHECKING = false;
 var fetchTimer = null;
 
 module.exports= function(io){
 
   var mediaManager = io.of('/media');
 
-  function playNextSong(){
+  function playNextSong(callback){
+    if(FETCHING){
+      return callback();
+    }
     if(currentVideo){
       saveHistory(JSON.parse(JSON.stringify(currentVideo)));
     }
@@ -24,7 +28,7 @@ module.exports= function(io){
       currDJ = userQueue.shift();
       var socks = directory.getsockets(currDJ);
       if(socks.length<1){
-        playNextSong();
+        playNextSong(callback);
       }
       else{
         FETCHING=true;
@@ -32,11 +36,13 @@ module.exports= function(io){
         socks.forEach(function(socket){
           mediaManager.to(socket).emit('nextSong_fetch');
         });
+        return callback();
       }
     }
     else{
       mediaManager.emit('queue_updated', userQueue);
       mediaManager.emit('song_start', {currVid: currentVideo});
+      return callback();
     }
   }
 
@@ -46,9 +52,10 @@ module.exports= function(io){
       return callback(Math.ceil((now - currentVideo.StartTime)/1000.0));
     }
     else{
-      playNextSong();
+      playNextSong(function(){
+        return callback(0);
+      });
     }
-    return callback(0);
   }
 
   function saveHistory(playedSong){
@@ -105,7 +112,13 @@ module.exports= function(io){
     if(currentVideo && currentVideo.Info.PlaybackID !== req.body.PlaybackID){
       return res.send({Success: false, Error: 'Current video does not match ID'});
     }
+    if(ENDCHECKING){
+      console.log('received duplicate request');
+      return res.send({Success: false, Error: 'Currently processing song end'})
+    }
+    ENDCHECKING=true;
     getTimeElapsed(function(elapsed){
+      ENDCHECKING=false;
       return res.send({Success:true});
     });
   });
@@ -138,10 +151,11 @@ module.exports= function(io){
     }
     userQueue.push(res.locals.usersession.Username);
     mediaManager.emit('queue_updated', userQueue);
-    if(!currentVideo){
-      playNextSong();
+    if(!currentVideo && !FETCHING){
+      playNextSong(function(){
+        return res.send({Success:true});
+      });
     }
-    return res.send({Success:true});
   });
 
   router.delete('/queue/:username', function(req,res){
@@ -169,7 +183,9 @@ module.exports= function(io){
       if(res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ.Username){
         if(req.body.PlaybackID === currentVideo.Info.PlaybackID){
           skipped = true;
-          playNextSong();
+          playNextSong(function(){
+            return res.send({Success: skipped});
+          });
         }
       }
     }
