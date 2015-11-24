@@ -29,6 +29,10 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
 
   chatService.on('messageFromServer', function(payload){
     $scope.messages.push({Author: payload.sender, Message:decodeURIComponent(payload.message)});
+    if($scope.messages.length>100){
+      $scope.messages.splice(0,$scope.messages.length-100);
+      console.log($scope.messages.length);
+    }
   });
 
   // makes sure all socket event listeners are removed after controller is destroyed
