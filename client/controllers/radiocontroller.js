@@ -1,4 +1,4 @@
-app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, mediaService, authService) {
+app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $cookies, mediaService, authService) {
   $scope.videoInfo;
   $scope.playing = false;
   $scope.playbackID=null;
@@ -7,6 +7,27 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   $scope.timeRemaining = "00:00";
   $scope.premuteVolume=100;
   $scope.volume = 100;
+
+  $scope.vcookie =$cookies.get('ytvolume');
+  if($scope.vcookie){
+    var vparts = $scope.vcookie.split('|');
+    $scope.muted=JSON.parse(vparts[0]);
+    $scope.premuteVolume = JSON.parse(vparts[1]);
+    $scope.volume = JSON.parse(vparts[2]);
+    if($scope.muted){
+      $rootScope.$broadcast('mute');
+    }
+    else{
+      $rootScope.$broadcast('setVolume', $scope.volume);
+    }
+  }
+
+  function saveVolume(){
+    var volume_cookie = JSON.stringify($scope.muted)+'|'+$scope.premuteVolume+'|'+$scope.volume;
+    var future = new Date().getTime()+(52*7*24*60*60000);
+    var eDate = new Date(future);
+    $cookies.put('ytvolume', volume_cookie, {expires: eDate});
+  }
 
   /*
   * Client Methods
@@ -52,10 +73,12 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
       $scope.premuteVolume = $scope.volume;
       $scope.volume=0;
     }
+    saveVolume()
   }
 
   $scope.setVolume=function(){
     $rootScope.$broadcast('setVolume', $scope.volume);
+    saveVolume()
   }
 
   $scope.getUser=function(){
@@ -117,7 +140,6 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   */
 
   mediaService.on('join', function(data){
-    console.log(data);
     if(data.currVid){
       $scope.videoInfo = data.currVid.Info;
       $scope.playbackID = data.currVid.Info.PlaybackID;
