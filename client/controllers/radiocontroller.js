@@ -1,37 +1,16 @@
 app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, mediaService, authService) {
   $scope.videoInfo;
-  $scope.playerInfo;
   $scope.playing = false;
   $scope.playbackID=null;
-  $scope.playerVars = {
-    controls: 0,
-    autoplay: 1,
-    fs:0,
-    iv_load_policy:3,
-    modestbranding: 1,
-    rel: 0,
-    disablekb: 1,
-    enablejsapi: 1,
-    start: 0
-  };
-  $scope.novid = true;
   $scope.muted = false;
-
-  $scope.queue = [];
-
   $scope.timer;
   $scope.timeRemaining = "00:00";
-
   $scope.premuteVolume=100;
   $scope.volume = 100;
 
   /*
   * Client Methods
   */
-  $scope.getQueue=function(){
-    return $scope.queue;
-  }
-
   $scope.canSkip=function(){
     if(!$scope.playing){
       return false;
@@ -49,18 +28,26 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     }
     $http.post('/api/radio/skip', {PlaybackID: $scope.videoInfo.PlaybackID})
     .then(function(res){
-      console.log('skipping');
+      var data = res.data;
+      if(data.Success){
+        console.log('skipping');
+      }
+      else{
+        console.log(data.Error);
+      }
+    }, function(err){
+      console.log(err);
     });
   }
 
   $scope.toggleMute=function(){
     if($scope.muted){
-      $scope.ytplayer.unMute();
+      $rootScope.$broadcast('unmute');
       $scope.muted = false;
       $scope.volume = $scope.premuteVolume;
     }
     else{
-      $scope.ytplayer.mute();
+      $rootScope.$broadcast('mute');
       $scope.muted=true;
       $scope.premuteVolume = $scope.volume;
       $scope.volume=0;
@@ -68,28 +55,21 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
   }
 
   $scope.setVolume=function(){
-    $scope.ytplayer.setVolume($scope.volume);
+    $rootScope.$broadcast('setVolume', $scope.volume);
   }
 
   $scope.getUser=function(){
     return authService.getUser();
   }
 
-  $scope.getProgressPercent=function(){
-    if(!$scope.playing || ! $scope.ytplayer){
-      return 0;
-    }
-    return ($scope.ytplayer.getCurrentTime()/$scope.ytplayer.getDuration())*100;
-  }
-
   /*
   * Player events
   */
-  $scope.$on('youtube.player.playing', function ($event, player) {
+  $scope.$on('player.playing', function ($event, player) {
     if($scope.muted){
-      $scope.ytplayer.mute();
+      $rootScope.$broadcast('mute');
     }
-    $scope.ytplayer.setVolume($scope.muted ? $scope.premuteVolume : $scope.volume);
+    $rootScope.$broadcast('setVolume', $scope.muted ? $scope.premuteVolume : $scope.volume);
     $scope.timer=$interval(function(){
       var currtime = Math.floor($scope.ytplayer.getCurrentTime());
       var trem = "";
@@ -111,7 +91,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     }, 1000);
   });
 
-  $scope.$on('youtube.player.ended', function ($event, player) {
+  $scope.$on('player.ended', function ($event, player) {
     if($scope.timer){
       $interval.cancel($scope.timer);
     }
@@ -120,9 +100,8 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
       $http.post('/api/radio/songend', {PlaybackID: $scope.playbackID})
       .then(function(res){
         var data = res.data;
-        console.log('sent song-end');
         if(data.Success){
-          //it worked
+          console.log('sent song-end');
         }
         else{
           console.log(data.Error);
@@ -133,57 +112,37 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, medi
     }, 1000);
   });
 
-  $scope.$on('youtube.player.paused', function ($event, player) {
-    player.playVideo();
-  });
-
   /*
   * Socket Events
   */
 
   mediaService.on('join', function(data){
+    console.log(data);
     if(data.currVid){
-      $scope.novid = false;
-      $scope.playerInfo = data.currVid.Info;
+      $scope.videoInfo = data.currVid.Info;
       $scope.playbackID = data.currVid.Info.PlaybackID;
-	    $scope.videoInfo = data.currVid.Info;
-      $scope.playerVars.start = data.startSeconds;
+      $rootScope.$broadcast('playVideo', data.currVid, data.startSeconds);
       $scope.playing = true;
     }
     else{
-      $scope.novid = true;
+      $scope.videoInfo = null;
+      $scope.timeRemaining='0:00';
+      $rootScope.$broadcast('playVideo', null, data.startSeconds);
+      $scope.playing=false;
     }
-  });
-
-  mediaService.on('queue_updated', function(data){
-    $scope.queue = data;
-    $rootScope.$broadcast('queue_updated', data);
   });
 
   mediaService.on('song_start', function(data){
     if(data.currVid){
-      $scope.novid = false;
-      $scope.playbackID = data.currVid.Info.PlaybackID;
-      if($scope.ytplayer && $scope.ytplayer.clearVideo){
-        $scope.ytplayer.clearVideo();
-        $scope.ytplayer.cueVideoById(data.currVid.Info.ID);
-        $scope.ytplayer.playVideo();
-      }
-      else{
-        $scope.playerInfo = data.currVid.Info;
-      }
       $scope.videoInfo = data.currVid.Info;
-      $scope.playerVars.start = 0;
+      $scope.playbackID = data.currVid.Info.PlaybackID;
+      $rootScope.$broadcast('playVideo', data.currVid, null);
       $scope.playing = true;
     }
     else{
-      $scope.novid = true;
       $scope.videoInfo = null;
-      $scope.playerInfo = null;
-      if($scope.ytplayer && $scope.ytplayer.stopVideo){
-        $scope.ytplayer.stopVideo();
-      }
       $scope.timeRemaining='0:00';
+      $rootScope.$broadcast('playVideo', null, null);
       $scope.playing=false;
     }
   });

@@ -1,4 +1,4 @@
-app.controller('UserCtrl', function ($scope, $http, ModalService, authService, mediaService, toastr) {
+app.controller('UserCtrl', function ($scope, $http, ModalService, authService, mediaService, queueService, toastr) {
   $scope.expand = false;
   $scope.searchResults = [];
   $scope.isSearching = false;
@@ -9,8 +9,8 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }
   };
   $scope.playlistName="Default";
-  $scope.inQueue=false;
-  $scope.queue =[];
+  $scope.joined=false;
+
   $scope.isAdding = false;
   $scope.userData;
   fetch_playlist();
@@ -43,7 +43,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     if($scope.playlists[$scope.playlistName].Contents.length <1){
       $scope.isAdding = false;
       toastr.error('No song in selected playlist');
-      $scope.inQueue = false;
+      $scope.joined = false;
       return;
     }
     if(checkPresence()){
@@ -59,13 +59,13 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       }
       else{
         $scope.isAdding = false;
-        $scope.inQueue=false;
+        $scope.joined=false;
         toastr.error(data.Error, 'Could not join Queue');
         return callback(data.Error);
       }
     }, function(err){
       $scope.isAdding = false;
-      $scope.inQueue=false;
+      $scope.joined=false;
       return callback(err);
     });
   }
@@ -75,12 +75,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     if(!uname){
       return false;
     }
-    return ($scope.queue.indexOf(uname) > -1);
+    return queueService.checkPresence(uname);
   }
 
-  $scope.$on('queue_updated', function(event, queue){
-    $scope.queue = queue;
-    if(!$scope.inQueue || $scope.isAdding){
+  $scope.$on('queue_updated', function(event){
+    if(!$scope.joined || $scope.isAdding){
       return;
     }
     addToQueue(function(err){
@@ -230,8 +229,8 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   }
 
   $scope.joinLeaveQueue=function(){
-    if($scope.inQueue){
-      $scope.inQueue = false;
+    if($scope.joined){
+      $scope.joined = false;
       var user = authService.getUser();
       if(user){
         console.log('exiting queue');
@@ -251,7 +250,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       }
     }
     else{
-      $scope.inQueue = true;
+      $scope.joined = true;
       addToQueue(function(err){
         if(err){
           console.log(err);

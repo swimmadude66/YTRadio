@@ -13,13 +13,12 @@ app.config(['$httpProvider', function($httpProvider) {
 
 app.controller('PageCtrl', function ($scope, $http) {
 
-
 });
 
 app.directive('theatre', function() {
   return {
     restrict: 'E',
-    controller: 'RadioCtrl',
+    controller: 'TheatreCtrl',
 		templateUrl: 'views/theatre.html'
 	}
 });
