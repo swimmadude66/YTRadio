@@ -28,6 +28,7 @@ module.exports= function(io){
       }
       else{
         FETCHING=true;
+        mediaManager.emit('queue_updated', userQueue);
         socks.forEach(function(socket){
           mediaManager.to(socket).emit('nextSong_fetch');
         });
@@ -73,7 +74,6 @@ module.exports= function(io){
         newguy.DJ = directory.getuser(socket.id);
         var now = new Date().getTime();
         currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
-        mediaManager.emit('queue_updated', userQueue);
         mediaManager.emit('song_start', {currVid: currentVideo});
       }
     });

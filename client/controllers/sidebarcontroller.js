@@ -9,7 +9,7 @@ app.controller('SidebarCtrl', function ($scope, $http, authService) {
 app.directive('queue', function() {
   return {
     restrict: 'E',
-    controller: 'RadioCtrl',
+    controller: 'QueueCtrl',
 		templateUrl: 'views/queue.html'
 	}
 });
