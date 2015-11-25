@@ -59,7 +59,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.search=function(){
     $scope.isSearching=true;
     $scope.isLoading = true;
-    console.log('searching for ', $scope.searchCriteria.query);
     var cleancrit = encodeURIComponent($scope.searchCriteria.query)
     $http.get('/api/search/'+cleancrit)
     .then(function(res){
@@ -230,6 +229,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       modal.element.modal();
       modal.close.then(function(result) {
         fetch_playlist();
+        $scope.joined=false;
       });
     });
   };
@@ -245,6 +245,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.$on('session_resume', function(){
     console.log('resuming session in progress');
     fetch_playlist();
+    $scope.joined=false;
   });
 
 });
