@@ -21,12 +21,23 @@ module.exports={
         if(nextPage){
           search_string= raw_string+"&pageToken="+nextPage;
         }
-        request(search_string, function(err, response, body){
+        var options={
+          url: search_string,
+          header:{
+            'Accept':'application/json'
+          }
+        };
+        request(options, function(err, response, body){
           if(err){
             return cb(err);
           }
           else{
-            var body_obj = JSON.parse(body);
+            try{
+              var body_obj = JSON.parse(body);
+            }
+            catch(e){
+              return cb(e);
+            }
             results = results.concat(body_obj.items);
             nextPage = body_obj.nextPageToken;
             more = !!nextPage;
@@ -84,7 +95,6 @@ module.exports={
       if(err){
         console.log(err);
       }
-      console.log('saved search results');
     });
     return callback(null, full_list);
   }

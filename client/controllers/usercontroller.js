@@ -67,9 +67,14 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       if(data.Success){
         $scope.searchResults = data.Videos;
       }
+      else{
+        console.log(data.Error);
+        toastr.error('Error completing search');
+      }
       $scope.isLoading = false;
     },function(error){
       $scope.isLoading = false;
+      toastr.error('Error completing search');
       console.log(error);
     });
   }

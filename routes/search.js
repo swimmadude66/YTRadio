@@ -32,7 +32,11 @@ router.get('/:query', function(req, res){
         console.log(err);
         return res.send({Success: false, Error: err});
       }
-      ytapi.addDurations(innerresults, cleanvids, function(err, full_list){        
+      ytapi.addDurations(innerresults, cleanvids, function(err, full_list){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
+        }
         return res.send({Success:true, Videos:full_list});
       });
     });
