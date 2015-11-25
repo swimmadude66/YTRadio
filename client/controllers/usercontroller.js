@@ -38,58 +38,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     });
   }
 
-  function addToQueue(callback){
-    $scope.isAdding = true;
-    if($scope.playlists[$scope.playlistName].Contents.length <1){
-      $scope.isAdding = false;
-      toastr.error('No song in selected playlist');
-      $scope.joined = false;
-      return;
-    }
-    if(checkPresence()){
-      $scope.isAdding = false;
-      return;
-    }
-    $http.post('/api/radio/queue')
-    .then(function(res){
-      var data = res.data;
-      if(data.Success){
-        $scope.isAdding = false;
-        return callback();
-      }
-      else{
-        $scope.isAdding = false;
-        $scope.joined=false;
-        toastr.error(data.Error, 'Could not join Queue');
-        return callback(data.Error);
-      }
-    }, function(err){
-      $scope.isAdding = false;
-      $scope.joined=false;
-      return callback(err);
-    });
-  }
-
-  function checkPresence(){
-    var uname = (authService.getUser() || {Username:null}).Username;
-    if(!uname){
-      return false;
-    }
-    return queueService.checkPresence(uname);
-  }
-
-  $scope.$on('queue_updated', function(event){
-    if(!$scope.joined || $scope.isAdding){
-      return;
-    }
-    addToQueue(function(err){
-      if(err){
-        console.log(err);
-      }
-      return;
-    });
-  });
-
   mediaService.on('nextSong_fetch', function(){
     var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
     mediaService.emit('nextSong_response', vidinfo);
@@ -251,10 +199,20 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }
     else{
       $scope.joined = true;
-      addToQueue(function(err){
-        if(err){
-          console.log(err);
+      $http.post('/api/radio/queue')
+      .then(function(res){
+        var data = res.data;
+        if(data.Success){
+          console.log('added to queue');
         }
+        else{
+          $scope.joined=false;
+          toastr.error(data.Error, 'Could not join Queue');
+          console.log(data.Error);
+        }
+      }, function(err){
+        $scope.joined=false;
+        console.log(err);
       });
     }
   }

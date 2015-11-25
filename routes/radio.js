@@ -5,6 +5,7 @@ var uuid = require('node-uuid');
 var async = require('async');
 
 var userQueue = [];
+var userinqueue  = {};
 
 var currentVideo = false;
 var currDJ = null;
@@ -32,6 +33,9 @@ module.exports= function(io){
       }
       else{
         FETCHING=true;
+        if(userinqueue[currDJ] && userQueue.indexOf(currDJ)<0){
+          userQueue.push(currDJ);
+        }
         mediaManager.emit('queue_updated', userQueue);
         socks.forEach(function(socket){
           mediaManager.to(socket).emit('nextSong_fetch');
@@ -88,6 +92,7 @@ module.exports= function(io){
     socket.on('leave', function(){
       var username = (directory.getuser(socket.id)||{Username:null}).Username;
       if(username){
+        userinqueue[username]=false;
         var i = userQueue.indexOf(username);
         if(i >-1){
           userQueue.splice(i,1);
@@ -99,6 +104,7 @@ module.exports= function(io){
     socket.on('disconnect', function(){
       var username = (directory.getuser(socket.id)||{Username:null}).Username;
       if(username){
+        userinqueue[username]=false;
         var i = userQueue.indexOf(username);
         if(i >-1){
           userQueue.splice(i,1);
@@ -143,18 +149,19 @@ module.exports= function(io){
   });
 
   router.post('/queue', function(req, res){
-    if(userQueue.indexOf(res.locals.usersession.Username)>-1){
-      return res.send({Success:true});
-    }
     if(directory.getsockets(res.locals.usersession.Username).length<1){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"})
     }
+    userinqueue[res.locals.usersession.Username] = true;
     userQueue.push(res.locals.usersession.Username);
     mediaManager.emit('queue_updated', userQueue);
     if(!currentVideo && !FETCHING){
       playNextSong(function(){
         return res.send({Success:true});
       });
+    }
+    else{
+      return res.send({Success:true});
     }
   });
 
@@ -164,6 +171,7 @@ module.exports= function(io){
       var ind = userQueue.indexOf(dmw);
       if(ind >-1){
         var remuser = userQueue.splice(ind,1);
+        userinqueue[dmw]=false;
         console.log(remuser, 'Removed from queue');
         mediaManager.emit('queue_updated', userQueue);
         return res.send({Success:true});
@@ -178,18 +186,24 @@ module.exports= function(io){
   });
 
   router.post('/skip', function(req, res){
-    var skipped = false;
     if(currentVideo){
       if(res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ.Username){
         if(req.body.PlaybackID === currentVideo.Info.PlaybackID){
-          skipped = true;
           playNextSong(function(){
-            return res.send({Success: skipped});
+            return res.send({Success: true});
           });
         }
+        else{
+          return res.send({Success: false});
+        }
+      }
+      else{
+        return res.send({Success: false});
       }
     }
-    return res.send({Success: skipped});
+    else{
+      return res.send({Success: false});
+    }
   });
 
   return router;
