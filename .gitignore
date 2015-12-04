@@ -4,3 +4,4 @@ config.json
 *.vagrant
 *.sql
 npm-debug.log
+dist/
