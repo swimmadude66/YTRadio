@@ -3,7 +3,7 @@ app.controller('SidebarCtrl', function ($scope, $http, authService) {
 
   $scope.getUser=function(){
     return authService.getUser();
-  }
+  };
 });
 
 app.directive('queue', function() {
@@ -11,7 +11,7 @@ app.directive('queue', function() {
     restrict: 'E',
     controller: 'QueueCtrl',
 		templateUrl: 'views/queue.html'
-	}
+	};
 });
 
 app.directive('userlist', function() {
@@ -19,7 +19,7 @@ app.directive('userlist', function() {
     restrict: 'E',
     controller: 'UserListCtrl',
 		templateUrl: 'views/users.html'
-	}
+	};
 });
 
 app.directive('chat', function() {
@@ -27,7 +27,7 @@ app.directive('chat', function() {
     restrict: 'E',
     controller: 'ChatCtrl',
 		templateUrl: 'views/chat.html'
-	}
+	};
 });
 
 app.directive('settings', function() {
@@ -35,5 +35,5 @@ app.directive('settings', function() {
     restrict: 'E',
     controller: 'SettingsCtrl',
 		templateUrl: 'views/settings.html'
-	}
+	};
 });

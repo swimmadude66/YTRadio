@@ -1,9 +1,9 @@
 app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $cookies, mediaService, authService) {
-  $scope.videoInfo;
+  $scope.videoInfo={};
   $scope.playing = false;
   $scope.playbackID=null;
   $scope.muted = false;
-  $scope.timer;
+  $scope.timer=null;
   $scope.timeRemaining = "00:00";
   $scope.premuteVolume=100;
   $scope.volume = 100;
@@ -41,7 +41,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
       return true;
     }
     return false;
-  }
+  };
 
   $scope.skip = function(){
     if(!$scope.canSkip()){
@@ -59,7 +59,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
     }, function(err){
       console.log(err);
     });
-  }
+  };
 
   $scope.toggleMute=function(){
     if($scope.muted){
@@ -73,17 +73,17 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
       $scope.premuteVolume = $scope.volume;
       $scope.volume=0;
     }
-    saveVolume()
-  }
+    saveVolume();
+  };
 
   $scope.setVolume=function(){
     $rootScope.$broadcast('setVolume', $scope.volume);
-    saveVolume()
-  }
+    saveVolume();
+  };
 
   $scope.getUser=function(){
     return authService.getUser();
-  }
+  };
 
   /*
   * Player events
@@ -99,13 +99,13 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
       var minutes = Math.floor(currtime/60);
       var seconds = currtime%60;
       if(minutes > 60){
-        trem += Math.floor(minutes/60) +":"
+        trem += Math.floor(minutes/60) +":";
         minutes = minutes%60;
         if(minutes<10){
           minutes = "0"+minutes;
         }
       }
-      trem += minutes +":"
+      trem += minutes +":";
       if(seconds < 10){
         trem += 0;
       }

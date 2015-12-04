@@ -6,14 +6,14 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
 
   $scope.getUser=function(){
     return authService.getUser();
-  }
+  };
 
   $scope.sendMessage=function(){
     if($scope.messageText && $scope.messageText.contents && $scope.messageText.contents.trim().length>0){
       chatService.emit('messageToServer', encodeURIComponent($scope.messageText.contents));
       $scope.messageText.contents="";
     }
-  }
+  };
 
   chatService.on('motd', function(message){
     $scope.messages.push({Author: "MotD", Message:message});

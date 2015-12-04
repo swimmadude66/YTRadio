@@ -10,7 +10,7 @@ app.controller('TheatreCtrl', function ($rootScope, $scope, $http, authService) 
     enablejsapi: 1,
     start: 0
   };
-  $scope.playerInfo;
+  $scope.playerInfo = {};
   $scope.novid = true;
 
   $scope.$on('mute', function($event){

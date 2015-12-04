@@ -20,7 +20,7 @@ app.directive('theatre', function() {
     restrict: 'E',
     controller: 'TheatreCtrl',
 		templateUrl: 'views/theatre.html'
-	}
+	};
 });
 
 app.directive('radioSidebar', function() {
@@ -28,7 +28,7 @@ app.directive('radioSidebar', function() {
     restrict: 'E',
     controller: 'SidebarCtrl',
 		templateUrl: 'views/sidebar.html'
-	}
+	};
 });
 
 app.directive('radioControls', function() {
@@ -36,7 +36,7 @@ app.directive('radioControls', function() {
     restrict: 'E',
     controller: 'RadioCtrl',
 		templateUrl: 'views/radiocontrols.html'
-	}
+	};
 });
 
 app.directive('userControls', function() {
@@ -44,14 +44,14 @@ app.directive('userControls', function() {
     restrict: 'E',
     controller: 'UserCtrl',
 		templateUrl: 'views/usercontrols.html'
-	}
+	};
 });
 
 app.factory('httpRequestInterceptor', function ($cookies) {
   return {
     request: function(config){
       var auth_token = $cookies.get('ytrk_66') || "";
-      config.headers['Authorization'] = auth_token;
+      config.headers.Authorization = auth_token;
       return config;
     }
   };

@@ -32,8 +32,9 @@ module.exports={
             return cb(err);
           }
           else{
+            var body_obj;
             try{
-              var body_obj = JSON.parse(body);
+              body_obj = JSON.parse(body);
             }
             catch(e){
               return cb(e);
@@ -58,7 +59,7 @@ module.exports={
     videos.forEach(function(ir){
       if(!ir.contentDetails || !ir.contentDetails.duration){
         delete cleanvids[ir.id];
-        return
+        return;
       }
       var duration = ir.contentDetails.duration;
       var durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)?/i, "$1, $2, $3, $4").split(/\s*,\s*/i);
@@ -72,7 +73,7 @@ module.exports={
       var seconds = (durationmillis/1000)%60;
       var normtime = "";
       if(minutes>60){
-        normtime = Math.floor(minutes/60) +":"
+        normtime = Math.floor(minutes/60) +":";
         minutes = minutes%60;
         if(minutes < 10){
           minutes = "0"+minutes;
@@ -90,7 +91,7 @@ module.exports={
     if(nestedlists.length<1){
       return callback('No Songs mapped');
     }
-    var song_collate = "INSERT INTO `videos` (`videoID`, `Title`, `Poster`, `Thumbnails`, `FormattedTime`, `Duration`) VALUES " + db.escape(nestedlists) + " ON DUPLICATE KEY UPDATE `videoID`=`videoID`;"
+    var song_collate = "INSERT INTO `videos` (`videoID`, `Title`, `Poster`, `Thumbnails`, `FormattedTime`, `Duration`) VALUES " + db.escape(nestedlists) + " ON DUPLICATE KEY UPDATE `videoID`=`videoID`;";
     db.query(song_collate, function(err, result){
       if(err){
         console.log(err);
@@ -98,4 +99,4 @@ module.exports={
     });
     return callback(null, full_list);
   }
-}
+};

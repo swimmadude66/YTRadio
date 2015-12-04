@@ -16,6 +16,5 @@ app.factory('queueService',['$rootScope', 'mediaService', function($rootScope, m
       getQueue: function(){
         return queue;
       }
-    }
-
+    };
 }]);

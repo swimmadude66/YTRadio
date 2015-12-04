@@ -12,7 +12,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.joined=false;
 
   $scope.isAdding = false;
-  $scope.userData;
+  $scope.userData = {};
   fetch_playlist();
 
   function fetch_playlist(){
@@ -23,7 +23,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       var data = res.data;
       if(data.Success){
         $scope.playlists = data.Playlists;
-        for(pl in data.Playlists){
+        for(var pl in data.Playlists){
           if(data.Playlists[pl].Active){
             $scope.playlistName = data.Playlists[pl].Name;
             break;
@@ -59,7 +59,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   $scope.search=function(){
     $scope.isSearching=true;
     $scope.isLoading = true;
-    var cleancrit = encodeURIComponent($scope.searchCriteria.query)
+    var cleancrit = encodeURIComponent($scope.searchCriteria.query);
     $http.get('/api/search/'+cleancrit)
     .then(function(res){
       var data = res.data;
@@ -76,7 +76,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       toastr.error('Error completing search');
       console.log(error);
     });
-  }
+  };
 
   $scope.viewPlaylist=function(name){
     var oldpl = null;
@@ -90,7 +90,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
       var data = res.data;
       if(data.Success){
-        console.log('new playlist activated')
+        console.log('new playlist activated');
         if(oldpl){
           $http.post('/api/playlists/update', $scope.playlists[oldpl]).then(function(res){
             var data = res.data;
@@ -107,7 +107,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
         console.log(data.Error);
       }
     });
-  }
+  };
 
   $scope.addToPlaylist=function(vidinfo){
     if(!vidinfo){
@@ -129,7 +129,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }, function(err){
       console.log(err);
     });
-  }
+  };
 
   $scope.removeFromPlaylist=function(ind){
     var item = $scope.playlists[$scope.playlistName].Contents.splice(ind, 1)[0];
@@ -144,7 +144,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }, function(err){
       console.log(err);
     });
-  }
+  };
 
   $scope.moveUp=function(ind){
     var item = $scope.playlists[$scope.playlistName].Contents[ind];
@@ -161,7 +161,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }, function(err){
       console.log(err);
     });
-  }
+  };
 
   $scope.moveDown=function(ind){
     var item = $scope.playlists[$scope.playlistName].Contents[ind];
@@ -178,7 +178,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }, function(err){
       console.log(err);
     });
-  }
+  };
 
   $scope.joinLeaveQueue=function(){
     if($scope.joined){
@@ -219,7 +219,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
         console.log(err);
       });
     }
-  }
+  };
 
   $scope.login=function(){
     ModalService.showModal({
@@ -236,11 +236,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
 
   $scope.logOut=function(){
     authService.logOut();
-  }
+  };
 
   $scope.getUser=function(){
     return authService.getUser();
-  }
+  };
 
   $scope.$on('session_resume', function(){
     console.log('resuming session in progress');

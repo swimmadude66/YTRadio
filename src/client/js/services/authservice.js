@@ -1,5 +1,3 @@
-'use strict';
-
 app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService', 'mediaService', function($rootScope, $q, $http, $cookies, chatService, mediaService){
 
   var session;
@@ -94,5 +92,5 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
       userinfo=null;
       session = null;
     }
-  }
+  };
 }]);

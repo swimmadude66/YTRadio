@@ -14,7 +14,7 @@ router.get('/:query', function(req, res){
     var cleanvids = {};
     results.forEach(function(result){
       if(!result || !result.id || !result.id.videoId){
-        return
+        return;
       }
       var body = {
         ID: result.id.videoId,

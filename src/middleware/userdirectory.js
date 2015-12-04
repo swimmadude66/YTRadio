@@ -7,6 +7,7 @@ module.exports = {
 		return sockettouser;
 	},
   disconnect: function(socketid){
+		var last = false;
     if(sockettouser[socketid]){
       var user = sockettouser[socketid];
       var socks = usertosocket[user.Username];
@@ -14,7 +15,6 @@ module.exports = {
       if(i>-1){
         socks.splice(i,1);
       }
-      var last = false;
       if(socks.length<1){
         last = true;
         delete usertosocket[user.Username];
@@ -32,6 +32,7 @@ module.exports = {
 		return sockettouser;
 	},
   leave:function(socketid){
+		var last=false;
     if(sockettouser[socketid]){
       var username = sockettouser[socketid].Username || null;
       var socks = usertosocket[username];
@@ -39,7 +40,6 @@ module.exports = {
       if(i>-1){
         socks.splice(i,1);
       }
-      var last=false;
       if(socks.length<1){
         last = true;
         delete usertosocket[username];

@@ -66,7 +66,7 @@ module.exports= function(io){
         return res.send({Success:false, Error:"No such username"});
       }
       var user = results[0];
-      if(user.Active == 0){
+      if(user.Active === 0){
         return res.send({Success:false, Error:"Account is not active"});
       }
       var validpass = (encryption.hash(user.Salt+"|"+pass) === user.Password);
@@ -144,4 +144,4 @@ module.exports= function(io){
   require('./chat.js')(io);
 
   return router;
-}
+};

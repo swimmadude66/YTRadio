@@ -120,7 +120,7 @@ module.exports= function(io){
     }
     if(ENDCHECKING){
       console.log('received duplicate request');
-      return res.send({Success: false, Error: 'Currently processing song end'})
+      return res.send({Success: false, Error: 'Currently processing song end'});
     }
     ENDCHECKING=true;
     getTimeElapsed(function(elapsed){
@@ -150,7 +150,7 @@ module.exports= function(io){
 
   router.post('/queue', function(req, res){
     if(directory.getsockets(res.locals.usersession.Username).length<1){
-      return res.send({Success:false, Error:"No known sockets. Please Re-Login"})
+      return res.send({Success:false, Error:"No known sockets. Please Re-Login"});
     }
     userinqueue[res.locals.usersession.Username] = true;
     userQueue.push(res.locals.usersession.Username);
@@ -207,4 +207,4 @@ module.exports= function(io){
   });
 
   return router;
-}
+};

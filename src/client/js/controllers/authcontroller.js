@@ -8,14 +8,14 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
     $element.modal('hide');
     //  Now close as normal, but give 500ms for bootstrap to animate
     close(rval, 500);
-  };
+  }
 
   $scope.toggleAction=function(){
     if($scope.action ==='Log in'){
       $scope.action = 'Sign up';
     }
     else{
-      $scope.action ='Log in'
+      $scope.action ='Log in';
     }
   };
 
@@ -41,7 +41,7 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
         $scope.errormessage=error;
       });
     }
-  }
+  };
 });
 
 
