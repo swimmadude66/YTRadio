@@ -89,7 +89,7 @@ module.exports= function(io){
         contents.forEach(function(c){
           if(!c){
             i++;
-            return
+            return;
           }
           contentmap.push([plid, c.ID, i]);
           i++;
