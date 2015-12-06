@@ -4,3 +4,4 @@ config.json
 *.vagrant
 npm-debug.log
 dist/
+bower_components/
