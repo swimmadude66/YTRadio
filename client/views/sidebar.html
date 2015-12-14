@@ -1,5 +1,5 @@
-<div class="container-fluid sidebar" style="height:100%;">
-  <div class="row" style="margin-left:0px;">
+<div class="container-fluid sidebar fullheight">
+  <div class="row nopad-x">
    <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===0}" ng-click="activeTab=0">
      <h1><span class="glyphicon glyphicon-user"></span></h1>
    </div>
@@ -13,7 +13,7 @@
      <h1><span class="glyphicon glyphicon-cog"></span></h1>
    </div>
   </div>
-  <div class="row-fluid" style="height:100%; padding-bottom:175px;">
+  <div class="row fullheight" style="padding-bottom:175px;">
     <userlist ng-hide="activeTab!==0"></userlist>
     <queue ng-hide="activeTab!==1"></queue>
     <chat ng-hide="activeTab!==2"></chat>
