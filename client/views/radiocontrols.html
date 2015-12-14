@@ -1,37 +1,38 @@
 <nav class="navbar navbar-inverse" style="margin-bottom:0px; border-radius:0px;">
   <div class="container-fluid">
-    <a class="navbar-brand">YTRadio</a>
-    <div class="col-xs-6" id="songinfo" ng-show="playing">
-      <ul class="nav navbar-nav">
-        <li><span class="navbar-text">DJ: {{videoInfo.DJ.Username}}</span></li>
-        <li><span class="navbar-text">{{videoInfo.Title}}</span></li>
-      </ul>
+    <div class="col-md-1 hidden-xs hidden-sm">
+      <a class="navbar-brand">YTRadio</a>
     </div>
-    <div class="col-xs-2" ng-show="playing">
-      <ul class="nav navbar-nav pull-right">
-        <li><span class="navbar-text">{{timeRemaining}}/{{videoInfo.FormattedTime}}</span></li>
-      </ul>
+    <div class="col-xs-7" id="songinfo" ng-show="playing">
+      <div class="col-xs-4">
+        <span class="navbar-text">DJ: {{videoInfo.DJ.Username}}</span>
+      </div>
+      <div class="col-xs-6" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+        <span class="navbar-text">{{videoInfo.Title}}</span>
+      </div>
+      <div class="col-xs-2 pull-right">
+        <span class="navbar-text pull-right">{{timeRemaining}}/{{videoInfo.FormattedTime}}</span>
+      </div>
     </div>
-    <div class="col-xs-2 pull-right" ng-show="playing">
-      <div class="pull-right">
-        <ul class="nav navbar-nav">
-          <li style="margin-right:50px; margin-left:-50px;">
-            <button type="button" class="btn navbar-btn btn-danger" ng-click="skip()" ng-disabled="!canSkip()">
-                Skip
-            </button>
-          </li>
-          <li>
-            <form class="navbar-form">
-              <input class="form-control volumebar" type="range" ng-model="volume" ng-change="setVolume()" ng-disabled="muted"/>
-            </form>
-          </li>
-          <li>
-            <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()" ng-class="{'btn-danger':muted, 'btn-success':!muted}">
-              <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
-              <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
-            </button>
-          </li>
-        </ul>
+    <div class="col-xs-4 pull-right" ng-show="playing">
+      <div class="col-xs-2">
+        <button type="button" class="btn navbar-btn btn-danger" ng-click="skip()" ng-disabled="!canSkip()">
+            Skip
+        </button>
+      </div>
+      <div class="col-xs-1">&nbsp;</div>
+      <div class="col-xs-9">
+        <div class="col-xs-10">
+          <form class="navbar-form pull-right">
+            <input class="form-control volumebar" type="range" ng-model="volume" ng-change="setVolume()" ng-disabled="muted"/>
+          </form>
+        </div>
+        <div class="col-xs-2">
+          <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()" ng-class="{'btn-danger':muted, 'btn-success':!muted}">
+            <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
+            <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
