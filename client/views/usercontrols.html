@@ -13,38 +13,42 @@
         </div>
       </form>
     </div>
-    <div class="col-xs-3">
-      &nbsp;
-    </div>
   </div>
-  <div class="row" style="height:100%; padding-bottom:125px;">
-    <div class="col-xs-3">
+  <div class="row fullheight" style="padding-bottom:125px;">
+    <div class="col-xs-2">
       <h2>Playlists</h2>
       <hr>
       <ul class="nav nav-stacked playlist-list">
-        <li class="playlist-tab pointer" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)">
+        <li class="playlist-tab pointer" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)" ng-class="{'playlist-active': playlist.Name===playlistName}">
           <h4>
             {{playlist.Name}}
           </h4>
         </li>
       </ul>
     </div>
-    <div class="col-xs-6" style="height:100%; overflow-y: scroll;">
-      <div id="loadingbar" ng-show="isLoading">
-        <img src="images/loading.gif" alt="loading"/>
+    <div class="col-xs-9 fullheight" style="overflow-y: scroll;">
+      <div id="loadingbar" ng-show="isLoading" style="position:absolute; top:20%; right:50%;">
+        <h3 class="text-center">Loading...</h3>
+        <img src="images/loading.gif" alt="loading" class="center-block" />
       </div>
       <div id="search-results" ng-hide="!isSearching || isLoading">
         <h2>Results</h2>
         <hr>
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in searchResults track by $index" ng-click="addToPlaylist(item)" class="pointer" role="presentation">
-            <span>
-              <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
-              {{item.Title}}
-            </span>
-            <span class="pull-right" style="margin-top:30px;">
-              {{item.FormattedTime}}
-            </span>
+            <div class="row vidrow">
+              <div class="col-xs-2 vidicon">
+                <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
+              </div>
+              <div class="col-xs-3 col-sm-4 col-md-5 col-lg-6 vidtitle">
+                <span>{{item.Title}}</span>
+              </div>
+              <div class="col-xs-1 pull-right">
+                <span class="pull-right vidtime">
+                  {{item.FormattedTime}}
+                </span>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -53,22 +57,32 @@
         <hr>
         <ul class="nav nav-stacked" >
           <li ng-repeat="item in playlists[playlistName].Contents track by $index" role="presentation">
-            <span style="text-overflow:elipses;">
-              <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
-              {{item.Title}}
-            </span>
-            <span class="pull-right" style="margin-top:30px;">&nbsp;
-              <button type="button" class="btn btn-primary" ng-click="moveUp($index)" ng-hide="$first">
-                <span class="glyphicon glyphicon-arrow-up"></span>
-              </button>&nbsp;
-              <button type="button" class="btn btn-primary" ng-click="moveDown($index)" ng-hide="$last">
-                <span class="glyphicon glyphicon-arrow-down"></span>
-              </button>&nbsp;
-              <button type="button" class="btn btn-danger" ng-click="removeFromPlaylist($index)">
-                <span class="glyphicon glyphicon-remove"></span>
-              </button>&nbsp;
-              {{item.FormattedTime}}
-            </span>
+            <div class="row vidrow">
+              <div class="col-xs-2 vidicon">
+                <img ng-src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
+              </div>
+              <div class="col-xs-3 col-sm-4 col-md-5 col-lg-6 vidtitle">
+                <span>{{item.Title}}</span>
+              </div>
+              <div class="col-xs-3" style="min-width:300px;">
+                <div class="col-xs-9 vidbuttons">
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-primary" ng-click="moveUp($index)" ng-hide="$first">
+                      <span class="glyphicon glyphicon-arrow-up"></span>
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-primary" ng-click="moveDown($index)" ng-hide="$last">
+                      <span class="glyphicon glyphicon-arrow-down"></span>
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-danger" ng-click="removeFromPlaylist($index)">
+                      <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                  </div>
+                </div>
+                <div class="col-xs-2 pull-right">
+                  <span class="pull-right vidtime">{{item.FormattedTime}}</span>
+                </div>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -104,20 +118,20 @@
             </li>
           </ul>
         </div>
-        <div class="col-xs-6" ng-show="getUser()">
+        <div class="col-xs-5" ng-show="getUser()" style="overflow-x:hidden">
           <ul class="nav navbar-nav">
             <li>
               <a>{{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}</a>
             </li>
           </ul>
         </div>
-        <div class="col-xs-3 pull-right">
-          <ul class="nav navbar-nav pull-right" style="float:right!important;">
+        <div class="col-xs-3 col-md-4 col-lg-4 pull-right">
+          <ul class="nav navbar-nav pull-right" style="float:right !important;">
             <li class="pull-right text-right" ng-click="login()" ng-hide="getUser()">
               <a class="pull-right text-right">Log in/Sign up</a>
             </li>
             <li class="pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">
-              <span class="navbar-text">Logged in as {{getUser().Username}}</span>
+              <span class="navbar-text visible-md visible-lg">Logged in as {{getUser().Username}}</span>
               <a class="pull-right text-right"> Log Out?</a>
             </li>
           </ul>
