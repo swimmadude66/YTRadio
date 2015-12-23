@@ -1,8 +1,10 @@
 module.exports = {
   Keys:{
-    YoutubeAPI: 'youtubeApiKey'
+    YoutubeAPI: process.env.YOUTUBE_API_KEY || 'youtubeApiKey'
   },
   DB:{
+
+    // Note: defaults are set assuming MySQL is running locally
     host : process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASS || 'abc123',

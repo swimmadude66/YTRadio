@@ -13,7 +13,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node_modules/bower/bin/bower install"
+    "postinstall": "bower install"
   },
   "author": "swimmadude66",
   "license": "MIT",

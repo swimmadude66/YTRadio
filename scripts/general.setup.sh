@@ -17,6 +17,9 @@ sudo apt-get install -y build-essential g++ nodejs
 echo "Installing grunt-cli..."
 sudo npm install -g grunt-cli
 
+echo "Installing Bower..."
+sudo npm install bower -g
+
 echo "Installing PM2 server manager..."
 sudo npm install pm2 -g
 

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
                     dest: "/home/vagrant",
                     recursive: true,
                     delete: true,
-                    exclude: ["node_modules", ".*"],
+                    exclude: ["node_modules", "client/bower_components", ".*"],
                     event: ['changed', 'added', 'deleted']             
                 }
         	},
@@ -18,7 +18,7 @@ module.exports = function(grunt) {
                     dest: "/vagrant",
                     recursive: true,
                     delete: true,
-                    exclude: ["node_modules", ".*"],
+                    exclude: ["node_modules", "client/bower_components", ".*"],
                     event: ['changed', 'added', 'deleted']
                 }
             }
