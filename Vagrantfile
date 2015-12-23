@@ -5,6 +5,7 @@ Vagrant.configure(2) do |config|
 
   # base box
   config.vm.box = "ubuntu/trusty64"
+  config.vm.hostname = "ytradio-dev"
 
   # Create a private network
   config.vm.network "private_network", ip: "192.168.33.10"
@@ -16,11 +17,14 @@ Vagrant.configure(2) do |config|
     shell.args = %q{/etc/sudoers.d/root_ssh_agent "Defaults env_keep += \"SSH_AUTH_SOCK\""}
   end
 
-  # Transfer files
-  config.vm.provision :file, source: "./scripts/db-setup.sql", destination: "/home/vagrant/bin/db-setup.sql"
+  # provision scripts
+  config.vm.provision :shell, path: "./scripts/general.setup.sh", privileged: false
 
-  # Run scripts
-  config.vm.provision :shell, path: "./scripts/environment-setup.sh", privileged: false
+  config.vm.provision :shell, path: "./scripts/mysql.install.sh", privileged: true
+  config.vm.provision :shell, path: "./scripts/mysql.start.sh", privileged: true, run: "always"
+  config.vm.provision :shell, path: "./scripts/mysql.setup.sh", privileged: false
+
+  config.vm.provision :shell, path: "./scripts/server.start.sh", privileged: false
 
   # Enable SSH agent forwarding (for github key)
   config.ssh.forward_agent = true

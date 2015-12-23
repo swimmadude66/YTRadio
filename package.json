@@ -28,6 +28,7 @@
     "socket.io": "^1.3.7"
   },
   "devDependencies": {
-    "bower": "^1.5.3"
+    "grunt": "^0.4.5",
+    "grunt-rsync": "^0.6.2"
   }
 }
