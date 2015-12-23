@@ -1,0 +1,19 @@
+/**
+ * PM2 Application Delcaration File
+ * 
+ * This file contains options for PM2 Node App Manager
+ * More information about the all of the possible options can
+ * be found here: http://pm2.keymetrics.io/docs/usage/application-declaration/
+ *
+ * Options include log locations, number of instances, file watchers, etc
+ */
+{
+    "apps" : [
+        {
+            // YTRadio Server
+            "name"        : "YTRadio",
+            "script"      : "app.js",
+            "merge_logs"  : true
+        }
+    ]
+}

@@ -4,7 +4,7 @@ var http       = require('http');
 var fs         = require('fs');
 var bodyParser = require('body-parser');
 var path       = require('path');
-global.config  = require('./config.json');
+global.config  = require('./config');
 var app        = express(); 			// define our app using express
 
 
