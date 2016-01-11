@@ -1,5 +1,5 @@
-var bower = require('gulp-bower');
 var gulp        = require('gulp');
+var bower       = require('gulp-bower');
 var clean       = require('gulp-clean');
 var uncss       = require('gulp-uncss');
 var jshint      = require('gulp-jshint');
@@ -9,9 +9,29 @@ var rename      = require('gulp-rename');
 var nano        = require('gulp-cssnano');
 var ngAnnotate  = require('gulp-ng-annotate');
 
+var usemin = require('gulp-usemin');
+
 gulp.task('clean', function(){
   return gulp.src('dist')
         .pipe(clean());
+});
+
+// Lint Task
+gulp.task('lint', function() {
+    return gulp.src(['src/**/*.js','!src/**/lib/**/*'])
+        .pipe(jshint({esnext: true}))
+        .pipe(jshint.reporter('default'));
+});
+
+gulp.task('usemin', ['bower'], function(){
+  return gulp.src('src/client/index.html')
+    .pipe(usemin({
+        ng: [ngAnnotate(), uglify({mangle:false}), 'concat'],
+        js: [ngAnnotate(), uglify({mangle:false}), 'concat'],
+        css: [uncss({html:['src/client/**/*.html']}), nano(), 'concat']
+      })
+    )
+    .pipe(gulp.dest('dist/client'));
 });
 
 gulp.task('uncss', ['copy_assets', 'bower'], function(){
@@ -25,17 +45,17 @@ gulp.task('uncss', ['copy_assets', 'bower'], function(){
         .pipe(gulp.dest('dist/client/styles/'));
 });
 
-gulp.task('copy_assets', function(){
-  return gulp.src(['src/**/*', 'package.json', '!src/scripts', '!src/scripts/**/*', '!src/client/js/**/*', '!src/client/styles/**/*'])
-      .pipe(gulp.dest('dist'));
+gulp.task('copy_fonts', ['bower'], function(){
+  return gulp.src(['src/client/lib/bootstrap/dist/fonts/*'])
+      .pipe(gulp.dest('dist/client/fonts/'));
 });
 
-// Lint Task
-gulp.task('lint', function() {
-    return gulp.src('src/**/*.js')
-        .pipe(jshint({esnext: true}))
-        .pipe(jshint.reporter('default'));
+gulp.task('copy_views', function(){
+  return gulp.src(['src/client/views/*'])
+      .pipe(gulp.dest('dist/client/views/'));
 });
+
+
 
 // Concatenate & Minify JS
 gulp.task('scripts', function() {
@@ -49,8 +69,7 @@ gulp.task('scripts', function() {
 });
 
 gulp.task('bower', function() {
-  return bower({ directory: 'dist/client/lib/'})
-    .pipe(gulp.dest('dist/client/lib/'));
+  return bower({ directory: 'src/client/lib/'});
 });
 
 // Watch Files For Changes
@@ -60,4 +79,5 @@ gulp.task('watch', function() {
 });
 
 // Default Task
-gulp.task('default', ['lint', 'scripts', 'copy_assets',  'bower', 'uncss']);
+gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts']);
+//gulp.task('default', ['lint', 'scripts', 'copy_assets',  'bower', 'uncss']);

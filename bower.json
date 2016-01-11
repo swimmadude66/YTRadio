@@ -23,6 +23,7 @@
     "angular-toastr": "~1.5.0",
     "angular-youtube-mb": "~1.1.0",
     "bootstrap": "~3.3.5",
-    "jquery": "~2.1.4"
+    "jquery": "~2.1.4",
+    "socket.io-client": "~1.4.3"
   }
 }

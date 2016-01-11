@@ -40,6 +40,7 @@
     "gulp-sass": "^2.1.0",
     "gulp-uglify": "^1.5.1",
     "gulp-uncss": "^1.0.4",
+    "gulp-usemin": "^0.3.16",
     "jshint": "^2.8.0"
   }
 }
