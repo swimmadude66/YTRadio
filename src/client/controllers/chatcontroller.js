@@ -41,23 +41,6 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
   });
 });
 
-app.directive('scrollBottom', function () {
-  return {
-    scope: {
-      scrollBottom: "="
-    },
-    link: function (scope, element) {
-      scope.$watchCollection('scrollBottom', function (newValue) {
-        console.log('scrolling!');
-        if (newValue)
-        {
-          $(element).scrollTop($(element)[0].scrollHeight);
-        }
-      });
-    }
-  }
-});
-
 /*
 app.directive('chatmessage', function() {
   return {

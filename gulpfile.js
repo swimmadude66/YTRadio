@@ -3,13 +3,11 @@ var bower       = require('gulp-bower');
 var clean       = require('gulp-clean');
 var uncss       = require('gulp-uncss');
 var jshint      = require('gulp-jshint');
-var concat      = require('gulp-concat');
 var uglify      = require('gulp-uglify');
 var rename      = require('gulp-rename');
 var nano        = require('gulp-cssnano');
 var ngAnnotate  = require('gulp-ng-annotate');
-
-var usemin = require('gulp-usemin');
+var usemin      = require('gulp-usemin');
 
 gulp.task('clean', function(){
   return gulp.src('dist')
@@ -34,17 +32,6 @@ gulp.task('usemin', ['bower'], function(){
     .pipe(gulp.dest('dist/client'));
 });
 
-gulp.task('uncss', ['copy_assets', 'bower'], function(){
-  return gulp.src(['dist/client/**/*.css', 'src/client/styles/*.css'])
-        .pipe(concat('main.css'))
-        .pipe(uncss({
-            html: ['src/client/**/*.html']
-        }))
-        .pipe(nano())
-        .pipe(rename('styles.min.css'))
-        .pipe(gulp.dest('dist/client/styles/'));
-});
-
 gulp.task('copy_fonts', ['bower'], function(){
   return gulp.src(['src/client/lib/bootstrap/dist/fonts/*'])
       .pipe(gulp.dest('dist/client/fonts/'));
@@ -55,18 +42,16 @@ gulp.task('copy_views', function(){
       .pipe(gulp.dest('dist/client/views/'));
 });
 
-
-
-// Concatenate & Minify JS
-gulp.task('scripts', function() {
-    return gulp.src(['src/client/**/*.js'])
-        .pipe(ngAnnotate())
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('dist/client/js'))
-        .pipe(rename('all.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('dist/client/js'));
+gulp.task('copy_images', function(){
+  return gulp.src(['src/client/images/*'])
+      .pipe(gulp.dest('dist/client/images/'));
 });
+
+gulp.task('copy_node', function(){
+  return gulp.src(['src/**/*', '!src/client/**/*', 'src/config.json'])
+      .pipe(gulp.dest('dist/'));
+});
+
 
 gulp.task('bower', function() {
   return bower({ directory: 'src/client/lib/'});
@@ -79,5 +64,5 @@ gulp.task('watch', function() {
 });
 
 // Default Task
-gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts']);
+gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts', 'copy_views', 'copy_images', 'copy_node']);
 //gulp.task('default', ['lint', 'scripts', 'copy_assets',  'bower', 'uncss']);
