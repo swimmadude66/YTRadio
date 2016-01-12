@@ -92,6 +92,8 @@ html,body{
 .sidebar{
   background-color: rgba(64,64,64,1);
   color:#FFF;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 .sidebar-btn{
