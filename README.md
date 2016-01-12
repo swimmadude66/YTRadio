@@ -9,10 +9,10 @@ The built in chat allows for lifeboat to serve as a fun substitute for a message
 
 #How to Host
 
-##Method 1## __Download a release__
+##Method 1 - __Download a release__
 Coming soon, releases will be a zipped folder of pre-minified code; you need only edit `config.json` and run it with `node app.js`
 
-##Method 2## __Build from Source__
+##Method 2 - __Build from Source__
 _requires git, npm, bower, and gulp_
 
 1. Clone this repo on to your host box (or just download the zip from github, I'm not your mom)
