@@ -1,5 +1,5 @@
 #!/bin/bash
-# Environment setup script for Bonsai
+# Environment setup script for Lifeboat
 
 set -e # Exit script immediately on first error.
 
