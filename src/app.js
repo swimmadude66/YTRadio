@@ -4,10 +4,11 @@ var http       = require('http');
 var fs         = require('fs');
 var bodyParser = require('body-parser');
 var path       = require('path');
+var compress   = require('compression');
 global.config  = require('./config.json');
 var app        = express(); 			// define our app using express
 
-
+app.use(compress());
 app.set('view engine','html');
 app.engine('html', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, 'client')));
