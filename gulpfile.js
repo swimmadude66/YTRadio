@@ -1,18 +1,11 @@
 var gulp        = require('gulp');
 var bower       = require('gulp-bower');
-var clean       = require('gulp-clean');
 var uncss       = require('gulp-uncss');
 var jshint      = require('gulp-jshint');
 var uglify      = require('gulp-uglify');
-var rename      = require('gulp-rename');
 var nano        = require('gulp-cssnano');
 var ngAnnotate  = require('gulp-ng-annotate');
 var usemin      = require('gulp-usemin');
-
-gulp.task('clean', function(){
-  return gulp.src('dist')
-        .pipe(clean());
-});
 
 // Lint Task
 gulp.task('lint', function() {
@@ -21,12 +14,12 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('usemin', ['bower'], function(){
+gulp.task('usemin', ['bower', 'copy_views'], function(){
   return gulp.src('src/client/index.html')
     .pipe(usemin({
-        ng: [ngAnnotate(), uglify({mangle:false}), 'concat'],
-        js: [ngAnnotate(), uglify({mangle:false}), 'concat'],
-        css: [uncss({html:['src/client/**/*.html']}), nano(), 'concat']
+        ng: [ngAnnotate(), uglify(), 'concat'],
+        js: [ngAnnotate(), uglify(), 'concat'],
+        css: [uncss({html:['dist/client/**/*.html']}), nano(), 'concat']
       })
     )
     .pipe(gulp.dest('dist/client'));
@@ -48,7 +41,7 @@ gulp.task('copy_images', function(){
 });
 
 gulp.task('copy_node', function(){
-  return gulp.src(['src/**/*', '!src/client/**/*', 'src/config.json'])
+  return gulp.src(['src/**/*', '!src/client/**/*', './package.json'])
       .pipe(gulp.dest('dist/'));
 });
 
@@ -57,12 +50,7 @@ gulp.task('bower', function() {
   return bower({ directory: 'src/client/lib/'});
 });
 
-// Watch Files For Changes
-gulp.task('watch', function() {
-    gulp.watch('src/**/*.js', ['lint']);
-    gulp.watch('src/client/**/*.js', ['scripts']);
-});
-
 // Default Task
-gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts', 'copy_views', 'copy_images', 'copy_node']);
-//gulp.task('default', ['lint', 'scripts', 'copy_assets',  'bower', 'uncss']);
+gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts', 'copy_views', 'copy_images', 'copy_node'], function(){
+  console.log('----------------------------\n\nType `cd dist/`\nThen `npm install --production`\nThen `node app.js` to run your own radio!');
+});
