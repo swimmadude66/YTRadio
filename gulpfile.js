@@ -17,8 +17,7 @@ gulp.task('lint', function() {
 gulp.task('usemin', ['bower', 'copy_views'], function(){
   return gulp.src('src/client/index.html')
     .pipe(usemin({
-        ng: [ngAnnotate(), uglify(), 'concat'],
-        services: [ngAnnotate(), uglify(), 'concat'],
+        ng: [ngAnnotate(), uglify({}), 'concat'],
         js: [ngAnnotate(), uglify(), 'concat'],
         css: [uncss({html:['dist/client/**//*.html'], ignore:[/embed/i, /video/i, /iframe/i]}), nano(), 'concat']
       })
