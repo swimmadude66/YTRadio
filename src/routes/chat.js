@@ -103,7 +103,7 @@ module.exports = function(io){
     });
 
     socket.on('disconnect', function(){
-      var user = directory.disconnect(socket.id)
+      var user = directory.disconnect(socket.id);
       if(user){
         if(!directory.getsockets(user.Username)){
           socket.broadcast.emit('user_left', user.Username);
