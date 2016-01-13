@@ -19,6 +19,17 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
     });
   }
 
+  function scorched_Earth(){
+    $cookies.remove('ytrk_66');
+    $cookies.remove('ytvolume');
+    auth_cookie = null;
+    mediaService.emit('leave');
+    chatService.emit('leave');
+    userinfo=null;
+    session = null;
+  }
+
+
   return {
     getSession:function(){
       return session;
@@ -85,12 +96,11 @@ app.factory('authService', ['$rootScope','$q', '$http','$cookies', 'chatService'
       return deferred.promise;
     },
     logOut: function(){
-      $cookies.remove('ytrk_66');
-      auth_cookie = null;
-      mediaService.emit('leave');
-      chatService.emit('leave');
-      userinfo=null;
-      session = null;
+      $http.post('/api/logOut',{}).then(function(res){
+        scorched_Earth();
+      }, function(){
+        scorched_Earth();
+      });
     }
   };
 }]);

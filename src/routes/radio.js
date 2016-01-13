@@ -27,8 +27,8 @@ module.exports= function(io){
     currentVideo = false;
     if(userQueue.length>0){
       currDJ = userQueue.shift();
-      var socks = directory.getsockets(currDJ);
-      if(socks.length<1){
+      var sock = directory.getsockets(currDJ);
+      if(!sock || sock.length<1){
         playNextSong(callback);
       }
       else{
@@ -37,9 +37,7 @@ module.exports= function(io){
           userQueue.push(currDJ);
         }
         mediaManager.emit('queue_updated', userQueue);
-        socks.forEach(function(socket){
-          mediaManager.to(socket).emit('nextSong_fetch');
-        });
+        mediaManager.to(sock).emit('nextSong_fetch');
         return callback();
       }
     }
@@ -144,12 +142,12 @@ module.exports= function(io){
       }
       var user=results[0];
       res.locals.usersession = user;
-      next();
+      return next();
     });
   });
 
   router.post('/queue', function(req, res){
-    if(directory.getsockets(res.locals.usersession.Username).length<1){
+    if(!directory.getsockets(res.locals.usersession.Username)){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"});
     }
     userinqueue[res.locals.usersession.Username] = true;
@@ -167,12 +165,15 @@ module.exports= function(io){
 
   router.delete('/queue/:username', function(req,res){
     var dmw = req.params.username;
-    if(res.locals.usersession.Username === dmw || res.locals.usersession.Role === 'Admin'){
+    if(res.locals.usersession.Username === dmw || res.locals.usersession.Role === 'ADMIN'){
       var ind = userQueue.indexOf(dmw);
       if(ind >-1){
         var remuser = userQueue.splice(ind,1);
         userinqueue[dmw]=false;
-        console.log(remuser, 'Removed from queue');
+        var dmwsocket = directory.getsockets(dmw);
+        if(dmwsocket){
+          mediaManager.to(dmwsocket).emit('queue_kick');
+        }
         mediaManager.emit('queue_updated', userQueue);
         return res.send({Success:true});
       }

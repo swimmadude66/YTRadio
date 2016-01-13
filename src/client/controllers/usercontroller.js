@@ -53,6 +53,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     });
   });
 
+  mediaService.on('queue_kick', function(){
+    $scope.joined=false;
+    toastr.error('You have been removed from the queue');
+  });
+
   /*
   * Client Methods
   */

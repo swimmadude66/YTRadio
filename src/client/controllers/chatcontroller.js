@@ -35,6 +35,12 @@ app.controller('ChatCtrl', function ($scope, $http, authService, chatService) {
     }
   });
 
+  chatService.on('session_expired', function(){
+    authService.logOut();
+    toastr.error('Your session has expired!');
+    $location.path('/');
+  });
+
   // makes sure all socket event listeners are removed after controller is destroyed
   $scope.$on('$destroy', function (event){
     chatService.removeAllListeners();

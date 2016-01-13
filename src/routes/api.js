@@ -79,7 +79,6 @@ module.exports= function(io){
           }
           delete user.Password;
           delete user.Salt;
-          console.log(user);
           return res.send({Success: true, Data:{Session:session, User:user}});
         });
       }
@@ -88,6 +87,8 @@ module.exports= function(io){
       }
     });
   });
+
+
 
   router.get('/auth/:sessionID', function(req, res){
     var sid = req.params.sessionID;
@@ -133,6 +134,17 @@ module.exports= function(io){
       var user=results[0];
       res.locals.usersession = user;
       next();
+    });
+  });
+
+  router.post('/logOut', function(req, res){
+    var session = res.locals.usersession.Key;
+    db.query('Update `Sessions` Set `Active`=0 Where `Key`=?;', [session], function(err, result){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success: true});
     });
   });
 
