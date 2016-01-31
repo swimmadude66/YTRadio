@@ -208,7 +208,7 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     }, function(err){
       toastr.err('Error connecting to API');
     });
-  }
+  };
 
   $scope.joinLeaveQueue=function(){
     if($scope.joined){
