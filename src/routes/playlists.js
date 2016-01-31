@@ -65,6 +65,19 @@ module.exports= function(io){
     });
   }
 
+  router.post('/setActive', function(req, res){
+    var ID = req.body.Name;
+    var active = req.body.Active;
+    var sql = "Update `Playlists` SET `Active`= ? where `ID`=? and `Owner`=?;";
+    db.query(sql, [active, ID, res.locals.usersession.ID], function(err, result){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success:true});
+    });
+  });
+
   router.post('/update', function(req,res){
     var name = req.body.Name;
     var contents = req.body.Contents;
@@ -118,7 +131,7 @@ module.exports= function(io){
   });
 
   router.get('/', function(req, res){
-    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `playlistcontents`.`Order`, `videos`.* from `Playlists` join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ?;', [res.locals.usersession.ID], function(err, results){
+    db.query('Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `playlistcontents`.`Order`, `videos`.* from `Playlists` left join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` left join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` where `Owner` = ?;', [res.locals.usersession.ID], function(err, results){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
@@ -136,12 +149,25 @@ module.exports= function(io){
           };
         }
         var thumbs = JSON.parse(result.Thumbnails);
-        playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration, Order: result.Order});
+        if(result.videoID){
+          playlists[result.Name].Contents.push({ID:result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails:thumbs, FormattedTime:result.FormattedTime, Duration:result.Duration, Order: result.Order});
+        }
       });
       for(var pl in playlists){
         playlists[pl].Contents.sort((a,b)=>a.Order-b.Order);
       }
       return res.send({Success: true, Playlists: playlists});
+    });
+  });
+
+  router.post('/', function(req, res){
+    var sql = "Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);";
+    db.query(sql, [res.locals.usersession.ID, req.body.Name, JSON.stringify([]), false], function(err, result){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success:true});
     });
   });
 

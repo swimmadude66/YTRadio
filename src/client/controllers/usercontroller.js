@@ -13,6 +13,9 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
 
   $scope.isAdding = false;
   $scope.userData = {};
+  $scope.newPlaylist = {};
+  $scope.addingPlaylist=false;
+
   fetch_playlist();
 
   function fetch_playlist(){
@@ -92,12 +95,12 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $scope.playlistName=name;
     $scope.playlists[$scope.playlistName].Active=true;
     $scope.isSearching = false;
-    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+    $http.post('/api/playlists/setActive', $scope.playlists[$scope.playlistName]).then(function(res){
       var data = res.data;
       if(data.Success){
         console.log('new playlist activated');
         if(oldpl){
-          $http.post('/api/playlists/update', $scope.playlists[oldpl]).then(function(res){
+          $http.post('/api/playlists/setActive', $scope.playlists[oldpl]).then(function(res){
             var data = res.data;
             if(data.Success){
               console.log('old playlist deactivated');
@@ -184,6 +187,28 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       console.log(err);
     });
   };
+
+  $scope.addPlaylist=function(){
+    $scope.addingPlaylist = true;
+    $scope.newPlaylist = {};
+  };
+
+  $scope.registerPlaylist=function(){
+    $http.post('/api/playlists/', $scope.newPlaylist).then(function(res){
+      var data = res.data;
+      if(data.Success){
+        $scope.addingPlaylist=false;
+        $scope.newPlaylist = {};
+        fetch_playlist();
+        toastr.success('Added Playlist!');
+      }
+      else{
+        toastr.error(data.Error);
+      }
+    }, function(err){
+      toastr.err('Error connecting to API');
+    });
+  }
 
   $scope.joinLeaveQueue=function(){
     if($scope.joined){

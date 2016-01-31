@@ -16,15 +16,36 @@
   </div>
   <div class="row fullheight" style="padding-bottom:125px;">
     <div class="col-xs-2">
-      <h2>Playlists</h2>
+      <div class="row">
+        <h2>Playlists</h2>
+      </div>
       <hr>
-      <ul class="nav nav-stacked playlist-list">
-        <li class="playlist-tab pointer" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)" ng-class="{'playlist-active': playlist.Name===playlistName}">
-          <h4>
-            {{playlist.Name}}
-          </h4>
-        </li>
-      </ul>
+      <div class="row">
+        <ul class="nav nav-stacked playlist-list">
+          <li class="playlist-tab pointer" ng-repeat="playlist in playlists track by $index" ng-click="viewPlaylist(playlist.Name)" ng-class="{'playlist-active': playlist.Name===playlistName}">
+            <h4>
+              {{playlist.Name}}
+            </h4>
+          </li>
+        </ul>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-xs-2" ng-if="!addingPlaylist">
+          <button type="button" class="btn btn-default" ng-click="addPlaylist()">
+            <span class="glyphicon glyphicon-plus"></span>
+          </button>
+        </div>
+        <div class="col-xs-12" ng-if="addingPlaylist">
+          <div class="col-xs-8">
+            <input type="text" name="nplaylistName" placeholder="New Playlist" ng-model="newPlaylist.Name" style="color:#000000;">
+          </div>
+          <div class="col-xs-4" style="padding-top:4px;">
+            <a href="javascript:void(0)" ng-click="addingPlaylist=false" style="color:red;"><span class="glyphicon glyphicon-remove"></span></a>
+            <a href="javascript:void(0)" ng-click="registerPlaylist()" style="color:green;"><span class="glyphicon glyphicon-ok"></span></a>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-xs-9 fullheight" style="overflow-y: scroll;">
       <div id="loadingbar" ng-show="isLoading" style="position:absolute; top:20%; right:50%;">
