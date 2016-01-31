@@ -129,7 +129,7 @@ html,body{
 
 .volumebar{
   height: 10px;
-  padding-top: 0px;
+  padding: 0px;
   background-color: rgba(66, 123, 208, 0.31);
   margin-top:6px;
 }
