@@ -19,8 +19,7 @@ gulp.task('usemin', ['bower', 'copy_views'], function(){
     .pipe(usemin({
         ng: [ngAnnotate(), uglify({}), 'concat'],
         js: [ngAnnotate(), uglify(), 'concat'],
-        css: [uncss({html:['dist/client/**//*.html'], ignore:[/embed/i, /video/i, /iframe/i, /toast/i]}), nano(), 'concat'],
-        favicon: []
+        css: [uncss({html:['dist/client/**//*.html'], ignore:[/embed/i, /video/i, /iframe/i, /toast/i]}), nano(), 'concat']
       })
     )
     .pipe(gulp.dest('dist/client'));
@@ -41,6 +40,11 @@ gulp.task('copy_images', function(){
       .pipe(gulp.dest('dist/client/images/'));
 });
 
+gulp.task('copy_favicon', function(){
+  return gulp.src(['src/client/*.ico'])
+      .pipe(gulp.dest('dist/client/'));
+});
+
 gulp.task('copy_node', function(){
   return gulp.src(['src/**/*', '!src/client/**/*', './package.json'])
       .pipe(gulp.dest('dist/'));
@@ -52,6 +56,6 @@ gulp.task('bower', function() {
 });
 
 // Default Task
-gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts', 'copy_views', 'copy_images', 'copy_node'], function(){
+gulp.task('default', ['lint', 'bower', 'usemin', 'copy_fonts', 'copy_views', 'copy_images', 'copy_node', 'copy_favicon'], function(){
   console.log('----------------------------\n\nType `cd dist/`\nThen `npm install --production`\nThen `node app.js` to run your own radio!');
 });
