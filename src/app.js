@@ -1,7 +1,4 @@
 var express    = require('express'); 		// call express
-var https      = require('https');
-var http       = require('http');
-var fs         = require('fs');
 var bodyParser = require('body-parser');
 var path       = require('path');
 var compress   = require('compression');
@@ -22,19 +19,18 @@ var server;
 var isHTTPS = false;
 
 if('SSL' in global.config){
+  var fs = require('fs');
   var config = {
     key: fs.readFileSync(global.config.SSL.keyfile),
-   cert: fs.readFileSync(global.config.SSL.certfile)
+   cert: fs.readFileSync(global.config.SSL.certfile),
+   ca: fs.readFileSync(global.config.SSL.chainfile)
   };
-  var redir = express();
-  redir.all(function(req, res){
-    return res.redirect("https://" + req.host + req.url);
-  });
-  http.createServer(redir).listen(httpport);
+  var https = require('https');
   server = https.createServer(config, app);
   isHTTPS = true;
 }
 else{
+  var http = require('http');
   server = http.Server(app);
 }
 var port = (isHTTPS ? httpsport : httpport);

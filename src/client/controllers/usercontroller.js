@@ -99,17 +99,6 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
       var data = res.data;
       if(data.Success){
         console.log('new playlist activated');
-        if(oldpl){
-          $http.post('/api/playlists/setActive', $scope.playlists[oldpl]).then(function(res){
-            var data = res.data;
-            if(data.Success){
-              console.log('old playlist deactivated');
-            }
-            else{
-              console.log(data.Error);
-            }
-          });
-        }
       }
       else{
         console.log(data.Error);

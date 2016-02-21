@@ -66,10 +66,9 @@ module.exports= function(io){
   }
 
   router.post('/setActive', function(req, res){
-    var ID = req.body.Name;
-    var active = req.body.Active;
-    var sql = "Update `Playlists` SET `Active`= ? where `ID`=? and `Owner`=?;";
-    db.query(sql, [active, ID, res.locals.usersession.ID], function(err, result){
+    var ID = req.body.ID;
+    var sql = "Update `Playlists` SET `Active`= (`ID` = ?) where `Owner`=?;";
+    db.query(sql, [ID, res.locals.usersession.ID], function(err, result){
       if(err){
         console.log(err);
         return res.send({Success: false, Error: err});
