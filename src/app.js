@@ -13,8 +13,8 @@ app.set('views', __dirname + '/client/views');
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-var httpport = 8080;
-var httpsport = 3000;
+var httpport = 80;
+var httpsport = 443;
 var server;
 var isHTTPS = false;
 
