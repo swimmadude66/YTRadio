@@ -87,15 +87,13 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   };
 
   $scope.viewPlaylist=function(name){
-    var oldpl = null;
     if($scope.playlistName && $scope.playlistName!==name){
       $scope.playlists[$scope.playlistName].Active=false;
-      oldpl = $scope.playlistName;
     }
     $scope.playlistName=name;
     $scope.playlists[$scope.playlistName].Active=true;
     $scope.isSearching = false;
-    $http.post('/api/playlists/setActive', $scope.playlists[$scope.playlistName]).then(function(res){
+    $http.post('/api/playlists/setActive', $scope.playlists[name]).then(function(res){
       var data = res.data;
       if(data.Success){
         console.log('new playlist activated');

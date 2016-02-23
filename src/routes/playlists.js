@@ -142,6 +142,7 @@ module.exports= function(io){
       results.forEach(function(result){
         if(!(result.Name in playlists)){
           playlists[result.Name] = {
+            ID: result.ID,
             Name: result.Name,
             Contents: [],
             Active: result.Active
