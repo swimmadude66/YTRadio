@@ -11,6 +11,8 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
   }
 
   $scope.toggleAction=function(){
+    $scope.errormessage = undefined;
+    
     if($scope.action ==='Log in'){
       $scope.action = 'Sign up';
     }
@@ -25,6 +27,7 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
       authService.logIn($scope.auth)
       .then(function(session){
           $scope.isLoading = false;
+          $scope.errormessage = undefined;
           closeModal(session);
       },function(error){
         $scope.isLoading = false;
@@ -36,6 +39,7 @@ app.controller('AuthCtrl', function ($scope, $http, $element, authService, close
       .then(function(session){
           $scope.isLoading = false;
           $scope.signupText = true;
+          $scope.errormessage = undefined;
       },function(error){
         $scope.isLoading = false;
         $scope.errormessage=error;
