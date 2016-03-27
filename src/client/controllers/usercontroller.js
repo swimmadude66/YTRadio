@@ -180,6 +180,11 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
     $scope.newPlaylist = {};
   };
 
+  $scope.cancelPlaylistAdd=function(){
+    $scope.addingPlaylist = false;
+    $scope.newPlaylist = {};
+  };
+
   $scope.registerPlaylist=function(){
     $http.post('/api/playlists/', $scope.newPlaylist).then(function(res){
       var data = res.data;

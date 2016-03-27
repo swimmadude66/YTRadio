@@ -1,4 +1,5 @@
 var fs = require('fs');
+var async = require('async');
 var directory = require('../middleware/userdirectory.js');
 
 var recentMessages = [];
@@ -10,36 +11,37 @@ module.exports = function(io){
   function updateUserList(){
     var userList = [];
     var anon_listeners = 0;
-    for(var socket in directory.getsockets()){
+    async.each(Object.keys(directory.getsockets()), function(socket, cb){
       var username = (directory.getuser(socket)||{Username:null}).Username;
       if(username){
         if(userList.indexOf(username) === -1){
           userList.push(username);
+          return cb();
         }
       }
       else{
-        anon_listeners ++;
+        anon_listeners++;
+        return cb();
       }
-    }
-    if(anon_listeners > 0){
-      var anon_string = anon_listeners + ' Anonymous guest';
-      if(anon_listeners > 1){
-        anon_string +='s';
+    }, function(err){
+      if(anon_listeners > 0){
+        var anon_string = anon_listeners + ' Anonymous guest';
+        if(anon_listeners > 1){
+          anon_string +='s';
+        }
+        if(userList.length > 0){
+          anon_string = 'Plus ' + anon_string;
+        }
+        userList.push(anon_string);
       }
-      if(userList.length > 0){
-        anon_string = 'Plus ' + anon_string;
-      }
-      userList.push(anon_string);
-    }
-    io.emit('userList', userList);
+      io.sockets.emit('userList', userList);
+    });
   }
 
   // connection event
   chatManager.on('connection', function(socket){
-    console.log('Chat Client Connected :: ' + socket.id);
-    directory.connect(socket.id);
-    socket.emit('motd', 'Welcome to Lifeboat');
     // update/send userList when guest joins (on socket connection and before user join)
+    directory.connect(socket.id);
     updateUserList();
 
     // join the chatroom

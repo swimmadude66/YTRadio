@@ -29,7 +29,7 @@ module.exports= function(io){
       currDJ = userQueue.shift();
       var sock = directory.getsockets(currDJ);
       if(!sock || sock.length<1){
-        playNextSong(callback);
+        return playNextSong(callback);
       }
       else{
         FETCHING=true;
@@ -92,7 +92,7 @@ module.exports= function(io){
       if(username){
         userinqueue[username]=false;
         var i = userQueue.indexOf(username);
-        if(i >-1){
+        if(i>=0){
           userQueue.splice(i,1);
           mediaManager.emit('queue_updated', userQueue);
         }
@@ -104,7 +104,7 @@ module.exports= function(io){
       if(username){
         userinqueue[username]=false;
         var i = userQueue.indexOf(username);
-        if(i >-1){
+        if(i>=0){
           userQueue.splice(i,1);
           mediaManager.emit('queue_updated', userQueue);
         }
@@ -151,8 +151,10 @@ module.exports= function(io){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"});
     }
     userinqueue[res.locals.usersession.Username] = true;
-    userQueue.push(res.locals.usersession.Username);
-    mediaManager.emit('queue_updated', userQueue);
+    if(userQueue.indexOf(res.locals.usersession.Username)<0){
+      userQueue.push(res.locals.usersession.Username);
+      mediaManager.emit('queue_updated', userQueue);
+    }
     if(!currentVideo && !FETCHING){
       playNextSong(function(){
         return res.send({Success:true});

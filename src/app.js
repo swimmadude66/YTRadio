@@ -62,7 +62,7 @@ app.use(function(req, res, next){
   }
   // respond with json
   if (req.accepts('json')) {
-    return res.send({error: 'Not a valid endpoint'});
+    return res.send({Error: 'Not a valid endpoint'});
   }
   // default to plain-text. send()
   return res.type('txt').send('Not found');
