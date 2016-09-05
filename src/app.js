@@ -1,9 +1,12 @@
 var express    = require('express'); 		// call express
 var bodyParser = require('body-parser');
 var path       = require('path');
+var morgan     = require('morgan');
 var compress   = require('compression');
 global.config  = require('./config.json');
 var app        = express(); 			// define our app using express
+
+app.use(morgan('dev'));
 
 app.use(compress());
 app.set('view engine','html');

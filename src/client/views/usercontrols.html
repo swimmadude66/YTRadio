@@ -114,48 +114,22 @@
   <div class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container-fluid">
         <div class="col-xs-1" ng-click="expand=!expand" ng-show="getUser()">
-          <ul class="nav navbar-nav">
-            <li>
-              <a>
-                <span class="glyphicon glyphicon-chevron-down" ng-show="expand"></span>
-                <span class="glyphicon glyphicon-chevron-up" ng-hide="expand"></span>
-              </a>
-            </li>
-          </ul>
+          <span class="navbar-text glyphicon glyphicon-chevron-down" ng-if="expand"></span>
+          <span class="navbar-text glyphicon glyphicon-chevron-up" ng-if="!expand"></span>
         </div>
-        <div class="col-xs-1" ng-show="getUser()">
-          <ul class="nav navbar-nav">
-            <li>
-              <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !joined, 'btn-danger': joined}" ng-click="joinLeaveQueue()">
-                {{joined ? 'Leave Queue' : 'Join Queue'}}
-              </button>
-            </li>
-          </ul>
+        <div class="col-xs-4 col-sm-2 col-lg-1" ng-show="getUser()">
+          <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !joined, 'btn-danger': joined}" ng-click="joinLeaveQueue()">
+            {{joined ? 'Leave Queue' : 'Join Queue'}}
+          </button>
         </div>
-        <div class="col-xs-1" ng-show="getUser()">
-          <ul class="nav navbar-nav">
-            <li>
-              <a class="pointer">{{playlistName}}</a>
-            </li>
-          </ul>
+        <div class="col-xs-4 col-md-3 col-lg-5" ng-show="getUser()">
+          <p class="navbar-text"><strong>Playlist: </strong>{{playlistName}}</p>
+          <p class="navbar-text visible-lg"><strong>Next Song: </strong>{{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}</p>
         </div>
-        <div class="col-xs-5" ng-show="getUser()" style="overflow-x:hidden">
-          <ul class="nav navbar-nav">
-            <li>
-              <a>{{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}</a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-xs-3 col-md-4 col-lg-4 pull-right">
-          <ul class="nav navbar-nav pull-right" style="float:right !important;">
-            <li class="pull-right text-right" ng-click="login()" ng-hide="getUser()">
-              <a class="pull-right text-right">Log in/Sign up</a>
-            </li>
-            <li class="pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">
-              <span class="navbar-text visible-md visible-lg">Logged in as {{getUser().Username}}</span>
-              <a class="pull-right text-right"> Log Out?</a>
-            </li>
-          </ul>
+        <div class="col-xs-3 col-sm-2 col-lg-4 pull-right">
+          <p class="navbar-text pointer pull-right text-right" ng-click="login()" ng-hide="getUser()">Log in/Sign up</p>
+          <span class="navbar-text visible-lg text-right">Logged in as {{getUser().Username}}</span>
+          <p class="navbar-text pointer pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">Log Out?</p>
         </div>
       </div>
   </div>

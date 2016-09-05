@@ -10,7 +10,7 @@ var usemin      = require('gulp-usemin');
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src(['src/**/*.js','!src/**/lib/**/*'])
-        .pipe(jshint({esnext: true}))
+        .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
@@ -19,7 +19,7 @@ gulp.task('usemin', ['bower', 'copy_views'], function(){
     .pipe(usemin({
         ng: [ngAnnotate(), uglify({}), 'concat'],
         js: [ngAnnotate(), uglify(), 'concat'],
-        css: [uncss({html:['dist/client/**//*.html'], ignore:[/embed/i, /video/i, /iframe/i, /toast/i]}), nano(), 'concat']
+        css: [nano(), 'concat']
       })
     )
     .pipe(gulp.dest('dist/client'));

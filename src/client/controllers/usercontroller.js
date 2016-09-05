@@ -44,16 +44,18 @@ app.controller('UserCtrl', function ($scope, $http, ModalService, authService, m
   mediaService.on('nextSong_fetch', function(){
     var vidinfo = $scope.playlists[$scope.playlistName].Contents.shift();
     mediaService.emit('nextSong_response', vidinfo);
-    $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
-    $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
-      var data = res.data;
-      if(data.Success){}
-      else{
-        console.log(data.Error);
-      }
-    },function(err){
-      console.log(err);
-    });
+    if(vidinfo){
+      $scope.playlists[$scope.playlistName].Contents.push(vidinfo);
+      $http.post('/api/playlists/update', $scope.playlists[$scope.playlistName]).then(function(res){
+        var data = res.data;
+        if(data.Success){}
+        else{
+          console.log(data.Error);
+        }
+      },function(err){
+        console.log(err);
+      });
+    }
   });
 
   mediaService.on('queue_kick', function(){
