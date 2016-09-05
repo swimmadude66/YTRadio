@@ -150,18 +150,25 @@ module.exports= function(io){
     if(!directory.getsockets(res.locals.usersession.Username)){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"});
     }
-    userinqueue[res.locals.usersession.Username] = true;
-    if(userQueue.indexOf(res.locals.usersession.Username)<0){
-      userQueue.push(res.locals.usersession.Username);
-      mediaManager.emit('queue_updated', userQueue);
-    }
-    if(!currentVideo && !FETCHING){
-      playNextSong(function(){
-        return res.send({Success:true});
-      });
-    }
     else{
-      return res.send({Success:true});
+      userinqueue[res.locals.usersession.Username] = true;
+      if(userQueue.indexOf(res.locals.usersession.Username)<0){
+        userQueue.push(res.locals.usersession.Username);
+        var current = userQueue.indexOf(currDJ);
+        if(current>=0){
+          userQueue.splice(current, 1);
+          userQueue.push(currDJ);
+        }
+        mediaManager.emit('queue_updated', userQueue);
+      }
+      if(!currentVideo && !FETCHING){
+        playNextSong(function(){
+          return res.send({Success:true});
+        });
+      }
+      else{
+        return res.send({Success:true});
+      }
     }
   });
 
