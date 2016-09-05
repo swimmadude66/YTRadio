@@ -61,8 +61,8 @@ module.exports= function(io){
   }
 
   function saveHistory(playedSong){
-    var insert = 'Insert into `History`(`PlayTime`, `DJ`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,0,0,0,0);';
-    db.query(insert, [playedSong.StartTime, playedSong.Info.DJ.ID], function(err, result){
+    var insert = 'Insert into `History`(`PlayTime`, `DJ`, `VideoID`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,?,?,0,0,0);';
+    db.query(insert, [playedSong.StartTime, playedSong.Info.DJ.ID, playedSong.Info.ID, Object.keys(directory.getsockets()).length], function(err, result){
       if(err){
         console.log(err);
       }
@@ -206,6 +206,17 @@ module.exports= function(io){
     else{
       return res.send({Success:false, Error:'User is not authorized to alter the queue'});
     }
+  });
+
+  router.get('/history', function(req, res){
+    var q = 'Select `Users`.`Username`, `Videos`.* from `History` join `Videos` on `History`.`VideoID`=`Videos`.`VideoID` join `Users` on `Users`.`ID`=`History`.`DJ` ORDER BY `History`.`ID` DESC LIMIT 25;';
+    db.query(q, function(err, results){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success:true, History: results});
+    });
   });
 
   router.post('/skip', function(req, res){
