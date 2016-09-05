@@ -134,6 +134,12 @@ html,body{
   margin-top:6px;
 }
 
+.see-more{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 /*Override navbar collapse*/
 .navbar-collapse.collapse {
