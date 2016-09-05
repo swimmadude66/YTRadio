@@ -78,13 +78,26 @@ module.exports= function(io){
     socket.on('nextSong_response', function(songdata){
       if(FETCHING){
         FETCHING=false;
-        var newguy = songdata;
-        newguy.PlaybackID = uuid.v4();
-        newguy.DJ = directory.getuser(socket.id);
-        var now = new Date().getTime();
-        currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
-        mediaManager.emit('song_start', {currVid: currentVideo});
+        if(songdata){
+          var newguy = songdata;
+          newguy.PlaybackID = uuid.v4();
+          newguy.DJ = directory.getuser(socket.id);
+          var now = new Date().getTime();
+          currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
+          mediaManager.emit('song_start', {currVid: currentVideo});
+        }
+        else{
+          var uiq = userQueue.indexOf(directory.getuser(socket.id));
+          if(uiq >= 0){
+            userQueue.splice(uiq, 1);
+            socket.emit('queue_kick');
+          }
+          playNextSong(function(){
+            console.log('DJ did not have a valid song. Skipping....');
+          });
+        }
       }
+
     });
 
     socket.on('leave', function(){
