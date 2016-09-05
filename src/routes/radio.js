@@ -69,6 +69,23 @@ module.exports= function(io){
     });
   }
 
+  function remove_from_queue(dmw, callback){
+    var ind = userQueue.indexOf(dmw);
+    if(ind >-1){
+      var remuser = userQueue.splice(ind,1);
+      userinqueue[dmw]=false;
+      var dmwsocket = directory.getsockets(dmw);
+      if(dmwsocket){
+        mediaManager.to(dmwsocket).emit('queue_kick');
+      }
+      mediaManager.emit('queue_updated', userQueue);
+      return callback();
+    }
+    else{
+      return callback('User not in queue');
+    }
+  }
+
   mediaManager.on('connect', function(socket){
     getTimeElapsed(function(elapsed){
       mediaManager.emit('queue_updated', userQueue);
@@ -78,22 +95,20 @@ module.exports= function(io){
     socket.on('nextSong_response', function(songdata){
       if(FETCHING){
         FETCHING=false;
+        var dj = directory.getuser(socket.id);
         if(songdata){
           var newguy = songdata;
           newguy.PlaybackID = uuid.v4();
-          newguy.DJ = directory.getuser(socket.id);
+          newguy.DJ = dj;
           var now = new Date().getTime();
           currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
           mediaManager.emit('song_start', {currVid: currentVideo});
         }
         else{
-          var uiq = userQueue.indexOf(directory.getuser(socket.id));
-          if(uiq >= 0){
-            userQueue.splice(uiq, 1);
-            socket.emit('queue_kick');
-          }
-          playNextSong(function(){
-            console.log('DJ did not have a valid song. Skipping....');
+          remove_from_queue(dj.Username, function(err){
+            playNextSong(function(){
+              console.log('DJ did not have a valid song. Skipping....');
+            });
           });
         }
       }
@@ -188,20 +203,13 @@ module.exports= function(io){
   router.delete('/queue/:username', function(req,res){
     var dmw = req.params.username;
     if(res.locals.usersession.Username === dmw || res.locals.usersession.Role === 'ADMIN'){
-      var ind = userQueue.indexOf(dmw);
-      if(ind >-1){
-        var remuser = userQueue.splice(ind,1);
-        userinqueue[dmw]=false;
-        var dmwsocket = directory.getsockets(dmw);
-        if(dmwsocket){
-          mediaManager.to(dmwsocket).emit('queue_kick');
+      remove_from_queue(dmw, function(err){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
         }
-        mediaManager.emit('queue_updated', userQueue);
         return res.send({Success:true});
-      }
-      else{
-        return res.send({Success:false, Error: 'User not in Queue'});
-      }
+      });
     }
     else{
       return res.send({Success:false, Error:'User is not authorized to alter the queue'});
