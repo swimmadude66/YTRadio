@@ -10,7 +10,7 @@ var usemin      = require('gulp-usemin');
 // Lint Task
 gulp.task('lint', function() {
     return gulp.src(['src/**/*.js','!src/**/lib/**/*'])
-        .pipe(jshint({esnext: true}))
+        .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
