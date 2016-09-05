@@ -61,12 +61,29 @@ module.exports= function(io){
   }
 
   function saveHistory(playedSong){
-    var insert = 'Insert into `History`(`PlayTime`, `DJ`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,0,0,0,0);';
-    db.query(insert, [playedSong.StartTime, playedSong.Info.DJ.ID], function(err, result){
+    var insert = 'Insert into `History`(`PlayTime`, `DJ`, `VideoID`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,?,?,0,0,0);';
+    db.query(insert, [playedSong.StartTime, playedSong.Info.DJ.ID, playedSong.Info.ID, Object.keys(directory.getsockets()).length], function(err, result){
       if(err){
         console.log(err);
       }
     });
+  }
+
+  function remove_from_queue(dmw, callback){
+    var ind = userQueue.indexOf(dmw);
+    if(ind >-1){
+      var remuser = userQueue.splice(ind,1);
+      userinqueue[dmw]=false;
+      var dmwsocket = directory.getsockets(dmw);
+      if(dmwsocket){
+        mediaManager.to(dmwsocket).emit('queue_kick');
+      }
+      mediaManager.emit('queue_updated', userQueue);
+      return callback();
+    }
+    else{
+      return callback('User not in queue');
+    }
   }
 
   mediaManager.on('connect', function(socket){
@@ -78,13 +95,24 @@ module.exports= function(io){
     socket.on('nextSong_response', function(songdata){
       if(FETCHING){
         FETCHING=false;
-        var newguy = songdata;
-        newguy.PlaybackID = uuid.v4();
-        newguy.DJ = directory.getuser(socket.id);
-        var now = new Date().getTime();
-        currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
-        mediaManager.emit('song_start', {currVid: currentVideo});
+        var dj = directory.getuser(socket.id);
+        if(songdata){
+          var newguy = songdata;
+          newguy.PlaybackID = uuid.v4();
+          newguy.DJ = dj;
+          var now = new Date().getTime();
+          currentVideo = {Info: newguy, StartTime:now, EndTime: now+newguy.Duration};
+          mediaManager.emit('song_start', {currVid: currentVideo});
+        }
+        else{
+          remove_from_queue(dj.Username, function(err){
+            playNextSong(function(){
+              console.log('DJ did not have a valid song. Skipping....');
+            });
+          });
+        }
       }
+
     });
 
     socket.on('leave', function(){
@@ -150,42 +178,53 @@ module.exports= function(io){
     if(!directory.getsockets(res.locals.usersession.Username)){
       return res.send({Success:false, Error:"No known sockets. Please Re-Login"});
     }
-    userinqueue[res.locals.usersession.Username] = true;
-    if(userQueue.indexOf(res.locals.usersession.Username)<0){
-      userQueue.push(res.locals.usersession.Username);
-      mediaManager.emit('queue_updated', userQueue);
-    }
-    if(!currentVideo && !FETCHING){
-      playNextSong(function(){
-        return res.send({Success:true});
-      });
-    }
     else{
-      return res.send({Success:true});
+      userinqueue[res.locals.usersession.Username] = true;
+      if(userQueue.indexOf(res.locals.usersession.Username)<0){
+        userQueue.push(res.locals.usersession.Username);
+        var current = userQueue.indexOf(currDJ);
+        if(current>=0){
+          userQueue.splice(current, 1);
+          userQueue.push(currDJ);
+        }
+        mediaManager.emit('queue_updated', userQueue);
+      }
+      if(!currentVideo && !FETCHING){
+        playNextSong(function(){
+          return res.send({Success:true});
+        });
+      }
+      else{
+        return res.send({Success:true});
+      }
     }
   });
 
   router.delete('/queue/:username', function(req,res){
     var dmw = req.params.username;
     if(res.locals.usersession.Username === dmw || res.locals.usersession.Role === 'ADMIN'){
-      var ind = userQueue.indexOf(dmw);
-      if(ind >-1){
-        var remuser = userQueue.splice(ind,1);
-        userinqueue[dmw]=false;
-        var dmwsocket = directory.getsockets(dmw);
-        if(dmwsocket){
-          mediaManager.to(dmwsocket).emit('queue_kick');
+      remove_from_queue(dmw, function(err){
+        if(err){
+          console.log(err);
+          return res.send({Success: false, Error: err});
         }
-        mediaManager.emit('queue_updated', userQueue);
         return res.send({Success:true});
-      }
-      else{
-        return res.send({Success:false, Error: 'User not in Queue'});
-      }
+      });
     }
     else{
       return res.send({Success:false, Error:'User is not authorized to alter the queue'});
     }
+  });
+
+  router.get('/history', function(req, res){
+    var q = 'Select `Users`.`Username`, `Videos`.* from `History` join `Videos` on `History`.`VideoID`=`Videos`.`VideoID` join `Users` on `Users`.`ID`=`History`.`DJ` ORDER BY `History`.`ID` DESC LIMIT 25;';
+    db.query(q, function(err, results){
+      if(err){
+        console.log(err);
+        return res.send({Success: false, Error: err});
+      }
+      return res.send({Success:true, History: results});
+    });
   });
 
   router.post('/skip', function(req, res){
