@@ -17,18 +17,9 @@
             Skip
         </button>
       </div>
-      <div class="col-xs-9 col-sm-10">
-        <div class="col-xs-10">
-          <form class="navbar-form pull-right">
-            <input class="form-control volumebar" type="range" ng-model="volume" ng-change="setVolume()" ng-disabled="muted"/>
-          </form>
-        </div>
-        <div class="col-xs-2">
-          <button type="button" class="btn navbar-btn pull-right" ng-click="toggleMute()" ng-class="{'btn-danger':muted, 'btn-success':!muted}">
-            <span class="glyphicon glyphicon-volume-off" ng-show="muted"></span>
-            <span class="glyphicon glyphicon-volume-up" ng-hide="muted"></span>
-          </button>
-        </div>
+      <div class="col-xs-9 pull-right">
+        <input class="form-control volumebar pull-right" type="range" ng-model="volume" ng-change="setVolume()" ng-disabled="muted"/>
+        <p class="glyphicon navbar-text mute-button pull-right" ng-class="{'glyphicon-volume-off':muted, 'glyphicon-volume-up':!muted}" ng-click="toggleMute()"></p>
       </div>
     </div>
   </div>
