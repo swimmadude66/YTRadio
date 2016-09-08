@@ -58,6 +58,10 @@ app.controller('TheatreCtrl', function ($rootScope, $scope, $http, authService) 
   $scope.$on('youtube.player.ended', function ($event, player) {
     $rootScope.$broadcast('player.ended');
   });
+  
+  $scope.$on('youtube.player.error', function ($event, player) {
+    $rootScope.$broadcast('player.error');
+  });
 
   $scope.$on('youtube.player.paused', function ($event, player) {
     player.playVideo();

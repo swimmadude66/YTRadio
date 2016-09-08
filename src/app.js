@@ -36,7 +36,12 @@ else{
   var http = require('http');
   server = http.Server(app);
 }
+
 var port = (isHTTPS ? httpsport : httpport);
+
+if('Localhost' in global.config){
+  port = global.config.Localhost ? 3000 : port;
+}
 
 // SOCKET CONNECTIONS
 // =============================================================================

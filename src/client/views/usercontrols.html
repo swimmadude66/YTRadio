@@ -114,22 +114,29 @@
   <div class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container-fluid">
         <div class="col-xs-1" ng-click="expand=!expand" ng-show="getUser()">
-          <span class="navbar-text glyphicon glyphicon-chevron-down" ng-if="expand"></span>
-          <span class="navbar-text glyphicon glyphicon-chevron-up" ng-if="!expand"></span>
+          <span class="navbar-text glyphicon glyphicon-chevron-down pointer" ng-if="expand"></span>
+          <span class="navbar-text glyphicon glyphicon-chevron-up pointer" ng-if="!expand"></span>
         </div>
         <div class="col-xs-4 col-sm-2 col-lg-1" ng-show="getUser()">
           <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !joined, 'btn-danger': joined}" ng-click="joinLeaveQueue()">
             {{joined ? 'Leave Queue' : 'Join Queue'}}
           </button>
         </div>
-        <div class="col-xs-4 col-md-3 col-lg-5" ng-show="getUser()">
-          <p class="navbar-text"><strong>Playlist: </strong>{{playlistName}}</p>
-          <p class="navbar-text visible-lg"><strong>Next Song: </strong>{{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}</p>
+        <div class="col-xs-4 col-md-3 col-lg-2" ng-show="getUser()">
+          <p class="navbar-text see-more">
+            <strong>Playlist: </strong>{{playlistName}}
+          </p>
+        </div>
+        <div class="visible-lg col-lg-4">
+          <p class="navbar-text visible-lg see-more full-width">
+            <strong>Next Song: </strong>
+            {{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}
+          </p>
         </div>
         <div class="col-xs-3 col-sm-2 col-lg-4 pull-right">
           <p class="navbar-text pointer pull-right text-right" ng-click="login()" ng-hide="getUser()">Log in/Sign up</p>
-          <span class="navbar-text visible-lg text-right">Logged in as {{getUser().Username}}</span>
           <p class="navbar-text pointer pull-right text-right" ng-click="logOut()" ng-show="getUser().Username">Log Out?</p>
+          <p class="navbar-text visible-lg pull-right text-right">Logged in as {{getUser().Username}}</p>
         </div>
       </div>
   </div>
