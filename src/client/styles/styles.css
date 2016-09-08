@@ -9,6 +9,10 @@ html,body{
   height:100%;
 }
 
+.full-width{
+  width: 100%;
+}
+
 .nopad-x{
   padding-left: 0px;
   padding-right:0px;
@@ -159,10 +163,10 @@ float: right!important;
 }
 .mute-button{
   font-size: 24px;
-  line-height: 20px;
+  line-height: 18px;
   vertical-align: middle;
   display:inline;
-  padding-right:10px;
+  cursor: pointer;
 }
 
 input[type=range] {
