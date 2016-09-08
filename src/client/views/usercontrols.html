@@ -114,8 +114,8 @@
   <div class="navbar navbar-inverse navbar-fixed-bottom">
       <div class="container-fluid">
         <div class="col-xs-1" ng-click="expand=!expand" ng-show="getUser()">
-          <span class="navbar-text glyphicon glyphicon-chevron-down" ng-if="expand"></span>
-          <span class="navbar-text glyphicon glyphicon-chevron-up" ng-if="!expand"></span>
+          <span class="navbar-text glyphicon glyphicon-chevron-down pointer" ng-if="expand"></span>
+          <span class="navbar-text glyphicon glyphicon-chevron-up pointer" ng-if="!expand"></span>
         </div>
         <div class="col-xs-4 col-sm-2 col-lg-1" ng-show="getUser()">
           <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !joined, 'btn-danger': joined}" ng-click="joinLeaveQueue()">
@@ -127,7 +127,7 @@
             <strong>Playlist: </strong>{{playlistName}}
           </p>
         </div>
-        <div class="visible-lg col-lg-4 text-right">
+        <div class="visible-lg col-lg-4">
           <p class="navbar-text visible-lg see-more full-width">
             <strong>Next Song: </strong>
             {{playlists[playlistName].Contents[0].Title || 'No song left in playlist'}}
