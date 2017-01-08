@@ -4,7 +4,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
   $scope.playbackID=null;
   $scope.muted = false;
   $scope.timer=null;
-  $scope.timeRemaining = "00:00";
+  $scope.timeRemaining = '00:00';
   $scope.premuteVolume=100;
   $scope.volume = 100;
 
@@ -95,19 +95,19 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
     $rootScope.$broadcast('setVolume', $scope.muted ? $scope.premuteVolume : $scope.volume);
     $scope.timer=$interval(function(){
       var currtime = Math.floor($scope.ytplayer.getCurrentTime());
-      var trem = "";
+      var trem = '';
       var minutes = Math.floor(currtime/60);
       var seconds = currtime%60;
-      if(minutes > 60){
-        trem += Math.floor(minutes/60) +":";
+      if(minutes >= 60){
+        trem += Math.floor(minutes/60) +':';
         minutes = minutes%60;
         if(minutes<10){
-          minutes = "0"+minutes;
+          minutes = '0'+minutes;
         }
       }
-      trem += minutes +":";
+      trem += minutes +':';
       if(seconds < 10){
-        trem += 0;
+        trem += '0';
       }
       trem += seconds;
       $scope.timeRemaining = trem;
@@ -118,7 +118,7 @@ app.controller('RadioCtrl', function ($rootScope, $interval, $scope, $http, $coo
     if($scope.timer){
       $interval.cancel($scope.timer);
     }
-    $scope.timeRemaining = "00:00";
+    $scope.timeRemaining = '00:00';
     setTimeout(function(){
       $http.post('/api/radio/songend', {PlaybackID: $scope.playbackID})
       .then(function(res){
