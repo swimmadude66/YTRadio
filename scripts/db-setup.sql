@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS `ytradio` /*!40100 DEFAULT CHARACTER SET latin1 */
 
 USE `ytradio`;
 
-CREATE TABLE `history` (
+CREATE TABLE IF NOT EXISTS `history` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `PlayTime` bigint(16) NOT NULL,
   `DJ` int(11) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `history` (
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `videos` (
+CREATE TABLE IF NOT EXISTS `videos` (
   `videoID` varchar(100) NOT NULL,
   `Title` text NOT NULL,
   `Poster` varchar(200) DEFAULT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE `videos` (
   UNIQUE KEY `videoID_UNIQUE` (`videoID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Username` varchar(64) NOT NULL,
   `Email` varchar(128) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `Email_UNIQUE` (`Email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `sessions` (
+CREATE TABLE IF NOT EXISTS `sessions` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Key` varchar(128) NOT NULL,
   `UserID` int(11) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `sessions` (
   CONSTRAINT `userid` FOREIGN KEY (`UserID`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `playlists` (
+CREATE TABLE IF NOT EXISTS `playlists` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Owner` int(11) NOT NULL,
   `Name` varchar(64) NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `playlists` (
   CONSTRAINT `ownerID` FOREIGN KEY (`Owner`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `playlistcontents` (
+CREATE TABLE IF NOT EXISTS `playlistcontents` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `PlaylistID` int(11) DEFAULT NULL,
   `VideoID` varchar(200) DEFAULT NULL,
