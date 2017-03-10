@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AuthService} from '../../services/authservice';
+import {AuthService} from '../../services/auth';
 import { Http } from '@angular/http';
 
 @Component({
@@ -45,7 +45,7 @@ export class AuthComponent {
             .subscribe(
                 session => {
                     this.isLoading = false;
-                    this.closeModal(session);
+                    // this.closeModal(session);
                 },
                 err => {
                     this.isLoading = false;

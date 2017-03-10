@@ -1,3 +1,13 @@
-.dummy {
-    background:  transparent;
+.chat-window {
+    height: 100%;
+
+    .messages {
+        height: calc(100% - 100px);
+    }
+
+    .send-box {
+        height: 30px;
+        margin: 5px 0;
+        width: 100%;
+    }
 }
