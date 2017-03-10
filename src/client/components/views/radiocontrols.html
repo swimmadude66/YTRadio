@@ -1,0 +1,26 @@
+<nav class="navbar navbar-inverse" style="margin-bottom:0px; border-radius:0px;">
+  <div class="container-fluid">
+    <div class="col-md-8 col-sm-7 hidden-xs" id="songinfo" ng-show="playing">
+      <div class="col-md-4 hidden-xs hidden-sm">
+        <span class="navbar-text">DJ: {{videoInfo.DJ.Username}}</span>
+      </div>
+      <div class="col-sm-12 col-md-6">
+        <p class="navbar-text see-more"><strong>Now Playing: </strong>{{videoInfo.Title}}</p>
+      </div>
+      <div class="col-md-2 hidden-xs hidden-sm pull-right">
+        <p class="navbar-text pull-right">{{timeRemaining}}/{{videoInfo.FormattedTime}}</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-5 col-xs-12 pull-right" ng-show="playing">
+      <div class="col-xs-3 col-sm-2">
+        <button type="button" class="btn navbar-btn btn-danger" ng-click="skip()" ng-hide="!canSkip()">
+            Skip
+        </button>
+      </div>
+      <div class="col-xs-9 pull-right">
+        <input class="form-control volumebar pull-right" type="range" ng-model="volume" ng-change="setVolume()" ng-disabled="muted"/>
+        <p class="glyphicon navbar-text mute-button pull-right" ng-class="{'glyphicon-volume-off':muted, 'glyphicon-volume-up':!muted}" ng-click="toggleMute()"></p>
+      </div>
+    </div>
+  </div>
+</nav>

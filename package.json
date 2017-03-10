@@ -33,6 +33,7 @@
     "@angular/router": "3.4.2",
     "@angular/upgrade": "2.4.2",
     "angular2-cookie": "^1.2.6",
+    "angular2-toaster": "^2.0.0",
     "async": "^1.5.2",
     "body-parser": "^1.15.2",
     "bootstrap": "^4.0.0-alpha.6",

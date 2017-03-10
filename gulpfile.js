@@ -74,7 +74,8 @@ gulp.task('webpack-watch', function() {
         new browserSync({
             host: 'localhost',
             port: 3001,
-            proxy: 'localhost:3000'
+            proxy: 'localhost:3000',
+            ws: true,
         })
     );
     webpack(config, function(err, stats) {

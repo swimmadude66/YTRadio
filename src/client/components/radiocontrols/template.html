@@ -1,0 +1,24 @@
+<div class="container-fluid radio-controls">
+  <div class="row">
+    <div class="col-lg-8 col-md-7 hidden-sm-down" id="songinfo">
+      <ng-container *ngIf="playing">
+        <div class="col-md-4 hidden-sm-down">
+          <span class="navbar-text">DJ: {{videoInfo?.DJ?.Username}}</span>
+        </div>
+        <div class="col-sm-12 col-md-6">
+          <p class="navbar-text see-more"><strong>Now Playing: </strong>{{videoInfo?.Title}}</p>
+        </div>
+        <div class="col-md-2 hidden-sm-down float-right">
+          <p class="navbar-text float-right">{{timeRemaining}}/{{videoInfo?.FormattedTime}}</p>
+        </div>
+      </ng-container>
+    </div>
+    <div class="col-lg-4 col-md-5 col-xs-12 flex-last track-controls">
+      <button type="button" class="btn btn-danger skip-button" (click)="skip()" [disabled]="!canSkip()">
+            Skip
+      </button>
+      <input class="form-control volumebar float-right" type="range" [(ngModel)]="volume" (change)="setVolume()" [disabled]="muted"/>
+      <p class="fa mute-button float-right" [ngClass]="{'fa-volume-off':muted, 'fa-volume-up':!muted}" (click)="toggleMute()"></p>
+    </div>
+  </div>
+</div>

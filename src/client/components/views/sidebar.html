@@ -1,0 +1,22 @@
+<div class="container-fluid sidebar fullheight">
+  <div class="row nopad-x">
+   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===0}" ng-click="activeTab=0">
+     <h1><span class="glyphicon glyphicon-user"></span></h1>
+   </div>
+   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===1}" ng-click="activeTab=1">
+     <h1><span class="glyphicon glyphicon-list"></span></h1>
+   </div>
+   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===2}" ng-click="activeTab=2">
+     <h1><span class="glyphicon glyphicon-comment"></span></h1>
+   </div>
+   <div class="col-xs-3 text-center pointer sidebar-btn" ng-class="{'sidebar-btn-active':activeTab===3}" ng-click="activeTab=3">
+     <h1><span class="glyphicon glyphicon-cog"></span></h1>
+   </div>
+  </div>
+  <div class="row fullheight" style="padding-bottom:175px;">
+    <userlist ng-hide="activeTab!==0"></userlist>
+    <queue ng-hide="activeTab!==1"></queue>
+    <chat ng-hide="activeTab!==2"></chat>
+    <settings ng-hide="activeTab!==3"></settings>
+  </div>
+</div>
