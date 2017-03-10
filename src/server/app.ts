@@ -45,6 +45,12 @@ if (process.env.HTTPS) {
         pfx: (process.env.SSLPFX ? readFileSync(process.env.SSLPFX) : undefined)
     };
     server = https.createServer(ssl_config, app);
+    let redir = express();
+    redir.get('*', (req, res, next) => {
+      var httpshost = 'https://'+req.headers.host+req.url;
+      return res.redirect(httpshost);
+    });
+    redir.listen(80);
 } else {
     server = createServer(app);
 }
@@ -68,4 +74,5 @@ app.all('*', function(req, res){
 });
 
 server.listen(APP_CONFIG.port);
+
 console.log('App started on port', APP_CONFIG.port);
