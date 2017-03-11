@@ -3,6 +3,8 @@ import { Http } from '@angular/http';
 import { QueueService, SocketService, AuthService } from '../../services/';
 import { ToasterService } from 'angular2-toaster';
 
+declare var $;
+
 @Component({
     selector: 'user-controls',
     templateUrl: './template.html',
@@ -16,15 +18,9 @@ export class UserControlsComponent implements OnInit {
     private searchCriteria: any = {};
 
     private searchResults = [];
-    private playlists = {
-        'Default': {
-            Name: "Default", Active: true, Contents: []
-        }
-    };
-    private playlistName = "Default";
+    private playlists: any = {};
+    private playlistName = 'Default';
     private joined = false;
-    private isAdding = false;
-    private userData = {};
     private newPlaylist = {};
     private addingPlaylist = false;
 
@@ -58,6 +54,21 @@ export class UserControlsComponent implements OnInit {
             this.joined = false;
             this._toastr.pop('error', 'You have been removed from the queue');
         });
+
+        this._sockets.onChat('user_join', (newUser) => {
+            this.fetch_playlist();
+        });
+
+        $('#authModal').modal({show: false});
+        $('#authModal').on('hidden.bs.modal', (event) => {
+            if (this._auth.getUser()) {
+                this.fetch_playlist();
+            }
+        });
+    }
+
+    private listPlaylists(): any[] {
+        return Object.values(this.playlists);
     }
 
     private fetch_playlist() {
@@ -79,7 +90,8 @@ export class UserControlsComponent implements OnInit {
         });
     }
 
-    private search() {
+    private search(e) {
+        e.preventDefault();
         this.isSearching = true;
         this.isLoading = true;
         let cleancrit = encodeURIComponent(this.searchCriteria.query);
@@ -106,7 +118,7 @@ export class UserControlsComponent implements OnInit {
         this.playlists[this.playlistName].Active = true;
         this.isSearching = false;
         this._http.post('/api/playlists/setActive', this.playlists[name]).subscribe();
-    };
+    }
 
     addToPlaylist(vidinfo) {
         if (!vidinfo) {
@@ -123,36 +135,36 @@ export class UserControlsComponent implements OnInit {
             data => this._toastr.pop('success', `Song Added to Playlist: ${this.playlistName}`),
             err => console.error(err)
         );
-    };
+    }
 
     removeFromPlaylist(ind) {
         let item = this.playlists[this.playlistName].Contents.splice(ind, 1)[0];
         this._http.post('/api/playlists/removeItem', { PlaylistName: this.playlistName, VideoID: item.ID }).subscribe();
-    };
+    }
 
     moveUp(ind) {
         let item = this.playlists[this.playlistName].Contents[ind];
         this.playlists[this.playlistName].Contents.splice(ind, 1);
         this.playlists[this.playlistName].Contents.unshift(item);
         this._http.post('/api/playlists/update', this.playlists[this.playlistName]).subscribe();
-    };
+    }
 
     moveDown(ind) {
         let item = this.playlists[this.playlistName].Contents[ind];
         this.playlists[this.playlistName].Contents.splice(ind, 1);
         this.playlists[this.playlistName].Contents.push(item);
         this._http.post('/api/playlists/update', this.playlists[this.playlistName]).subscribe();
-    };
+    }
 
     addPlaylist() {
         this.addingPlaylist = true;
         this.newPlaylist = {};
-    };
+    }
 
     cancelPlaylistAdd() {
         this.addingPlaylist = false;
         this.newPlaylist = {};
-    };
+    }
 
     registerPlaylist() {
         this._http.post('/api/playlists/', this.newPlaylist)
@@ -166,7 +178,7 @@ export class UserControlsComponent implements OnInit {
             },
             err => this._toastr.pop('error', err)
         );
-    };
+    }
 
     joinLeaveQueue() {
         if (this.joined) {
@@ -175,8 +187,7 @@ export class UserControlsComponent implements OnInit {
             if (user) {
                 this._http.delete(`/api/radio/queue/${user.Username}`).subscribe();
             }
-        }
-        else {
+        } else {
             this.joined = true;
             this._http.post('/api/radio/queue', null)
             .subscribe(
@@ -187,27 +198,18 @@ export class UserControlsComponent implements OnInit {
                 }
             );
         }
-    };
+    }
 
-    // login() {
-    //     ModalService.showModal({
-    //         templateUrl: "views/auth.html",
-    //         controller: "AuthCtrl"
-    //     }).then((modal) => {
-    //         modal.element.modal();
-    //         modal.close.then((result) => {
-    //             this.fetch_playlist();
-    //             this.joined = false;
-    //         });
-    //     });
-    // };
+    login() {
+        $('#authModal').show();
+    }
 
     logOut() {
         this._auth.logOut().subscribe();
-    };
+    }
 
     getUser() {
         return this._auth.getUser();
-    };
+    }
 
 }

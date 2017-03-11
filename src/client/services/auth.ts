@@ -15,23 +15,19 @@ export class AuthService {
         private _cookies: CookieService,
         private _sockets: SocketService,
     ) {
-        let cval = this._cookies.get('ytrk_66');
-        if (cval && cval.length > 0) {
-            this._http.get(`/api/auth/${cval}`)
-            .map(res => res.json().Data)
-            .subscribe(
-                data => {
-                    this.session = data.Session;
-                    this.userInfo = data.User;
-                    this._sockets.join(data.User);
-                },
-                err => console.error(err)
-            );
-        }
+        this._http.get(`/api/auth/`)
+        .map(res => res.json().Data)
+        .subscribe(
+            data => {
+                this.session = data.Session.Key;
+                this.userInfo = data.User;
+                this._sockets.join(data.User);
+            },
+            err => console.error(err)
+        );
     }
 
     private nuke() {
-        this._cookies.remove('ytrk_66');
         this._cookies.remove('ytvolume');
         this.session = undefined;
         this.userInfo = undefined;
@@ -61,7 +57,7 @@ export class AuthService {
                 this.userInfo = data.User;
                 let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
                 let eDate = new Date(future);
-                this._cookies.put('ytrk_66', data.Session.Key, { expires: eDate });
+                this._cookies.put('ytrk_66', data.Session, { expires: eDate });
                 this._sockets.join(data.User);
             });
     }

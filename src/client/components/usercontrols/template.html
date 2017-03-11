@@ -1,30 +1,27 @@
 <div id="search-overlay" class="container-fluid overlay animation-on" *ngIf="expand && getUser()">
-  <div class="row" style="padding-top:20px; height:75px; background-color:#000;">
-    <div class="col-xs-3">
-      &nbsp;
-    </div>
-    <div class="col-xs-6">
-      <form class="simple-form" (submit)="search()">
+  <div class="row search-row justify-content-center">
+    <div class="col-6">
+      <form class="simple-form" #searchForm="ngForm" (ngSubmit)="searchForm.valid && search($event)">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Search for videos" ng-model="searchCriteria.query">
+          <input type="text" class="form-control" placeholder="Search for videos" [(ngModel)]="searchCriteria.query" name="search" required>
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button" ng-click="search()">Search</button>
+            <button class="btn btn-default" type="submit" [disabled]="searchForm.invalid">Search</button>
           </span>
         </div>
       </form>
     </div>
   </div>
-  <div class="row fullheight" style="padding-bottom:125px;">
-    <div class="col-xs-2">
+  <div class="row full-height" style="padding-bottom:125px;">
+    <div class="col-2 full-height overlay-col">
       <div class="row">
         <h2>Playlists</h2>
       </div>
       <hr>
       <div class="row">
         <ul class="nav nav-stacked playlist-list">
-          <li class="playlist-tab pointer" *ngFor="let pl of Object.Keys(playlists); let i=index;" (click)="viewPlaylist(playlists[pl].Name)" [ngClass]="{'playlist-active': playlists[pl].Name===playlistName}">
+          <li class="playlist-tab pointer" *ngFor="let pl of listPlaylists(); let i=index;" (click)="viewPlaylist(pl.Name)" [ngClass]="{'playlist-active': pl.Name===playlistName}">
             <h4>
-              {{playlists[pl]?.Name}}
+              {{pl?.Name}}
             </h4>
           </li>
         </ul>
@@ -36,21 +33,21 @@
             <span class="fa fa-plus"></span>
           </button>
         </div>
-        <div class="col-xs-12" *ngIf="addingPlaylist">
-          <div class="col-xs-8">
+        <div class="col-12" *ngIf="addingPlaylist">
+          <div class="col-8">
             <input type="text" name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist.Name" style="color:#000000;">
           </div>
-          <div class="col-xs-4" style="padding-top:4px;">
+          <div class="col-4" style="padding-top:4px;">
             <a href="javascript:void(0)" (click)="cancelPlaylistAdd()" style="color:red;"><span class="fa fa-remove"></span></a>
             <a href="javascript:void(0)" (click)="registerPlaylist()" style="color:green;"><span class="fa fa-ok"></span></a>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-xs-9 fullheight" style="overflow-y: scroll;">
+    <div class="col-9 full-height overlay-col" style="overflow-y: scroll;">
       <div id="loadingbar" *ngIf="isLoading" style="position:absolute; top:20%; right:50%;">
         <h3 class="text-center">Loading...</h3>
-        <img src="images/loading.gif" alt="loading" class="center-block" />
+        <img src="assets/images/loading.gif" alt="loading" class="center-block" />
       </div>
       <div id="search-results" [hidden]="!isSearching || isLoading">
         <h2>Results</h2>
@@ -77,7 +74,7 @@
         <h2>{{playlistName}}</h2>
         <hr>
         <ul class="nav nav-stacked" >
-          <li *ngFor="let item of playlists[playlistName].Contents let i=index; let f=first; let l=last" role="presentation">
+          <li *ngFor="let item of playlists[playlistName]?.Contents let i=index; let f=first; let l=last" role="presentation">
             <div class="row vidrow">
               <div class="col-xs-2 vidicon">
                 <img src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
@@ -113,15 +110,14 @@
 <footer class="user-controls">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-1" (click)="expand=!expand">
+      <div class="col-1 expand-button text-center" (click)="expand=!expand">
         <ng-container *ngIf="getUser()">
-          <span class="footer-text fa fa-chevron-down pointer" *ngIf="expand"></span>
-          <span class="footer-text fa fa-chevron-up pointer" *ngIf="!expand"></span>
+          <span class="footer-text fa pointer" [ngClass]="{'fa-chevron-up': !expand, 'fa-chevron-down': expand}"></span>
         </ng-container>
       </div>
       <div class="col-xs-4 col-sm-2 col-lg-1">
         <ng-container *ngIf="getUser()">
-          <button type="button" class="btn navbar-btn" ng-class="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
+          <button type="button" class="btn join-button" [ngClass]="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
             {{joined ? 'Leave Queue' : 'Join Queue'}}
           </button>
         </ng-container>
@@ -136,14 +132,14 @@
       <div class="hidden-md-down col-lg-4">
         <p class="footer-text hidden-md-down see-more full-width">
           <strong>Next Song: </strong>
-          {{playlists[playlistName].Contents[0]?.Title || 'No song left in playlist'}}
+          {{playlists[playlistName]?.Contents[0]?.Title || 'No song left in playlist'}}
         </p>
       </div>
       <div class="col-xs-3 col-sm-2 col-lg-4">
-        <p class="footer-text pointer float-right text-right" (click)="login()" *ngIf="!getUser()">Log in/Sign up</p>
+        <a class="footer-text pointer float-right text-right" (click)="login()" *ngIf="!getUser()">Log in/Sign up</a>
         <ng-container *ngIf="getUser()?.Username">
-          <p class="footer-text pointer float-right text-right" (click)="logOut()">Log Out?</p>
-          <p class="footer-text hidden-md-down float-right text-right">Logged in as {{getUser()?.Username}}</p>
+          <a class="footer-text pointer float-right text-right" (click)="logOut()">Log Out?</a>
+          <p class="footer-text hidden-md-down float-left text-left">Logged in as {{getUser()?.Username}}</p>
         </ng-container>
       </div>
     </div>

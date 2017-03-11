@@ -25,7 +25,7 @@ module.exports = (APP_CONFIG) => {
         if (userQueue.length > 0) {
             currDJ = userQueue.shift();
             let sock = directory.getsockets(currDJ);
-            if (!sock || sock.length < 1) {
+            if (!sock || !('/media' in sock) || sock['/media'].length < 1) {
                 return playNextSong(callback);
             } else {
                 FETCHING = true;
@@ -33,7 +33,7 @@ module.exports = (APP_CONFIG) => {
                     userQueue.push(currDJ);
                 }
                 mediaManager.emit('queue_updated', userQueue);
-                mediaManager.to(sock).emit('nextSong_fetch');
+                sock['/media'].emit('nextSong_fetch');
                 return callback();
             }
         } else {
@@ -69,8 +69,8 @@ module.exports = (APP_CONFIG) => {
             userQueue.splice(ind, 1);
             userinqueue[dmw] = false;
             let dmwsocket = directory.getsockets(dmw);
-            if (dmwsocket) {
-                mediaManager.to(dmwsocket).emit('queue_kick');
+            if (dmwsocket && dmwsocket['/media']) {
+                dmwsocket['/media'].emit('queue_kick');
             }
             mediaManager.emit('queue_updated', userQueue);
             return callback();
@@ -80,9 +80,15 @@ module.exports = (APP_CONFIG) => {
     }
 
     mediaManager.on('connect', (socket) => {
+        directory.connect(socket.id);
         getTimeElapsed((elapsed) => {
             mediaManager.emit('queue_updated', userQueue);
-            socket.emit('join', { currVid: currentVideo, startSeconds: elapsed });
+            socket.emit('welcome', { currVid: currentVideo, startSeconds: elapsed });
+        });
+
+        // authenticate to become elegible to DJ
+        socket.on('join', (user) => {
+            directory.join(socket, user);
         });
 
         socket.on('nextSong_response', (songdata) => {

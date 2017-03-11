@@ -2,6 +2,8 @@ import {Component} from '@angular/core';
 import {AuthService} from '../../services/auth';
 import { Http } from '@angular/http';
 
+declare var $;
+
 @Component({
     selector: 'auth',
     templateUrl: './template.html',
@@ -9,7 +11,7 @@ import { Http } from '@angular/http';
 })
 export class AuthComponent {
 
-    private action = 'Log In';
+    private action = 'Log in';
     private signupText = false;
     private isLoading = false;
     private auth: any = {};
@@ -19,14 +21,22 @@ export class AuthComponent {
     constructor(
         private _http: Http,
         private _auth: AuthService
-    ) { }
+    ) {}
 
-    // closeModal(rval) {
-    //     //  Manually hide the modal using bootstrap.
-    //     $element.modal('hide');
-    //     //  Now close as normal, but give 500ms for bootstrap to animate
-    //     close(rval, 500);
-    // }
+    closeModal() {
+        $('#authModal').hide();
+    }
+
+    passwordMismatch() {
+        return (this.action === 'Sign up' && this.auth.Password && this.auth.Password2 !== this.auth.Password);
+    }
+
+    formInvalid(form) {
+        let htmlinValid = form.invalid;
+        let busy = this.isLoading;
+        let pwdMismatch = this.passwordMismatch();
+        return htmlinValid || busy || pwdMismatch;
+    }
 
     toggleAction() {
         this.errormessage = undefined;
@@ -37,7 +47,8 @@ export class AuthComponent {
         }
     }
 
-    submit() {
+    submit(e) {
+        e.preventDefault();
         this.errormessage = undefined;
         this.isLoading = true;
         if (this.action === 'Log in') {
@@ -45,11 +56,15 @@ export class AuthComponent {
             .subscribe(
                 session => {
                     this.isLoading = false;
-                    // this.closeModal(session);
+                    this.closeModal();
                 },
                 err => {
                     this.isLoading = false;
-                    this.errormessage = err;
+                    if (err.status === 400) {
+                        this.errormessage = 'Invalid Username and/or Password';
+                    } else {
+                        this.errormessage = 'Could not log in. Try again later';
+                    }
                 }
             );
         } else {
@@ -61,7 +76,11 @@ export class AuthComponent {
                 },
                 error => {
                     this.isLoading = false;
-                    this.errormessage = error;
+                    if (error.status === 400) {
+                        this.errormessage = 'Invalid Username, Email and/or Password';
+                    } else {
+                        this.errormessage = 'Could not sign up. Try again later';
+                    }
                 }
             );
         }

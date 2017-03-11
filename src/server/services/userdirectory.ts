@@ -21,21 +21,32 @@ export class UserDirectory {
         return user;
     }
 
-    join(socketid, user) {
+    join(socket, user) {
+        let idParts = socket.id.split('#');
+        let room = idParts[0];
         let oldsock = null;
-        if (user.Username in this.usertosocket) {
-            oldsock = this.usertosocket[user.Username];
+        if ((user.Username in this.usertosocket) && (room in this.usertosocket[user.Username])) {
+            oldsock = this.usertosocket[user.Username][room];
         }
-        this.usertosocket[user.Username] = socketid;
-        this.sockettouser[socketid] = user;
+        let socks = this.usertosocket[user.Username] || {};
+        socks[room] = socket;
+        this.usertosocket[user.Username] = socks;
+        this.sockettouser[socket.id] = user;
         return oldsock;
     }
 
     leave(socketid) {
         let user = null;
+        let idParts = socketid.split('#');
+        let room = idParts[0];
         if (this.sockettouser[socketid]) {
             user = this.sockettouser[socketid];
-            delete this.usertosocket[user.Username];
+            if (room in this.usertosocket[user.Username]) {
+                delete this.usertosocket[user.Username][room];
+                if (Object.keys(this.usertosocket[user.Username]).length < 1) {
+                    delete this.usertosocket[user.Username];
+                }
+            }
         }
         this.sockettouser[socketid] = null;
         return user;

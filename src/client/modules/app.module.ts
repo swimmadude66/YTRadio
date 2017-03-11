@@ -12,9 +12,9 @@ import {
     ChatComponent,
     RadioControlsComponent,
     TheatreComponent,
-    UserControlsComponent
+    UserControlsComponent,
+    AuthComponent
 } from '../components/';
-
 import { ALL_SERVICES } from '../services';
 
 @NgModule({
@@ -25,9 +25,7 @@ import { ALL_SERVICES } from '../services';
         ToasterModule,
         RouterModule.forRoot(
             [
-                { path: '', component: UserListComponent },
-                { path: 'queue', component: QueueComponent },
-                { path: 'chat', component: ChatComponent },
+                { path: '**', redirectTo: '/'}
             ]
         )
     ],
@@ -39,6 +37,7 @@ import { ALL_SERVICES } from '../services';
         RadioControlsComponent,
         TheatreComponent,
         UserControlsComponent,
+        AuthComponent,
     ],
     providers: [
         ...ALL_SERVICES,

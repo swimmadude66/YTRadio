@@ -35,14 +35,13 @@ export class RadioControlsComponent implements OnInit, OnDestroy{
             this.volume = JSON.parse(vparts[2]);
         }
 
-        this._sockets.onMedia('join', (data) => {
+        this._sockets.onMedia('welcome', (data) => {
             if (data.currVid) {
                 this.videoInfo = data.currVid.Info;
                 this.playbackID = data.currVid.Info.PlaybackID;
                 this._player.playVideo(data.currVid, data.startSeconds);
                 this.playing = true;
-            }
-            else {
+            } else {
                 this.videoInfo = null;
                 this.timeRemaining = '0:00';
                 this._player.playVideo(null, data.startSeconds);
@@ -56,8 +55,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy{
                 this.playbackID = data.currVid.Info.PlaybackID;
                 this._player.playVideo(data.currVid, null);
                 this.playing = true;
-            }
-            else {
+            } else {
                 this.videoInfo = null;
                 this.timeRemaining = '0:00';
                 this._player.playVideo(null, null);

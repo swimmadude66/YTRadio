@@ -18,7 +18,6 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.onlineUsers = [];
         this._sockets.onRoot('userList', (list) => {
             this.onlineUsers = list;
-            console.log('online users:', list);
         });
     }
 

@@ -10,6 +10,33 @@ module.exports = (APP_CONFIG) => {
     /*
     * Identify users as anon or signed in
     */
+    // try the cookie first
+    router.use((req, res, next) => {
+        if (res.locals.usersession) {
+            return next();
+        }
+        if (!req.signedCookies || !req.signedCookies[APP_CONFIG.cookie_name]) {
+            res.locals.user = null;
+            return next();
+        }
+        let authZ = req.signedCookies[APP_CONFIG.cookie_name];
+        let keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+        db.query(keylookup, [authZ])
+        .subscribe(
+            results => {
+                if (!results || results.length < 1) {
+                    return next();
+                }
+                let user = results[0];
+                res.locals.usersession = user;
+                return next();
+            }, err => {
+                return next();
+            }
+        );
+    });
+
+    // next try API codes in the headers
     router.use((req, res, next) => {
         if (res.locals.usersession) {
             return next();
@@ -31,7 +58,7 @@ module.exports = (APP_CONFIG) => {
             }, err => {
                 return next();
             }
-        )
+        );
     });
 
     /*
@@ -89,21 +116,38 @@ module.exports = (APP_CONFIG) => {
             let sid = uuid();
             return db.query('Insert into Sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
             .map(() => {
-                delete user.Salt;
-                delete user.Password;
-                return {Session: sid, User: user};
+                return {Session: sid, User: public_user};
             });
         })
         .subscribe(
-            result => res.send({ Data:  result}),
+            result => {
+                res.cookie(APP_CONFIG.cookie_name, result.Session, {
+                    maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // ten year expiration
+                    path: '/',
+                    httpOnly: true,
+                    secure: req.secure,
+                    signed: true,
+                    sameSite: true
+                });
+                return res.send({ Data:  result});
+            },
             err => {
                 return res.status(400).send('Invalid username and/or password');
             }
-        )
+        );
     });
 
-    router.get('/auth/:sessionID', (req, res) => {
-        let sid = req.params.sessionID;
+    router.get('/auth/', (req, res) => {
+        let sid;
+        if (!res.locals || !res.locals.usersession || !res.locals.usersession.Key) {
+            if (!req.query || !req.query.sessionId) {
+                return res.status(400).send('Missing cookie or query param');
+            } else {
+                sid = req.query.sessionID;
+            }
+        } else {
+            sid = res.locals.usersession.Key;
+        }
         let keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
         db.query(keylookup, [sid])
         .subscribe(
@@ -118,7 +162,7 @@ module.exports = (APP_CONFIG) => {
                 console.error(err);
                 return res.status(500).send('Could not retrieve session data');
             }
-        )
+        );
     });
 
     router.post('/logOut', (req, res) => {

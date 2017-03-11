@@ -4,9 +4,78 @@
     background-color: $menu-color;
     color: $light-text-color;
     height: 50px;
-
+    position: relative;
+    z-index: 100;
     .footer-text {
         line-height: 50px;
         vertical-align: middle;
     }
+
+    a,button,.expand-button {
+        cursor: pointer;
+    }
+
+    .join-button {
+        margin: 7px 5px;
+    }
+}
+
+
+.overlay{
+  height:100%;
+  width:100%;
+  overflow:hidden;
+  position:absolute;
+  z-index:10;
+  top:0;
+  left:0;
+  color:#FFF;
+  background-color: rgba(64,64,64,0.9);
+
+  .search-row {
+      padding-top:20px; height:75px; background-color:#000;
+  }
+
+  .overlay-col {
+      padding: 25px 0 25px 50px;
+  }
+}
+
+.playlist-list li{
+  padding-top:5px;
+  padding-bottom: 5px;
+
+}
+
+.playlist-list li h4{
+  padding-left: 15px;
+}
+
+.playlist-active{
+  background-color: rgba(255,255,255,0.5);
+}
+
+.vidrow{
+  min-width:700px;
+  overflow-x: hidden;
+}
+
+.vidrow:hover{
+  background-color: rgba(255,255,255,0.3);
+}
+
+.vidicon{
+  min-width:150px;
+}
+
+.vidtitle, .vidtime{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top:35px;
+}
+
+.vidbuttons{
+  min-width:145px;
+  margin-top:30px;
 }

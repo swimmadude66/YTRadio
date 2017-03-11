@@ -9,6 +9,7 @@
     "tsc-server": "tsc -p src/server/tsconfig.json",
     "gulp": "gulp",
     "start": "node dist/server/app.js",
+    "start-dev": "node --debug=5858 dist/server/app.js",
     "dev": "gulp watch"
   },
   "repository": {

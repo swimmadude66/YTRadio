@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as async from 'async';
 
 let recentMessages = [];
@@ -18,8 +17,7 @@ module.exports = (APP_CONFIG) => {
                     userList.push(username);
                     return cb();
                 }
-            }
-            else {
+            } else {
                 anon_listeners++;
                 return cb();
             }
@@ -47,12 +45,15 @@ module.exports = (APP_CONFIG) => {
         // join the chatroom
         socket.on('join', (user) => {
             if (!(user.Username in directory.getusers())) {
-                socket.broadcast.emit('user_join', user.Username);
+                socket.emit('user_join', user.Username);
                 console.log(user.Username + ' joined chat!');
             }
             // add to maps
-            let oldsock = directory.join(socket.id, user);
-            chatManager.to(oldsock).emit('session_expired');
+
+            let oldsock = directory.join(socket, user);
+            if (oldsock) {
+                oldsock.emit('session_expired');
+            }
             updateUserList();
             recentMessages.forEach((rnode) => {
                 socket.emit('messageFromServer', rnode);
@@ -83,8 +84,8 @@ module.exports = (APP_CONFIG) => {
                 timestamp: new Date(),
                 message: payload.message
             };
-            if (directory.getsockets(payload.to)) {
-                chatManager.to(directory.getsockets(payload.to)).emit('private_message', privateMessage);
+            if ('/chat' in directory.getsockets(payload.to)) {
+                directory.getsockets(payload.to)['/chat'].emit('private_message', privateMessage);
                 console.log('Chat-PM: ', privateMessage.timestamp, privateMessage.sender, payload.to, privateMessage.message);
             }
         });
