@@ -14,7 +14,7 @@
                             <div class="form-group" [ngClass]="{'has-danger': !(username.valid || (username.pristine && !f.submitted))}">
                                 <label for="username" class="control-label">Username</label>
                                 <input type="text" name="username" id="username" class="form-control" 
-                                    pattern="[A-Za-z0-9]{3,}" placeholder="{{action==='Sign up' ? 'Pick a username' : 'Your Username'}}"
+                                    pattern=".{3,}" placeholder="{{action==='Sign up' ? 'Pick a username' : 'Your Username'}}"
                                     [(ngModel)]="auth.Username" #username="ngModel" required>
                                 <small [hidden]="username.valid || (username.pristine && !f.submitted)">
                                     Username is required (minimum 3 characters).
