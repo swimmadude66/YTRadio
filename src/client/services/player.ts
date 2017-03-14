@@ -23,10 +23,15 @@ export class PlayerService {
     private player;
     private playerInfo: any = {};
     private novid = true;
+    private volumeInfo: any = {};
 
     constructor() {
         let that = this;
         window['onYouTubeIframeAPIReady'] = (event) => that.onReady(event, that);
+        this.init();
+    }
+
+    init() {
         let tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         let firstScriptTag = document.getElementsByTagName('script')[0];
@@ -52,6 +57,8 @@ export class PlayerService {
     onPlayerReady(event, that) {
         if (that.player && that.playerInfo.VideoId) {
             that.playVideo({Info: {ID: that.playerInfo.VideoId}}, that.playerInfo.start || 0);
+            that.setVolume(that.volumeInfo.volume || 100);
+            that.setMuted(that.volumeInfo.muted || false);
         }
     }
 
@@ -77,7 +84,7 @@ export class PlayerService {
             }
         } else {
             this.novid = true;
-            this.playerInfo = undefined;
+            this.playerInfo = {};
             if (this.player && this.player.stopVideo) {
                 this.player.stopVideo();
             }
@@ -89,11 +96,19 @@ export class PlayerService {
     }
 
     setVolume(volume: number) {
-        this.player.setVolume(volume);
+        if (this.player && this.player.setVolume) {
+            this.player.setVolume(volume);
+        } else {
+            this.volumeInfo.volume = volume;
+        }
     }
 
     setMuted(muted: boolean) {
-        muted ? this.player.mute() : this.player.unMute();
+        if (this.player && this.player.mute && this.player.unMute) {
+            muted ? this.player.mute() : this.player.unMute();
+        } else {
+            this.volumeInfo.muted = muted;
+        }
     }
 
     hasVideo(): boolean {

@@ -1,3 +1,4 @@
+import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import {PlayerService} from '../../services/player';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AuthService, SocketService } from '../../services';
@@ -11,14 +12,25 @@ import { Http } from '@angular/http';
 })
 export class RadioControlsComponent implements OnInit, OnDestroy {
     private videoInfo: any = {};
+    private subs: Subscription[] = [];
+    private volumeEvents: Subject<number> = new Subject<number>();
     private playing = false;
     private playbackID = null;
     private muted = false;
     private timeRemaining = '00:00';
     private premuteVolume = 100;
-    private volume = 100;
-    private timer;
-    private sub;
+    private _volume = 100;
+    private timer: Observable<string>;
+
+    set volume(vol: number) {
+        this._volume = vol;
+        this._player.setVolume(vol);
+        this.volumeEvents.next(vol);
+    }
+
+    get volume() {
+        return this._volume;
+    }
 
     constructor(
         private _http: Http,
@@ -33,6 +45,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
             this.muted = JSON.parse(vparts[0]);
             this.premuteVolume = JSON.parse(vparts[1]);
             this.volume = JSON.parse(vparts[2]);
+            this._player.setMuted(this.muted);
         }
 
         this._sockets.onMedia('welcome', (data) => {
@@ -65,7 +78,9 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.sub = this._player.observe().subscribe(
+        this.subs.push(this._player.observe()
+        .distinct()
+        .subscribe(
             event => {
                 if (event.Data === 1) {
                     this.startTimer();
@@ -73,17 +88,26 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
                     this.stopTimer();
                 }
             }
+        ));
+
+        this.subs.push(
+            this.volumeEvents
+            .debounce(() => Observable.timer(400))
+            .subscribe(
+                vol => this.saveVolume()
+            )
         );
     }
 
     ngOnDestroy() {
-        if (this.sub) {
-            this.sub.unsubscribe();
+        if (this.subs) {
+            this.subs.forEach(s => s.unsubscribe());
         }
     }
 
     private startTimer() {
-        this.timer = setInterval(() => {
+        this.timer = Observable.timer(0, 1000)
+        .map(_ => {
             let currtime = Math.floor(this._player.getCurrentTime());
             let trem = '';
             let minutes = Math.floor(currtime / 60);
@@ -100,21 +124,18 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
                 trem += '0';
             }
             trem += seconds;
-            this.timeRemaining = trem;
-        }, 1000);
+            return trem;
+        });
     }
 
     private stopTimer() {
         if (this.timer) {
-            clearInterval(this.timer);
+            this.timer = undefined;
         }
-        this.timeRemaining = '00:00';
         setTimeout(() => this._http.post('/api/radio/songend', { PlaybackID: this.playbackID }).subscribe(), 1000);
     }
 
     private saveVolume() {
-        this._player.setVolume(this.volume);
-        this._player.setMuted(this.muted);
         let volume_cookie = JSON.stringify(this.muted) + '|' + this.premuteVolume + '|' + this.volume;
         let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
         let eDate = new Date(future);
@@ -148,11 +169,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
             this.premuteVolume = this.volume;
             this.volume = 0;
         }
-        this.saveVolume();
-    }
-
-    setVolume() {
-        this.saveVolume();
+        this._player.setMuted(this.muted);
     }
 
     getUser() {
