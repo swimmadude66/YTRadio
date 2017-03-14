@@ -1,5 +1,3 @@
-import * as async from 'async';
-
 let recentMessages = [];
 
 module.exports = (APP_CONFIG) => {
@@ -10,33 +8,33 @@ module.exports = (APP_CONFIG) => {
     function updateUserList() {
         let userList = [];
         let anon_listeners = 0;
-        async.each(Object.keys(directory.getsockets()), (socket, cb) => {
+        Object.keys(directory.getsockets()).forEach((socket) => {
             if (!socket.startsWith('/chat')) {
-                return cb();
+                return;
             }
             let username = (directory.getuser(socket) || { Username: null }).Username;
             if (username) {
                 if (userList.indexOf(username) === -1) {
                     userList.push(username);
-                    return cb();
+                    return;
                 }
             } else {
-                userList.push(socket);
-                return cb();
+                anon_listeners++;
+                return;
             }
-        }, (err) => {
-            if (anon_listeners > 0) {
-                let anon_string = anon_listeners + ' Anonymous guest';
-                if (anon_listeners > 1) {
-                    anon_string += 's';
-                }
-                if (userList.length > 0) {
-                    anon_string = 'Plus ' + anon_string;
-                }
-                userList.push(anon_string);
-            }
-            APP_CONFIG.Socks.sockets.emit('userList', userList);
         });
+
+        if (anon_listeners > 0) {
+            let anon_string = anon_listeners + ' Anonymous guest';
+            if (anon_listeners > 1) {
+                anon_string += 's';
+            }
+            if (userList.length > 0) {
+                anon_string = 'Plus ' + anon_string;
+            }
+            userList.push(anon_string);
+        }
+        APP_CONFIG.Socks.sockets.emit('userList', userList);
     }
 
     // connection event

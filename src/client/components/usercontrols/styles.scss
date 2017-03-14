@@ -41,14 +41,18 @@
   }
 }
 
+.list-group-item {
+    background-color: transparent;
+}
+
+.playlist-tab {
+    padding: 5px 20px;
+}
+
 .playlist-list li{
   padding-top:5px;
   padding-bottom: 5px;
 
-}
-
-.playlist-list li h4{
-  padding-left: 15px;
 }
 
 .playlist-active{
@@ -58,6 +62,7 @@
 .vidrow{
   min-width:700px;
   overflow-x: hidden;
+  width: 100%;
 }
 
 .vidrow:hover{

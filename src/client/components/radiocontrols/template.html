@@ -9,7 +9,7 @@
           <p class="radio-control-text see-more"><strong>Now Playing: </strong>{{videoInfo?.Title}}</p>
         </div>
         <div class="col-md-2 hidden-sm-down float-right">
-          <p class="radio-control-text float-right" *ngIf="videoInfo?.FormattedTime">{{timer | async}}/{{videoInfo?.FormattedTime}}</p>
+          <p class="radio-control-text float-right" *ngIf="timer">{{timer | async}}/{{videoInfo?.FormattedTime}}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,4 @@
 import * as uuid from 'uuid/v4';
-import * as async from 'async';
 
 let userQueue = [];
 let userinqueue = {};
