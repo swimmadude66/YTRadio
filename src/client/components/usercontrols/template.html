@@ -87,13 +87,13 @@
                   <div class="col-xs-9 vidbuttons">
                     <div class="btn-group btn-group-sm">
                       <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-primary" (click)="moveUp($index)" [hidden]="f">
+                        <button type="button" class="btn btn-primary" (click)="moveUp(i)" [hidden]="f">
                           <span class="fa fa-arrow-up"></span>
                         </button>
-                        <button type="button" class="btn btn-primary" (click)="moveDown($index)" [hidden]="l">
+                        <button type="button" class="btn btn-primary" (click)="moveDown(i)" [hidden]="l">
                           <span class="fa fa-arrow-down"></span>
                         </button>
-                        <button type="button" class="btn btn-danger" (click)="removeFromPlaylist($index)">
+                        <button type="button" class="btn btn-danger" (click)="removeFromPlaylist(i)">
                           <span class="fa fa-remove"></span>
                         </button>
                       </div>
