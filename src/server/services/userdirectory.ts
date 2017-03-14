@@ -12,9 +12,8 @@ export class UserDirectory {
     }
 
     disconnect(socketid) {
-        let user = null;
-        if (this.sockettouser[socketid]) {
-            user = this.sockettouser[socketid];
+        let user = this.sockettouser[socketid];
+        if (user) {
             delete this.usertosocket[user.Username];
         }
         delete this.sockettouser[socketid];

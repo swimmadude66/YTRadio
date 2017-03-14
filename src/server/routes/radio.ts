@@ -1,4 +1,5 @@
 import * as uuid from 'uuid/v4';
+import * as async from 'async';
 
 let userQueue = [];
 let userinqueue = {};
@@ -80,7 +81,7 @@ module.exports = (APP_CONFIG) => {
     }
 
     mediaManager.on('connect', (socket) => {
-        directory.connect(socket.id);
+
         getTimeElapsed((elapsed) => {
             mediaManager.emit('queue_updated', userQueue);
             socket.emit('welcome', { currVid: currentVideo, startSeconds: elapsed });
@@ -114,8 +115,9 @@ module.exports = (APP_CONFIG) => {
         });
 
         socket.on('leave', function () {
-            let username = (directory.getuser(socket.id) || { Username: null }).Username;
-            if (username) {
+            let user = directory.leave(socket.id);
+            if (user && user.Username) {
+                let username = user.Username;
                 userinqueue[username] = false;
                 let i = userQueue.indexOf(username);
                 if (i >= 0) {
@@ -126,10 +128,10 @@ module.exports = (APP_CONFIG) => {
         });
 
         socket.on('disconnect', function () {
-            let username = (directory.getuser(socket.id) || { Username: null }).Username;
-            if (username) {
-                userinqueue[username] = false;
-                let i = userQueue.indexOf(username);
+            let user = directory.disconnect(socket.id);
+            if (user && user.Username) {
+                userinqueue[user.Username] = false;
+                let i = userQueue.indexOf(user.Username);
                 if (i >= 0) {
                     userQueue.splice(i, 1);
                     mediaManager.emit('queue_updated', userQueue);

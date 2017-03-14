@@ -9,7 +9,7 @@ import { Http } from '@angular/http';
     templateUrl: './template.html',
     styleUrls: ['./styles.scss']
 })
-export class RadioControlsComponent implements OnInit, OnDestroy{
+export class RadioControlsComponent implements OnInit, OnDestroy {
     private videoInfo: any = {};
     private playing = false;
     private playbackID = null;
@@ -39,13 +39,13 @@ export class RadioControlsComponent implements OnInit, OnDestroy{
             if (data.currVid) {
                 this.videoInfo = data.currVid.Info;
                 this.playbackID = data.currVid.Info.PlaybackID;
-                this._player.playVideo(data.currVid, data.startSeconds);
                 this.playing = true;
+                this._player.playVideo(data.currVid, data.startSeconds);
             } else {
                 this.videoInfo = null;
                 this.timeRemaining = '0:00';
-                this._player.playVideo(null, data.startSeconds);
                 this.playing = false;
+                this._player.playVideo(null, data.startSeconds);
             }
         });
 
@@ -73,7 +73,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy{
                     this.stopTimer();
                 }
             }
-        )
+        );
     }
 
     ngOnDestroy() {
@@ -137,24 +137,23 @@ export class RadioControlsComponent implements OnInit, OnDestroy{
             return;
         }
         this._http.post('/api/radio/skip', { PlaybackID: this.videoInfo.PlaybackID }).subscribe();
-    };
+    }
 
     toggleMute() {
         if (this.muted) {
             this.muted = false;
             this.volume = this.premuteVolume;
-        }
-        else {
+        } else {
             this.muted = true;
             this.premuteVolume = this.volume;
             this.volume = 0;
         }
         this.saveVolume();
-    };
+    }
 
     setVolume() {
         this.saveVolume();
-    };
+    }
 
     getUser() {
         return this._auth.getUser();

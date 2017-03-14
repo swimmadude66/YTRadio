@@ -11,6 +11,9 @@ module.exports = (APP_CONFIG) => {
         let userList = [];
         let anon_listeners = 0;
         async.each(Object.keys(directory.getsockets()), (socket, cb) => {
+            if (!socket.startsWith('/chat')) {
+                return cb();
+            }
             let username = (directory.getuser(socket) || { Username: null }).Username;
             if (username) {
                 if (userList.indexOf(username) === -1) {
@@ -18,7 +21,7 @@ module.exports = (APP_CONFIG) => {
                     return cb();
                 }
             } else {
-                anon_listeners++;
+                userList.push(socket);
                 return cb();
             }
         }, (err) => {

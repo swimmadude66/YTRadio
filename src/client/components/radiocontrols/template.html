@@ -17,7 +17,7 @@
       <button type="button" class="btn btn-danger skip-button" (click)="skip()" [disabled]="!canSkip()">
             Skip
       </button>
-      <input class="form-control volumebar float-right" type="range" [(ngModel)]="volume" (change)="setVolume()" [disabled]="muted"/>
+      <input class="form-control volumebar float-right" type="range" [(ngModel)]="volume" [disabled]="muted"/>
       <p class="fa mute-button float-right" [ngClass]="{'fa-volume-off':muted, 'fa-volume-up':!muted}" (click)="toggleMute()"></p>
     </div>
   </div>

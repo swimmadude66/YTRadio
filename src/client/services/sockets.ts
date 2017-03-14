@@ -17,13 +17,11 @@ export class SocketService {
     join(data?: any) {
         this.chatSocket.emit('join', data);
         this.mediaSocket.emit('join', data);
-        this.rootSocket.emit('join', data);
     }
 
     leave() {
         this.chatSocket.emit('leave');
         this.mediaSocket.emit('leave');
-        this.rootSocket.emit('leave');
     }
 
     chatEmit(endpoint: string, data?: any) {
