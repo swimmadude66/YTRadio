@@ -1,0 +1,29 @@
+<radio-controls></radio-controls>
+<div class="container-fluid middle-section">
+    <div class="row full-height justify-content-center">
+        <div id="screen" class="col-12 col-md-8 col-lg-9 col-xl-10 full-height align-self-middle">
+            <theatre></theatre>
+        </div>
+        <div class="col-md-4 col-lg-3 col-xl-2 hidden-sm-down full-height sidebar">
+            <div class="row nopad-x align-items-space">
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===0}" (click)="activateTab(0)">
+                    <h1><span class="fa fa-user"></span></h1>
+                </div>
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===1}" (click)="activateTab(1)">
+                    <h1><span class="fa fa-list"></span></h1>
+                </div>
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===2}" (click)="activateTab(2)">
+                    <h1><span class="fa fa-comment"></span></h1>
+                </div>
+            </div>
+            <div class="row full-height">
+                <user-list [hidden]="activeTab !== 0"></user-list>
+                <queue [hidden]="activeTab !== 1"></queue>
+                <chat [hidden]="activeTab !== 2"></chat>
+            </div>
+        </div>
+    </div>
+</div>
+<user-controls></user-controls>
+<toaster-container></toaster-container>
+<auth></auth>

@@ -1,0 +1,10 @@
+<div id="screen" class="row align-items-middle justify-content-center full-height">
+  <div class="embed-responsive embed-responsive-16by9 full-height" [hidden]="!hasVideo()">
+    <div id="player"></div>
+  </div>
+  <h1 class="no-vid-message" *ngIf="!hasVideo()">
+      No Videos Queued
+      <br class="hidden-lg-up"/>
+      <small>Add a video to get the party rolling!</small>
+  </h1>
+</div>
