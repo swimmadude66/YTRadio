@@ -4,7 +4,7 @@ import {readFileSync} from 'fs';
 import {createServer} from 'http';
 import {Database} from './services/db';
 import {YTAPI} from './services/ytapi';
-import * as https from 'http2';
+import * as https from 'https';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as compress from 'compression';
