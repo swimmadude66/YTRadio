@@ -58,8 +58,8 @@
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
-    "@types/core-js": "^0.9.35",
-    "@types/node": "^6.0.51",
+    "@types/core-js": "0.9.35",
+    "@types/node": "6.0.51",
     "angular-router-loader": "^0.5.0",
     "angular2-template-loader": "^0.6.2",
     "awesome-typescript-loader": "^3.0.4-rc.0",

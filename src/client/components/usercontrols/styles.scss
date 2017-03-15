@@ -16,7 +16,7 @@
     }
 
     .join-button {
-        margin: 7px 5px;
+        margin: 7px 0;
     }
 }
 
@@ -39,6 +39,12 @@
   .overlay-col {
       padding: 25px 0 25px 50px;
   }
+
+  .overlay-sidebar {
+      overflow-x: hidden;
+      overflow-y: scroll;
+  }
+
 }
 
 .list-group-item {
@@ -64,17 +70,12 @@
 }
 
 .vidrow{
-  min-width:700px;
   overflow-x: hidden;
   width: 100%;
 }
 
 .vidrow:hover{
   background-color: rgba(255,255,255,0.3);
-}
-
-.vidicon{
-  min-width:150px;
 }
 
 .vidtitle, .vidtime{
@@ -85,6 +86,9 @@
 }
 
 .vidbuttons{
-  min-width:145px;
   margin-top:30px;
+}
+
+.expand-button {
+    max-width: 40px;
 }
