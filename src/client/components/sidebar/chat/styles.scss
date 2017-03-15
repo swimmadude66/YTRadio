@@ -3,6 +3,10 @@
 
     .messages {
         height: calc(100% - 100px);
+        overflow-x: hidden;
+        overflow-y: scroll;
+        padding-right: 20px;
+        padding-bottom: 45px; 
     }
 
     .send-box {

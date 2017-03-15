@@ -1,11 +1,10 @@
 <div class="col-12 chat-window">
-    <div class="messages">
+    <div class="messages" #scrollMe>
         <p class="chatmessage" *ngFor="let message of messages">
             <b>{{message?.Author}}:</b> {{message?.Message}}
         </p>
     </div>
-    <!--[hidden]="!getUser()"-->
-    <footer class="send-box" >
+    <footer class="send-box" *ngIf="getUser()">
         <form (submit)="sendMessage()">
             <input type="text" name="messageBox" class="form-control" placeholder="type here to chat" [(ngModel)]="messageText.contents" maxlength="512">
         </form>

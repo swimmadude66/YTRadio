@@ -1,5 +1,5 @@
 import {SocketService, AuthService} from '../../../services/';
-import {Component, OnDestroy} from '@angular/core';
+import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {Http} from '@angular/http';
 
 @Component({
@@ -8,6 +8,8 @@ import {Http} from '@angular/http';
     styleUrls: ['./styles.scss']
 })
 export class ChatComponent implements OnDestroy {
+
+    @ViewChild('scrollMe') private messageWindow: ElementRef;
 
     private messages = [];
     private messageText: any = {};
@@ -38,11 +40,20 @@ export class ChatComponent implements OnDestroy {
             if (this.messages.length > 100) {
                 this.messages.splice(0, this.messages.length - 100);
             }
+            this.scrollToBottom();
         });
     }
 
     ngOnDestroy() {
         this._sockets.destroyChat();
+    }
+
+    scrollToBottom(): void {
+        try {
+            this.messageWindow.nativeElement.scrollTop = this.messageWindow.nativeElement.scrollHeight;
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     getUser() {
