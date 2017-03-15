@@ -1,18 +1,6 @@
 CREATE DATABASE IF NOT EXISTS `ytradio` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
 USE `ytradio`;
-
-CREATE TABLE IF NOT EXISTS `history` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `PlayTime` bigint(16) NOT NULL,
-  `DJ` int(11) NOT NULL,
-  `ListenerCount` int(5) NOT NULL DEFAULT '0',
-  `UpVotes` int(5) NOT NULL DEFAULT '0',
-  `DownVotes` int(5) NOT NULL DEFAULT '0',
-  `Saves` int(5) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS `videos` (
   `videoID` varchar(100) NOT NULL,
   `Title` text NOT NULL,
@@ -73,3 +61,18 @@ CREATE TABLE IF NOT EXISTS `playlistcontents` (
   CONSTRAINT `FKvideoID` FOREIGN KEY (`VideoID`) REFERENCES `videos` (`videoID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `history` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `PlayTime` bigint(16) NOT NULL,
+  `DJ` int(11) NOT NULL,
+  `ListenerCount` int(5) NOT NULL DEFAULT '0',
+  `UpVotes` int(5) NOT NULL DEFAULT '0',
+  `DownVotes` int(5) NOT NULL DEFAULT '0',
+  `Saves` int(5) NOT NULL DEFAULT '0',
+  `VideoID` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `DJ_idx` (`DJ`),
+  KEY `Video_idx` (`VideoID`),
+  CONSTRAINT `DJ` FOREIGN KEY (`DJ`) REFERENCES `users` (`ID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Video` FOREIGN KEY (`VideoID`) REFERENCES `videos` (`videoID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
