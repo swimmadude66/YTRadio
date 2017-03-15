@@ -1,62 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="YTRadio">
+<html lang="en">
   <head>
+    <base href="/">
+    <title>Lifeboat</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Lifeboat</title>
-    <!--  build:css css/styles.min.css -->
-    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="lib/angular-toastr/dist/angular-toastr.min.css">
-    <link rel="stylesheet" href="styles/styles.css">
-    <!-- endbuild -->
-    <!--  build:favicon /favicon.ico -->
-    <link rel='shortcut icon' type='image/x-icon' href='/favicon.ico' />
-    <!-- endbuild -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="styles.min.css" rel="stylesheet">
   </head>
-
-  <body ng-controller="PageCtrl">
-    <radio-controls></radio-controls>
-    <div class="container-fluid" style="height:100%; overflow:hidden">
-      <div class="row" style="height:100%;">
-        <div class="col-md-10 col-xs-12" style="padding-left:0px; padding-right:0px; height:100%">
-          <theatre></theatre>
-        </div>
-        <div class="col-md-2 hidden-sm hidden-xs sidebar" style="height:100%;">
-          <radio-sidebar></radio-sidebar>
-        </div>
-      </div>
-    </div>
-    <user-controls></user-controls>
-    <!--  build:js js/lib.min.js -->
-    <script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
-    <script type="text/javascript" src="lib/angular-modal-service/dst/angular-modal-service.min.js"></script>
-    <script type="text/javascript" src="lib/angular-youtube-mb/dist/angular-youtube-embed.min.js"></script>
-    <script type="text/javascript" src="lib/angular-toastr/dist/angular-toastr.tpls.min.js"></script>
-    <script type="text/javascript" src="lib/angular-cookies/angular-cookies.min.js"></script>
-    <script type="text/javascript" src="lib/angular-scroll-glue/src/scrollglue.js"></script>
-    <script type="text/javascript" src="lib/socket.io-client/socket.io.js"></script>
-    <script type="text/javascript" src="lib/angular-socket-io/socket.js"></script>
-    <!-- endbuild -->
-    <script type="text/javascript" src="https://www.youtube.com/iframe_api"></script>
-    <!--  build:ng js/app.min.js -->
-    <script type="text/javascript" src="index.js"></script>
-    <script type="text/javascript" src="controllers/settingscontroller.js"></script>
-    <script type="text/javascript" src="controllers/sidebarcontroller.js"></script>
-    <script type="text/javascript" src="controllers/radiocontroller.js"></script>
-    <script type="text/javascript" src="controllers/theatrecontroller.js"></script>
-    <script type="text/javascript" src="controllers/queuecontroller.js"></script>
-    <script type="text/javascript" src="controllers/usercontroller.js"></script>
-    <script type="text/javascript" src="controllers/authcontroller.js"></script>
-    <script type="text/javascript" src="controllers/chatcontroller.js"></script>
-    <script type="text/javascript" src="controllers/userlistcontroller.js"></script>
-    <script type="text/javascript" src="services/authservice.js"></script>
-    <script type="text/javascript" src="services/chatservice.js"></script>
-    <script type="text/javascript" src="services/mediaservice.js"></script>
-    <script type="text/javascript" src="services/rootservice.js"></script>
-    <script type="text/javascript" src="services/queueservice.js"></script>
-    <!-- endbuild -->
+  <body>
+    <lifeboat>Loading ...</lifeboat>
+    <script type="text/javascript" src="common.min.js"></script>
+    <script type="text/javascript" src="vendor.min.js"></script>
+    <script type="text/javascript" src="app.min.js"></script>
   </body>
 </html>
