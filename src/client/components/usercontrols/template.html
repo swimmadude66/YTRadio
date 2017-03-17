@@ -34,12 +34,14 @@
           </button>
         </div>
         <div class="col-12" *ngIf="addingPlaylist">
-          <div class="col-8">
-            <input type="text" name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist.Name" style="color:#000000;">
-          </div>
-          <div class="col-4" style="padding-top:4px;">
-            <a (click)="cancelPlaylistAdd()" style="color:red;"><span class="fa fa-remove"></span></a>
-            <a (click)="registerPlaylist()" style="color:green;"><span class="fa fa-ok"></span></a>
+          <div class="row">
+            <div class="col-8">
+              <input type="text" name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist.Name" style="color:#000000;">
+            </div>
+            <div class="col-4" style="padding-top:4px;">
+              <a (click)="cancelPlaylistAdd()" style="color:red;"><span class="fa fa-remove"></span></a>
+              <a (click)="registerPlaylist()" style="color:green;"><span class="fa fa-check"></span></a>
+            </div>
           </div>
         </div>
       </div>
