@@ -102,10 +102,11 @@ export class YTAPI {
         let song_collate = 'INSERT INTO `videos` (`videoID`, `Title`, `Poster`, `Thumbnails`, `FormattedTime`, `Duration`) VALUES ' + this.db.escape(nestedlists) + ' ON DUPLICATE KEY UPDATE `videoID`=`videoID`;';
         this.db.query(song_collate)
         .subscribe(
-            _ => _,
+            _ => {
+                return callback(null, full_list);
+            },
             err => console.error(err)
         );
-        return callback(null, full_list);
     }
 
 }
