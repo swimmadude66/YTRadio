@@ -36,7 +36,7 @@ export class YTAPI {
                 .subscribe(
                     data => {
                         try {
-                            let body = JSON.parse(data.body);
+                            let body = JSON.parse(data.body.replace(/[\u0800-\uFFFF]/g, ''));
                             results = results.concat(body.items);
                             nextPage = body.nextPageToken;
                             more = !!nextPage;
