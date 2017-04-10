@@ -1,9 +1,9 @@
-CREATE DATABASE IF NOT EXISTS `ytradio` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE IF NOT EXISTS `ytradio` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 
 USE `ytradio`;
 CREATE TABLE IF NOT EXISTS `videos` (
   `videoID` varchar(100) NOT NULL,
-  `Title` text NOT NULL,
+  `Title` longtext NOT NULL,
   `Poster` varchar(200) DEFAULT NULL,
   `Thumbnails` longtext,
   `FormattedTime` varchar(100) NOT NULL DEFAULT '0:00',
