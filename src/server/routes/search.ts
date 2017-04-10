@@ -27,8 +27,8 @@ module.exports = (APP_CONFIG) => {
                 }
                 let body = {
                     ID: result.id.videoId,
-                    Title: result.snippet.title.replace(/[\u0800-\uFFFF]/g, ''),
-                    Poster: result.snippet.channelTitle.replace(/[\u0800-\uFFFF]/g, ''),
+                    Title: result.snippet.title,
+                    Poster: result.snippet.channelTitle,
                     Thumbnails: result.snippet.thumbnails
                 };
                 cleanvids[body.ID] = body;
