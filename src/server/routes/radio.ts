@@ -222,6 +222,7 @@ module.exports = (APP_CONFIG) => {
             if (res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ.Username) {
                 if (req.body.PlaybackID === currentVideo.Info.PlaybackID) {
                     playNextSong(function () {
+                        console.log(res.locals.usersession.Username, 'skipped the song');
                         return res.status(204).end();
                     });
                 } else {
