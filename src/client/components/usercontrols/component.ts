@@ -205,6 +205,7 @@ export class UserControlsComponent implements OnInit {
     }
 
     logOut() {
+        this.joined = false;
         this._auth.logOut().subscribe();
     }
 
