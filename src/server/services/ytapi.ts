@@ -36,7 +36,7 @@ export class YTAPI {
                 .subscribe(
                     data => {
                         try {
-                            let body = JSON.parse(data.body.replace(/[\u0800-\uFFFF]/g, ''));
+                            let body = JSON.parse(data.body);
                             results = results.concat(body.items);
                             nextPage = body.nextPageToken;
                             more = !!nextPage;
@@ -94,7 +94,7 @@ export class YTAPI {
         });
         let nestedlists = full_list
         .map(
-            x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default:{url:'images/nothumbnail.jpg'}}), x.FormattedTime, x.Duration]
+            x => [x.ID, x.Title, x.Poster, JSON.stringify(x.Thumbnails || {default: {url: 'images/nothumbnail.jpg'}}), x.FormattedTime, x.Duration]
         );
         if (nestedlists.length < 1) {
             return callback('No Songs mapped');
@@ -105,7 +105,10 @@ export class YTAPI {
             _ => {
                 return callback(null, full_list);
             },
-            err => console.error(err)
+            err => {
+                console.error(err);
+                return callback(err);
+            }
         );
     }
 
