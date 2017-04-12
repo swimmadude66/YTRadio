@@ -183,9 +183,9 @@ module.exports = (APP_CONFIG) => {
     /*
     * External Methods
     */
-    router.use('/search/', require('./search')(APP_CONFIG));
-    router.use('/radio/', require('./radio')(APP_CONFIG));
-    router.use('/playlists/', require('./playlists')(APP_CONFIG));
+    router.use('/search', require('./search')(APP_CONFIG));
+    router.use('/radio', require('./radio')(APP_CONFIG));
+    router.use('/playlists', require('./playlists')(APP_CONFIG));
     router.use('/chat', require('./chat')(APP_CONFIG));
 
     return router;

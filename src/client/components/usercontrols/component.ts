@@ -95,7 +95,7 @@ export class UserControlsComponent implements OnInit {
         this.isSearching = true;
         this.isLoading = true;
         let cleancrit = encodeURIComponent(this.searchCriteria.query);
-        this._http.get(`/api/search/${cleancrit}`)
+        this._http.get(`/api/search/?q=${cleancrit}`)
         .map(res => res.json())
         .subscribe(
             data => {

@@ -1,19 +1,22 @@
-import { RxHttpRequest } from 'rx-http-request';
 
 module.exports = (APP_CONFIG) => {
     const router = require('express').Router();
     const ytapi = APP_CONFIG.ytapiService;
 
-    router.use((req, res, next) => {
-        if (!res.locals.usersession) {
-            return res.status(403).send('Unauthorized');
-        } else {
-            return next();
+    // router.use((req, res, next) => {
+    //     if (!res.locals.usersession) {
+    //         return res.status(403).send('Unauthorized');
+    //     } else {
+    //         return next();
+    //     }
+    // });
+    router.get('/', (req, res) => {
+        if (!req.query || !req.query.q) {
+            return res.status(400).send('Query is required');
         }
-    });
-    router.get('/:query', (req, res) => {
+        let query = req.query.q;
         let host = 'https://www.googleapis.com/youtube/v3/search?part=id,snippet&maxResults=50&type=video&videoEmbeddable=true&q=';
-        let req_string = host + req.params.query + '&key=' + APP_CONFIG.YTAPI;
+        let req_string = host + query + '&key=' + APP_CONFIG.YTAPI;
         ytapi.compileResults(req_string, null, 50, (err, results) => {
             if (err) {
                 console.error(err);
@@ -27,8 +30,8 @@ module.exports = (APP_CONFIG) => {
                 }
                 let body = {
                     ID: result.id.videoId,
-                    Title: result.snippet.title.replace(/[\u0800-\uFFFF]/g, ''),
-                    Poster: result.snippet.channelTitle.replace(/[\u0800-\uFFFF]/g, ''),
+                    Title: result.snippet.title,
+                    Poster: result.snippet.channelTitle,
                     Thumbnails: result.snippet.thumbnails
                 };
                 cleanvids[body.ID] = body;
@@ -36,14 +39,14 @@ module.exports = (APP_CONFIG) => {
             });
             ids = ids.substring(0, ids.length - 1);
             let qstring = 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails&maxResults=50&id=' + ids + '&key=' + APP_CONFIG.YTAPI;
-            ytapi.compileResults(qstring, null, 25, (err, innerresults) => {
-                if (err) {
-                    console.error(err);
+            ytapi.compileResults(qstring, null, 25, (error, innerresults) => {
+                if (error) {
+                    console.error(error);
                     return res.status(500).send('Could not search');
                 }
-                ytapi.addDurations(innerresults, cleanvids, (err, full_list) => {
-                    if (err) {
-                        console.error(err);
+                ytapi.addDurations(innerresults, cleanvids, (err2, full_list) => {
+                    if (err2) {
+                        console.error(err2);
                         return res.status(500).send('Could not search');
                     }
                     return res.send({ Videos: full_list });

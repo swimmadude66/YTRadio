@@ -71,7 +71,7 @@
     "sass-loader": "^5.0.1",
     "source-map-loader": "^0.1.6",
     "tslint": "^3.7.4",
-    "typescript": "^2.1.6",
+    "typescript": "^2.2.2",
     "webpack": "^2.2.1"
   }
 }

@@ -10,7 +10,8 @@ export class Database {
             port: process.env.DB_PORT || 3306,
             database: process.env.DB_DATABASE || 'ytradio',
             user: process.env.DB_USER || 'root',
-            password: process.env.DB_PASSWORD || 'admin'
+            password: process.env.DB_PASSWORD || 'admin',
+            charset: 'utf8mb4' // needed since youtube allows emojis...
         }, config || {});
 
         this.pool = createPool(poolconfig);
@@ -35,6 +36,6 @@ export class Database {
     }
 
     public escape(value) {
-        return mysqlEscape(value)
+        return mysqlEscape(value);
     }
 }
