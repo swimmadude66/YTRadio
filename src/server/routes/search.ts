@@ -16,7 +16,7 @@ module.exports = (APP_CONFIG) => {
         }
         let query = req.query.q;
         let host = 'https://www.googleapis.com/youtube/v3/search?part=id,snippet&maxResults=50&type=video&videoEmbeddable=true&q=';
-        let req_string = host + query + '&key=' + APP_CONFIG.YTAPI;
+        let req_string = host + encodeURIComponent(query) + '&key=' + APP_CONFIG.YTAPI;
         ytapi.compileResults(req_string, null, 50, (err, results) => {
             if (err) {
                 console.error(err);
