@@ -44,7 +44,7 @@ app.use(morgan((tokens, req, res) => {
         '- user:',
         (res.locals.usersession || {Username: 'Unauthenticated User'}).Username,
         '(' + req.ip + ')'
-    ];
+    ].join(' ');
 }));
 
 let server;
