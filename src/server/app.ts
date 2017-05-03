@@ -34,7 +34,18 @@ app.use(compress());
 app.use(bodyParser.json({limit: '100mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(cookieParser(APP_CONFIG.cookie_secret));
-app.use(morgan(APP_CONFIG.log_level));
+app.use(morgan((tokens, req, res) => {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens['response-time'](req, res),
+        'ms',
+        '- user:',
+        (res.locals.usersession || {Username: 'Unauthenticated User'}).Username,
+        '(' + req.ip + ')'
+    ].join(' ');
+}));
 
 let server;
 if (process.env.HTTPS) {
