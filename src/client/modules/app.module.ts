@@ -21,6 +21,7 @@ import { ALL_SERVICES } from '../services';
     imports: [
         BrowserModule,
         HttpModule,
+        FormsModule,
         SharedModule,
         ToasterModule,
         RouterModule.forRoot(
