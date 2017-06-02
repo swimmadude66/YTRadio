@@ -40,7 +40,7 @@ export class UserDirectory {
         let room = idParts[0];
         if (this.sockettouser[socketid]) {
             user = this.sockettouser[socketid];
-            if (room in this.usertosocket[user.Username]) {
+            if (this.usertosocket[user.Username] && room in this.usertosocket[user.Username]) {
                 delete this.usertosocket[user.Username][room];
                 if (Object.keys(this.usertosocket[user.Username]).length < 1) {
                     delete this.usertosocket[user.Username];
