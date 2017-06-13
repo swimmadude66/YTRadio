@@ -7,7 +7,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
     templateUrl: './template.html',
     styleUrls: ['./styles.scss']
 })
-export class QueueComponent implements OnInit, OnDestroy{
+export class QueueComponent implements OnInit, OnDestroy {
 
     private sub: Subscription;
     private queue: string[];

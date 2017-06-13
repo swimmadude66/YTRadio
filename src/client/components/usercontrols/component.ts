@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { Http } from '@angular/http';
-import { QueueService, SocketService, AuthService } from '../../services/';
+import { SocketService, AuthService } from '../../services/';
 import { ToasterService } from 'angular2-toaster';
 
 declare var $;
@@ -12,22 +12,20 @@ declare var $;
 })
 export class UserControlsComponent implements OnInit {
 
-    private expand = false;
-    private isSearching = false;
-    private isLoading = false;
-    private searchCriteria: any = {};
-
-    private searchResults = [];
-    private playlists: any = {};
-    private playlistName = 'Default';
-    private joined = false;
-    private newPlaylist = {};
-    private addingPlaylist = false;
+    expand = false;
+    isSearching = false;
+    isLoading = false;
+    searchCriteria: any = {};
+    searchResults = [];
+    playlists: any = {};
+    playlistName = 'Default';
+    joined = false;
+    newPlaylist = {};
+    addingPlaylist = false;
 
     constructor(
         private _auth: AuthService,
         private _sockets: SocketService,
-        private _queue: QueueService,
         private _http: Http,
         private _toastr: ToasterService,
     ) { }
@@ -68,7 +66,7 @@ export class UserControlsComponent implements OnInit {
     }
 
     private listPlaylists(): any[] {
-        return Object.values(this.playlists);
+        return Object.keys(this.playlists).map(k => this.playlists[k]);
     }
 
     private fetch_playlist() {
@@ -79,11 +77,17 @@ export class UserControlsComponent implements OnInit {
         .map(res => res.json())
         .subscribe(data => {
             this.playlists = data.Playlists;
+            var found = false;
             for (let pl in data.Playlists) {
                 if (data.Playlists.hasOwnProperty(pl) && data.Playlists[pl].Active) {
                     this.playlistName = data.Playlists[pl].Name;
+                    found = true;
                     break;
                 }
+            }
+            if (!found && this.playlists.length) {
+                this.playlists[0].Active = true;
+                this.playlistName = this.playlists[0].Name;
             }
         }, err => {
             console.error('Problem retreiving playlist', err);
