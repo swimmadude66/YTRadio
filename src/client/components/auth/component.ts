@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {AuthService} from '../../services/auth';
-import { Http } from '@angular/http';
 
 declare var $;
 
@@ -19,7 +18,6 @@ export class AuthComponent {
     private errormessage: string;
 
     constructor(
-        private _http: Http,
         private _auth: AuthService
     ) {}
 
@@ -73,6 +71,7 @@ export class AuthComponent {
                 session => {
                     this.isLoading = false;
                     this.signupText = true;
+                    this.closeModal();
                 },
                 error => {
                     this.isLoading = false;

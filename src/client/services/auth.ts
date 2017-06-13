@@ -2,7 +2,7 @@ import {SocketService} from './sockets';
 import {Observable} from 'rxjs/Rx';
 import { Http } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { CookieService } from 'angular2-cookie/services';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
     }
 
     private nuke() {
-        this._cookies.remove('ytvolume');
+        this._cookies.deleteAll();
         this.session = undefined;
         this.userInfo = undefined;
         this._sockets.leave();
@@ -57,7 +57,7 @@ export class AuthService {
                 this.userInfo = data.User;
                 let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
                 let eDate = new Date(future);
-                this._cookies.put('ytrk_66', data.Session, { expires: eDate });
+                this._cookies.set('ytrk_66', data.Session, eDate);
                 this._sockets.join(data.User);
             });
     }

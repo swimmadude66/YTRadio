@@ -1,6 +1,5 @@
 import {SocketService, AuthService} from '../../../services/';
 import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {Http} from '@angular/http';
 
 @Component({
     selector: 'chat',
@@ -15,7 +14,6 @@ export class ChatComponent implements OnDestroy {
     private messageText: any = {};
 
     constructor(
-        private _http: Http,
         private _auth: AuthService,
         private _sockets: SocketService
     ) {

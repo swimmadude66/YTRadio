@@ -2,7 +2,7 @@ import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import {PlayerService} from '../../services/player';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AuthService, SocketService } from '../../services';
-import { CookieService } from 'angular2-cookie/core';
+import { CookieService } from 'ngx-cookie-service';
 import { Http } from '@angular/http';
 
 @Component({
@@ -139,7 +139,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
         let volume_cookie = JSON.stringify(this.muted) + '|' + this.premuteVolume + '|' + this.volume;
         let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
         let eDate = new Date(future);
-        this._cookies.put('ytvolume', volume_cookie, { expires: eDate });
+        this._cookies.set('ytvolume', volume_cookie, eDate);
     }
 
     canSkip() {
