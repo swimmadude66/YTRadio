@@ -1,5 +1,5 @@
 import {Database} from './db';
-import { RxHttpRequest as request } from 'rx-http-request';
+import * as request from 'request';
 import * as async from 'async';
 
 export class YTAPI {
@@ -32,11 +32,12 @@ export class YTAPI {
                         'Accept': 'application/json'
                     }
                 };
-                request.get(search_string, options)
-                .subscribe(
-                    data => {
+                request.get(search_string, options, (err, response, bodyText) => {
+                    if (err) {
+                        return cb(err);
+                    } else {
                         try {
-                            let body = JSON.parse(data.body);
+                            let body = JSON.parse(bodyText);
                             results = results.concat(body.items);
                             nextPage = body.nextPageToken;
                             more = !!nextPage;
@@ -44,9 +45,8 @@ export class YTAPI {
                         } catch (e) {
                             return cb(e);
                         }
-                    },
-                    err => cb(err)
-                );
+                    }
+                });
             },
             (err) => {
                 if (err) {
