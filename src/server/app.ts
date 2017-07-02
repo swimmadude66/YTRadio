@@ -11,7 +11,12 @@ import * as compress from 'compression';
 import * as express from 'express';
 import * as morgan from 'morgan';
 
-require('dotenv').config();
+try {
+    require('dotenv').config();
+} catch (error) {
+    console.log('No .env file found. Foregoing overrides')
+}
+
 
 const database = new Database();
 const ytapiService = new YTAPI(database);
