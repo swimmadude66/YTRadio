@@ -8,6 +8,8 @@ let currDJ;
 let FETCHING = false;
 let ENDCHECKING = false;
 
+let djtimer;
+
 module.exports = (APP_CONFIG) => {
     const router = require('express').Router();
     const db = APP_CONFIG.db;
@@ -34,6 +36,9 @@ module.exports = (APP_CONFIG) => {
                 }
                 mediaManager.emit('queue_updated', userQueue);
                 sock['/media'].emit('nextSong_fetch');
+                djtimer = setTimeout(() => {
+                    return playNextSong(() => console.log('Could not reach DJ in time'));
+                }, 3000)
                 return callback();
             }
         } else {
@@ -94,6 +99,10 @@ module.exports = (APP_CONFIG) => {
         socket.on('nextSong_response', (songdata) => {
             if (FETCHING) {
                 FETCHING = false;
+                if (djtimer) {
+                    clearTimeout(djtimer);
+                }
+                djtimer = undefined;
                 let dj = directory.getuser(socket.id);
                 if (songdata) {
                     let newguy = songdata;
@@ -104,7 +113,7 @@ module.exports = (APP_CONFIG) => {
                     mediaManager.emit('song_start', { currVid: currentVideo });
                 } else {
                     remove_from_queue(dj.Username, (err) => {
-                        playNextSong(function () {
+                        playNextSong(() => {
                             console.log('DJ did not have a valid song. Skipping....');
                         });
                     });
@@ -113,7 +122,7 @@ module.exports = (APP_CONFIG) => {
 
         });
 
-        socket.on('leave', function () {
+        socket.on('leave', () => {
             let user = directory.leave(socket.id);
             if (user && user.Username) {
                 let username = user.Username;
@@ -126,7 +135,7 @@ module.exports = (APP_CONFIG) => {
             }
         });
 
-        socket.on('disconnect', function () {
+        socket.on('disconnect', () => {
             let user = directory.disconnect(socket.id);
             if (user && user.Username) {
                 userinqueue[user.Username] = false;
@@ -221,7 +230,7 @@ module.exports = (APP_CONFIG) => {
         if (currentVideo) {
             if (res.locals.usersession.Role === 'ADMIN' || res.locals.usersession.Username === currentVideo.Info.DJ.Username) {
                 if (req.body.PlaybackID === currentVideo.Info.PlaybackID) {
-                    playNextSong(function () {
+                    playNextSong(() => {
                         console.log(res.locals.usersession.Username, 'skipped the song');
                         return res.status(204).end();
                     });
