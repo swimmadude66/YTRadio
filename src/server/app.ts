@@ -10,13 +10,9 @@ import * as cookieParser from 'cookie-parser';
 import * as compress from 'compression';
 import * as express from 'express';
 import * as morgan from 'morgan';
+import * as dotenv from 'dotenv';
 
-try {
-    require('dotenv').config();
-} catch (error) {
-    console.log('No .env file found. Foregoing overrides')
-}
-
+dotenv.config({silent: true});
 
 const database = new Database();
 const ytapiService = new YTAPI(database);
@@ -55,10 +51,10 @@ app.use(morgan((tokens, req, res) => {
 let server;
 if (process.env.HTTPS) {
     let ssl_config = {
-        key: (process.env.SSLKEY ? readFileSync(process.env.SSLKEY) : undefined),
-        cert: (process.env.SSLCERT ? readFileSync(process.env.SSLCERT) : undefined),
-        ca: (process.env.SSLCHAIN ? readFileSync(process.env.SSLCHAIN) : undefined),
-        pfx: (process.env.SSLPFX ? readFileSync(process.env.SSLPFX) : undefined)
+        key: (process.env.SSLKEY ? tryLoad(process.env.SSLKEY) : undefined),
+        cert: (process.env.SSLCERT ? tryLoad(process.env.SSLCERT) : undefined),
+        ca: (process.env.SSLCHAIN ? tryLoad(process.env.SSLCHAIN) : undefined),
+        pfx: (process.env.SSLPFX ? tryLoad(process.env.SSLPFX) : undefined)
     };
     server = https.createServer(ssl_config, app);
     let redir = express();
@@ -92,3 +88,15 @@ app.all('*', function(req, res){
 server.listen(APP_CONFIG.port);
 
 console.log('App started on port', APP_CONFIG.port);
+
+function tryLoad(filePath: string): any {
+    if (!filePath || !filePath.length) {
+        return undefined;
+    }
+    try {
+        return readFileSync(filePath);
+    } catch (err) {
+        console.log('Could not load', filePath);
+        return undefined;
+    }
+}
