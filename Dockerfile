@@ -10,7 +10,6 @@ nodejs-npm=6.10.3-r0 \
 WORKDIR /app
 COPY . /app
 
-# remove .env if it makes it into the image despite the dockerignore...
-RUN rm -f .env && npm install && npm test && npm run build
+RUN npm install && npm test && npm run build
 
 ENTRYPOINT ["pm2-docker", "dist/server/app.js"]
