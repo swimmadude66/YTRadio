@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+  app:
+    build: '.'
+    container_name: 'ytradio-app'
+    ports:
+      - '8000:80'
+      - '${NODE_PORT:-3000}:${NODE_PORT:-3000}'
+    environment:
+      - YTAPI_KEY=${YTAPI_KEY}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-ytradio}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD-$MYSQL_ROOT_PASSWORD:-admin}
+      - HTTPS=${HTTPS:-0}
+      - SSLKEY=${SSLKEY}
+      - SSLCERT=${SSLCERT}
+      - SSLCHAIN=${SSLCHAIN}
+      - SSLPFX=${SSLPFX}
+    volumes:
+      - '${HTTPS_CONFIG_DIR:-./https}:/https'
+    links: 
+      - mysql
+  mysql:
+    image: 'mysql'
+    container_name: 'ytradio-db'
+    expose: 
+      - 3306
+    environment: 
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-admin}
+      - MYSQL_ONETIME_PASSWORD=true
+    volumes:
+      - ./data:/var/lib/mysql
+      - ./scripts/sql:/docker-entrypoint-initdb.d
+      - ./backups:/backups
