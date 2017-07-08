@@ -20,7 +20,7 @@ module.exports = (APP_CONFIG) => {
             return next();
         }
         let authZ = req.signedCookies[APP_CONFIG.cookie_name];
-        let keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
         db.query(keylookup, [authZ])
         .subscribe(
             results => {
@@ -45,7 +45,7 @@ module.exports = (APP_CONFIG) => {
         if (!authZ) {
             return next();
         }
-        let keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
         db.query(keylookup, [authZ])
         .subscribe(
             results => {
@@ -71,9 +71,9 @@ module.exports = (APP_CONFIG) => {
         }
         let salt = uuid();
         let encpass = createHash('sha256').update(salt + '|' + body.Password).digest('hex');
-        db.query('Insert into Users(`Username`, `Email`, `Password`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,1);', [body.Username, body.Email, encpass, salt, uuid()])
+        db.query('Insert into users(`Username`, `Email`, `Password`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,1);', [body.Username, body.Email, encpass, salt, uuid()])
         .flatMap(() => {
-            return db.query('Insert into Playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select `ID` from `Users` where `Username`=?), \'Default\', \'[]\', 0);', [body.Username]);
+            return db.query('Insert into playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select `ID` from `users` where `Username`=?), \'Default\', \'[]\', 0);', [body.Username]);
         })
         .subscribe(
         result => res.send('Signed up successfully.'),
@@ -84,7 +84,7 @@ module.exports = (APP_CONFIG) => {
     });
 
     // router.get('/verification/:v_key', (req, res) => {
-    //     db.query('Update Users set `Active`=1 where `Confirm`=?', [req.params.v_key])
+    //     db.query('Update users set `Active`=1 where `Confirm`=?', [req.params.v_key])
     //     .subscribe(
     //     result => res.redirect('/'),
     //     err => {
@@ -98,7 +98,7 @@ module.exports = (APP_CONFIG) => {
         if (!body || !body.Username || !body.Password) {
             return res.status(400).send('Username and Password are required fields');
         }
-        db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from Users where `Username` = ?', [body.Username])
+        db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from users where `Username` = ?', [body.Username])
         .flatMap(
         results => {
             if (results.length < 1) {
@@ -114,7 +114,7 @@ module.exports = (APP_CONFIG) => {
             }
             let public_user = { ID: user.ID, Username: user.Username, Role: user.Role };
             let sid = uuid();
-            return db.query('Insert into Sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
+            return db.query('Insert into sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
             .map(() => {
                 return {Session: sid, User: public_user};
             });
@@ -148,7 +148,7 @@ module.exports = (APP_CONFIG) => {
         } else {
             sid = res.locals.usersession.Key;
         }
-        let keylookup = 'Select Users.`Username`, Users.`ID`, Users.`Role`, Sessions.`Key` from Sessions join Users on Sessions.`UserID` = Users.`ID` Where Sessions.`Active`=1 AND Sessions.`Key`=?;';
+        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
         db.query(keylookup, [sid])
         .subscribe(
             results => {
@@ -170,7 +170,7 @@ module.exports = (APP_CONFIG) => {
             return res.status(204).end();
         }
         let session = res.locals.usersession.Key;
-        db.query('Update `Sessions` Set `Active`=0 Where `Key`=?;', [session])
+        db.query('Update `sessions` Set `Active`=0 Where `Key`=?;', [session])
         .subscribe(
             result => res.status(204).end(),
             err => {

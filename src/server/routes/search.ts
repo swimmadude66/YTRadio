@@ -49,7 +49,7 @@ module.exports = (APP_CONFIG) => {
                         console.error(err2);
                         return res.status(500).send('Could not search');
                     }
-                    return res.send({ Videos: full_list });
+                    return res.send({ videos: full_list });
                 });
             });
         });

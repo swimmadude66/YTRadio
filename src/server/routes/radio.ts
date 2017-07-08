@@ -21,7 +21,7 @@ module.exports = (APP_CONFIG) => {
             return callback();
         }
         if (currentVideo) {
-            saveHistory(JSON.parse(JSON.stringify(currentVideo)));
+            savehistory(JSON.parse(JSON.stringify(currentVideo)));
         }
         currentVideo = false;
         if (userQueue.length > 0) {
@@ -59,8 +59,8 @@ module.exports = (APP_CONFIG) => {
         }
     }
 
-    function saveHistory(playedSong) {
-        let insert = 'Insert into `History`(`PlayTime`, `DJ`, `VideoID`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,?,?,0,0,0);';
+    function savehistory(playedSong) {
+        let insert = 'Insert into `history`(`PlayTime`, `DJ`, `VideoID`, `ListenerCount`, `UpVotes`, `DownVotes`, `Saves`) VALUES(?,?,?,?,0,0,0);';
         db.query(insert, [playedSong.StartTime, playedSong.Info.DJ.ID, playedSong.Info.ID, Object.keys(directory.getsockets()).length])
         .subscribe(
             _ => _,
@@ -211,10 +211,10 @@ module.exports = (APP_CONFIG) => {
     });
 
     router.get('/history', (req, res) => {
-        let q = 'Select `Users`.`Username`, `Videos`.* from `History` join `Videos` on `History`.`VideoID`=`Videos`.`VideoID` join `Users` on `Users`.`ID`=`History`.`DJ` ORDER BY `History`.`ID` DESC LIMIT 25;';
+        let q = 'Select `users`.`Username`, `videos`.* from `history` join `videos` on `history`.`VideoID`=`videos`.`VideoID` join `users` on `users`.`ID`=`history`.`DJ` ORDER BY `history`.`ID` DESC LIMIT 25;';
         db.query(q)
         .subscribe(
-            results => res.send({History: results}),
+            results => res.send({history: results}),
             err => {
                 console.error(err);
                 return res.status(500).send('Could not fetch history');
