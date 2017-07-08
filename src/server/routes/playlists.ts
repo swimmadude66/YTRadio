@@ -76,7 +76,7 @@ module.exports = (APP_CONFIG) => {
             return res.status(400).send('ID is a required field');
         }
         let ID = req.body.ID;
-        let sql = 'Update `Playlists` SET `Active`= (`ID` = ?) where `Owner`=?;';
+        let sql = 'Update `playlists` SET `Active`= (`ID` = ?) where `Owner`=?;';
         db.query(sql, [ID, res.locals.usersession.ID])
             .subscribe(
             result => res.status(204).end(),
@@ -94,13 +94,13 @@ module.exports = (APP_CONFIG) => {
         let name = body.Name;
         let contents = body.Contents;
         let active = body.Active;
-        db.query('Select `ID` from `Playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.ID])
+        db.query('Select `ID` from `playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.ID])
             .flatMap(results => {
                 if (results.length < 1) {
                     return Observable.throw('No such playlist');
                 }
                 let plid = results[0].ID;
-                let sql = 'Update `Playlists` SET `Active`= ? where `ID`=?;';
+                let sql = 'Update `playlists` SET `Active`= ? where `ID`=?;';
                 return db.query(sql, [active, plid])
                     .flatMap(result => {
                         let contentmap = [];
@@ -141,9 +141,9 @@ module.exports = (APP_CONFIG) => {
     });
 
     router.get('/', (req, res) => {
-        let q = 'Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `playlistcontents`.`Order`, `videos`.* ' +
-            'from `Playlists` ' +
-            'left join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` ' +
+        let q = 'Select `playlists`.`ID`, `playlists`.`Name`, `playlists`.`Active`, `playlistcontents`.`Order`, `videos`.* ' +
+            'from `playlists` ' +
+            'left join `playlistcontents` on `playlistcontents`.`PlaylistID`=`playlists`.`ID` ' +
             'left join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` ' +
             'where `Owner` = ?;';
         db.query(q, [res.locals.usersession.ID])
@@ -174,7 +174,7 @@ module.exports = (APP_CONFIG) => {
                 return playlists;
             })
             .subscribe(
-            playlists => res.send({ Playlists: playlists }),
+            playlists => res.send({ playlists: playlists }),
             err => {
                 console.error(err);
                 return res.status(500).send('Could not retrieve playlists');
@@ -185,7 +185,7 @@ module.exports = (APP_CONFIG) => {
         if (!req.body || !req.body.Name) {
             return res.status(400).send('Name is a required field');
         }
-        let sql = 'Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
+        let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
         db.query(sql, [res.locals.usersession.ID, req.body.Name, JSON.stringify([]), false])
         .subscribe(
             result => res.status(204).end(),
@@ -198,9 +198,9 @@ module.exports = (APP_CONFIG) => {
 
     router.get('/:name', (req, res) => {
         let name = req.params.name;
-        let q = 'Select `Playlists`.`ID`, `Playlists`.`Name`, `Playlists`.`Active`, `videos`.* ' +
-        'from `Playlists` ' +
-        'join `playlistcontents` on `playlistcontents`.`PlaylistID`=`Playlists`.`ID` ' +
+        let q = 'Select `playlists`.`ID`, `playlists`.`Name`, `playlists`.`Active`, `videos`.* ' +
+        'from `playlists` ' +
+        'join `playlistcontents` on `playlistcontents`.`PlaylistID`=`playlists`.`ID` ' +
         'join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` ' +
         'where `Owner` = ? AND `Name`=?;';
         db.query(q, [res.locals.usersession.ID, name])
@@ -260,7 +260,7 @@ module.exports = (APP_CONFIG) => {
                 console.log(err);
                 return res.send({ Success: false, Error: err });
             }
-            let sql = 'Insert into `Playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
+            let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
             db.query(sql, [res.locals.usersession.ID, name, JSON.stringify([]), false])
             .flatMap(
                 result => {
