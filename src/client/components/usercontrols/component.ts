@@ -76,11 +76,11 @@ export class UserControlsComponent implements OnInit {
         this._http.get('/api/playlists')
         .map(res => res.json())
         .subscribe(data => {
-            this.playlists = data.Playlists;
-            var found = false;
-            for (let pl in data.Playlists) {
-                if (data.Playlists.hasOwnProperty(pl) && data.Playlists[pl].Active) {
-                    this.playlistName = data.Playlists[pl].Name;
+            this.playlists = data.playlists;
+            let found = false;
+            for (let pl in data.playlists) {
+                if (data.playlists.hasOwnProperty(pl) && data.playlists[pl].Active) {
+                    this.playlistName = data.playlists[pl].Name;
                     found = true;
                     break;
                 }
@@ -104,7 +104,7 @@ export class UserControlsComponent implements OnInit {
         .subscribe(
             data => {
                 this.isLoading = false;
-                this.searchResults = data.Videos;
+                this.searchResults = data.videos;
             },
             err => {
                 this.isLoading = false;

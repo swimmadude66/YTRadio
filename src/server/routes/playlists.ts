@@ -13,7 +13,7 @@ module.exports = (APP_CONFIG) => {
             if (err) {
                 return callback(err);
             }
-            let batches = { 0: { Count: 0, ids: '', cleanvids: {} } }; //video duration lookup only accepts 49 IDs...
+            let batches = { 0: { Count: 0, ids: '', cleanvids: {} } }; // video duration lookup only accepts 49 IDs...
             let batchnum = 0;
             results.forEach((result) => {
                 if (!result.contentDetails || !result.snippet) {
@@ -174,7 +174,7 @@ module.exports = (APP_CONFIG) => {
                 return playlists;
             })
             .subscribe(
-            playlists => res.send({ playlists: playlists }),
+            playlists => res.send({ playlists }),
             err => {
                 console.error(err);
                 return res.status(500).send('Could not retrieve playlists');
@@ -258,7 +258,7 @@ module.exports = (APP_CONFIG) => {
         importPlaylist(body.PlaylistID, (err, contents) => {
             if (err) {
                 console.log(err);
-                return res.send({ Success: false, Error: err });
+                return res.status(500).send(err);
             }
             let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
             db.query(sql, [res.locals.usersession.ID, name, JSON.stringify([]), false])
