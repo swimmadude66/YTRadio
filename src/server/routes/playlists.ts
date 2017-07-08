@@ -207,7 +207,7 @@ module.exports = (APP_CONFIG) => {
         .subscribe(
             results => {
                 if (results.length < 1) {
-                    return res.send({Playlist: { Name: 'Default', Contents: [], Active: true } });
+                    return res.send({playlist: { Name: 'Default', Contents: [], Active: true } });
                 }
                 let playlists = {};
                 results.forEach((result) => {
@@ -226,7 +226,7 @@ module.exports = (APP_CONFIG) => {
                         playlists[pl].Contents.sort((a, b) => a.Order - b.Order);
                     }
                 }
-                return res.send({ Playlist: playlists[name] });
+                return res.send({ playlist: playlists[name] });
             }, err => {
                 console.error(err);
                 return res.status(500).send('Could not get playlist');
