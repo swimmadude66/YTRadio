@@ -10,7 +10,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 export class QueueComponent implements OnInit, OnDestroy {
 
     private sub: Subscription;
-    private queue: string[];
+    queue: string[];
 
     constructor(
         private _queue: QueueService

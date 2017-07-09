@@ -8,7 +8,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 })
 export class UserListComponent implements OnInit, OnDestroy {
 
-    private onlineUsers: string[];
+    onlineUsers: string[];
 
     constructor(
         private _sockets: SocketService

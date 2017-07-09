@@ -4,7 +4,7 @@
             <b>{{message?.Author}}:</b> {{message?.Message}}
         </p>
     </div>
-    <footer class="send-box" *ngIf="getUser()">
+    <footer class="send-box" *ngIf="user">
         <form (submit)="sendMessage()">
             <input type="text" name="messageBox" class="form-control" placeholder="type here to chat" [(ngModel)]="messageText.contents" maxlength="512">
         </form>

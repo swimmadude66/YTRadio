@@ -79,6 +79,12 @@ export class AuthService {
         .flatMap(_ => this.logIn(creds));
     }
 
+    expireSocket() {
+        this.userInfo = null;
+        this.session = null;
+        this.authEvents.next(null);
+    }
+
     logOut(): Observable<any> {
         return this._http.post('/api/logOut', null)
         .do(

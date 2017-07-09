@@ -12,6 +12,7 @@ import * as compress from 'compression';
 import * as express from 'express';
 import * as morgan from 'morgan';
 import * as dotenv from 'dotenv';
+import * as socketio from 'socket.io';
 
 dotenv.config({silent: true});
 
@@ -71,7 +72,7 @@ if (process.env.HTTPS) {
 }
 
 /*-------- SOCKET CONNECTIONS --------*/
-let io = require('socket.io')(server);
+let io = socketio(server);
 APP_CONFIG.Socks = io;
 
 /*-------- API --------*/

@@ -1,4 +1,4 @@
-<div id="search-overlay" class="container-fluid overlay animation-on" *ngIf="expand && getUser()">
+<div id="search-overlay" class="container-fluid overlay animation-on" *ngIf="expand && user">
   <div class="row search-row justify-content-center">
     <div class="col-6">
       <form class="simple-form" #searchForm="ngForm" (ngSubmit)="searchForm.valid && search($event)">
@@ -36,7 +36,7 @@
         <div class="col-12" *ngIf="addingPlaylist">
           <div class="row">
             <div class="col-12">
-              <input name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist.Name" style="color:#000000;" type="text">
+              <input name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist['Name']" style="color:#000000;" type="text">
             </div>
           </div>
           <div class="row">
@@ -119,35 +119,35 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-1 expand-button text-center" (click)="expand=!expand">
-        <ng-container *ngIf="getUser()">
+        <ng-container *ngIf="user">
           <span class="footer-text fa pointer" [ngClass]="{'fa-chevron-up': !expand, 'fa-chevron-down': expand}"></span>
         </ng-container>
       </div>
       <div class="col-3 col-md-2 text-center">
-        <ng-container *ngIf="getUser()">
+        <ng-container *ngIf="user">
           <button type="button" class="btn join-button" [ngClass]="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
             {{joined ? 'Leave Queue' : 'Join Queue'}}
           </button>
         </ng-container>
       </div>
       <div class="col-lg-2 hidden-md-down">
-        <ng-container *ngIf="getUser()">
+        <ng-container *ngIf="user">
           <p class="footer-text see-more">
             <strong>Playlist: </strong>{{playlistName}}
           </p>
         </ng-container>
       </div>
       <div class="col-5">
-        <p class="footer-text see-more full-width">
+        <p class="footer-text see-more full-width" *ngIf="user">
           <strong>Next Song: </strong>
           {{playlists[playlistName]?.Contents[0]?.Title || 'No song left in playlist'}}
         </p>
       </div>
       <div class="col-3 col-lg-2 float-right">
-        <a class="footer-text pointer float-right text-right" (click)="login()" *ngIf="!getUser()">Log in/Sign up</a>
-        <ng-container *ngIf="getUser()?.Username">
+        <a class="footer-text pointer float-right text-right" (click)="login()" *ngIf="!user">Log in/Sign up</a>
+        <ng-container *ngIf="user && user.Username">
           <a class="footer-text pointer float-right text-right" (click)="logOut()">Log Out?</a>
-          <p class="footer-text hidden-md-down float-left text-left">Logged in as {{getUser()?.Username}}</p>
+          <p class="footer-text hidden-md-down float-left text-left">Logged in as {{user.Username}}</p>
         </ng-container>
       </div>
     </div>

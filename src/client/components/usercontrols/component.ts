@@ -24,6 +24,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
     joined = false;
     newPlaylist = {};
     addingPlaylist = false;
+    user: any;
 
     private authSubscription: Subscription;
 
@@ -73,7 +74,10 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         .subscribe(
             event => {
                 if (event && event.User) {
+                    this.user = event.User;
                     this.fetch_playlist();
+                } else {
+                    this.user = null;
                 }
             }
         );

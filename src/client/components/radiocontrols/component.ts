@@ -11,16 +11,17 @@ import { Http } from '@angular/http';
     styleUrls: ['./styles.scss']
 })
 export class RadioControlsComponent implements OnInit, OnDestroy {
-    private videoInfo: any = {};
-    private subs: Subscription[] = [];
-    private volumeEvents: Subject<number> = new Subject<number>();
-    private playing = false;
+    videoInfo: any = {};
+    playing = false;
+    muted = false;
+    timeRemaining = '00:00';
+    _volume = 100;
+    timer: Observable<string>;
     private playbackID = null;
-    private muted = false;
-    private timeRemaining = '00:00';
+    private user;
     private premuteVolume = 100;
-    private _volume = 100;
-    private timer: Observable<string>;
+    private volumeEvents: Subject<number> = new Subject<number>();
+    private subs: Subscription[] = [];
 
     set volume(vol: number) {
         this._volume = vol;
@@ -97,6 +98,18 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
                 vol => this.saveVolume()
             )
         );
+
+        this.subs.push(
+            this._auth.observe().subscribe(
+                event => {
+                    if (event && event.User) {
+                        this.user = event.User;
+                    } else {
+                        this.user = null;
+                    }
+                }
+            )
+        )
     }
 
     ngOnDestroy() {
@@ -146,7 +159,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
         if (!this.playing) {
             return false;
         }
-        let u = this._auth.getUser();
+        let u = this.user;
         if ((u && u.Role === 'ADMIN') || (u && this.videoInfo && this.videoInfo.DJ && this.videoInfo.DJ.Username === u.Username)) {
             return true;
         }
@@ -170,10 +183,6 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
             this.volume = 0;
         }
         this._player.setMuted(this.muted);
-    }
-
-    getUser() {
-        return this._auth.getUser();
     }
 
 }
