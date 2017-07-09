@@ -9,8 +9,34 @@ The built in chat allows for lifeboat to serve as a fun substitute for a message
 
 # How to Host
 
-## Method 1 - __Download a release__
-Coming soon, releases will be a zipped folder of pre-minified code
+## Method 1 - __Docker__
+_requires docker_
+
+1. `Docker pull swimmadude66/ytradio`
+2. `Docker run [OPTIONS] swimmadude66/ytradio`
+
+`[OPTIONS]` is a placeholder for any number of docker options you may want to pass in order to make the app fit within your ecosystem. it is recommended that at a bare minimum, 
+you define the environment variables for connecting to your database (via `-e` or `--env-file`) and expose the port under which you will run the app (3000 is the default, so use `-p"3000:3000"`).
+
+Additionally, you can mount a volume at /https by passing the `-v {cert_location}:/https` option.
+
+
+# Development
+A `docker-compose` file has been included, which spins up a mysql instance with __unsafe__ defaults. __DO NOT USE THE DOCKER COMPOSE FILE IN PRODUCTION__
+
+Instead, it can be used as a handy way to isolate development. Check out the code, Make your changes in the editor of your choice, then run
+1. `docker-compose build`
+2. `docker-compose up -d`
+
+The app will be accessible at `localhost:3000` with your changes included. By default, the app runs in production mode (minified code and AOT compilaion) in the docker container, but if you'd like to run in dev, simply exec into the running container and stop the running instance
+
+1. `docker exec -it  ytradio-app sh`
+2. `pm2 stop all`
+
+Now you can change anything in the container, or re-build in non-prod mode.
+
+Lastly, to access the mysql database being used for the containers, either exec in to that container (`docker exec -it ytradio-db mysql -u root -padmin`) or connect the database manager (eg MySQL Workbench, Datagrip) to `localhost:6033` and log in with the __unsafe__ default login.
+
 
 ## Method 2 - __Build from Source__
 _requires git, node, and npm_

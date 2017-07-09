@@ -16,12 +16,12 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.onlineUsers = [];
-        this._sockets.onRoot('userList', (list) => {
+        this._sockets.on('userList', (list) => {
             this.onlineUsers = list;
         });
     }
 
     ngOnDestroy() {
-        this._sockets.destroyRoot();
+        this._sockets.destroy();
     }
 }

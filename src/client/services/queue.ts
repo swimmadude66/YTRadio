@@ -10,7 +10,7 @@ export class QueueService {
     constructor(
         private _sockets: SocketService
     ) {
-        this._sockets.onMedia('queue_updated', (data) => {
+        this._sockets.on('queue_updated', (data) => {
             this.queue = data;
             this.qSubject.next(data);
         });

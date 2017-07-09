@@ -1,12 +1,14 @@
 import {Observable} from 'rxjs/Rx';
-import { Database } from '../services/db';
-import { createHash } from 'crypto';
+import {Session} from '../models/session';
+import {Database} from '../services/db';
+import {SessionLookup} from '../services/sessionlookup';
+import {createHash} from 'crypto';
 import * as uuid from 'uuid/v4';
 
 module.exports = (APP_CONFIG) => {
     const router = require('express').Router();
     const db: Database = APP_CONFIG.db;
-
+    const sessionLookup: SessionLookup = APP_CONFIG.sessionLookup;
     /*
     * Identify users as anon or signed in
     */
@@ -20,15 +22,14 @@ module.exports = (APP_CONFIG) => {
             return next();
         }
         let authZ = req.signedCookies[APP_CONFIG.cookie_name];
-        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
-        db.query(keylookup, [authZ])
+        sessionLookup.lookupSession(authZ)
         .subscribe(
-            results => {
-                if (!results || results.length < 1) {
+            result => {
+                if (!result) {
                     return next();
                 }
-                let user = results[0];
-                res.locals.usersession = user;
+                let usersession = result;
+                res.locals.usersession = usersession;
                 return next();
             }, err => {
                 return next();
@@ -45,15 +46,14 @@ module.exports = (APP_CONFIG) => {
         if (!authZ) {
             return next();
         }
-        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
-        db.query(keylookup, [authZ])
+        sessionLookup.lookupSession(authZ)
         .subscribe(
-            results => {
-                if (!results || results.length < 1) {
+            result => {
+                if (!result) {
                     return next();
                 }
-                let user = results[0];
-                res.locals.usersession = user;
+                let usersession = result;
+                res.locals.usersession = usersession;
                 return next();
             }, err => {
                 return next();
@@ -148,15 +148,14 @@ module.exports = (APP_CONFIG) => {
         } else {
             sid = res.locals.usersession.Key;
         }
-        let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions join users on sessions.`UserID` = users.`ID` Where sessions.`Active`=1 AND sessions.`Key`=?;';
-        db.query(keylookup, [sid])
+        sessionLookup.lookupSession(sid)
         .subscribe(
-            results => {
-                if (results.length < 1) {
+            result => {
+                if (!result) {
                     return res.status(400).send('Invalid SessionID');
                 }
-                let uinfo = results[0];
-                return res.send({ Data: { Session: { Key: uinfo.Key }, User: { Username: uinfo.Username, ID: uinfo.ID, Role: uinfo.Role } } });
+                let uinfo: Session = result;
+                return res.send({ Data: { Session: { Key: uinfo.Key }, User: { Username: uinfo.User.Username, ID: uinfo.UserID, Role: uinfo.User.Role } } });
             },
             err => {
                 console.error(err);
@@ -186,7 +185,6 @@ module.exports = (APP_CONFIG) => {
     router.use('/search', require('./search')(APP_CONFIG));
     router.use('/radio', require('./radio')(APP_CONFIG));
     router.use('/playlists', require('./playlists')(APP_CONFIG));
-    router.use('/chat', require('./chat')(APP_CONFIG));
 
     return router;
 };

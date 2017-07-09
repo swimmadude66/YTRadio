@@ -48,7 +48,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
             this._player.setMuted(this.muted);
         }
 
-        this._sockets.onMedia('welcome', (data) => {
+        this._sockets.on('welcome', (data) => {
             if (data.currVid) {
                 this.videoInfo = data.currVid.Info;
                 this.playbackID = data.currVid.Info.PlaybackID;
@@ -62,7 +62,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
             }
         });
 
-        this._sockets.onMedia('song_start', (data) => {
+        this._sockets.on('song_start', (data) => {
             if (data.currVid) {
                 this.videoInfo = data.currVid.Info;
                 this.playbackID = data.currVid.Info.PlaybackID;

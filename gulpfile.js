@@ -78,7 +78,7 @@ gulp.task('webpack-watch', function() {
     config.watch = true;
     config.cache = true;
     config.bail = false;
-    config.stats = 'minimal';
+    config.stats = 'errors-only';
     config.module.rules.push(
         {
             enforce: 'pre',
@@ -114,7 +114,7 @@ gulp.task('webpack-watch', function() {
     webpack(config, function(err, stats) {
         if (err) {
             console.error(err);
-        }     
+        }
     });
 });
 

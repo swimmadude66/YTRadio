@@ -3,60 +3,29 @@ import * as io from 'socket.io-client';
 
 @Injectable()
 export class SocketService {
-
-    private chatSocket;
-    private mediaSocket;
-    private rootSocket;
+    private socket;
 
     constructor() {
-        this.chatSocket = io('/chat');
-        this.mediaSocket = io('/media');
-        this.rootSocket = io();
+        this.socket = io();
     }
 
     join(data?: any) {
-        this.chatSocket.emit('join', data);
-        this.mediaSocket.emit('join', data);
+        this.socket.emit('join', data);
     }
 
     leave() {
-        this.chatSocket.emit('leave');
-        this.mediaSocket.emit('leave');
+        this.socket.emit('leave');
     }
 
-    chatEmit(endpoint: string, data?: any) {
-        this.chatSocket.emit(endpoint, data);
+    emit(endpoint: string, data?: any) {
+        this.socket.emit(endpoint, data);
     }
 
-    mediaEmit(endpoint: string, data?: any) {
-        this.mediaSocket.emit(endpoint, data);
+    on(endpoint: string, handler) {
+        this.socket.on(endpoint, handler);
     }
 
-    rootEmit(endpoint: string, data?: any) {
-        this.rootSocket.emit(endpoint, data);
-    }
-
-    onChat(endpoint: string, handler) {
-        this.chatSocket.on(endpoint, handler);
-    }
-
-    onMedia(endpoint: string, handler) {
-        this.mediaSocket.on(endpoint, handler);
-    }
-
-    onRoot(endpoint: string, handler) {
-        this.rootSocket.on(endpoint, handler);
-    }
-
-    destroyChat() {
-        this.chatSocket.removeAllListeners();
-    }
-
-    destroyMedia() {
-        this.mediaSocket.removeAllListeners();
-    }
-
-    destroyRoot() {
-        this.rootSocket.removeAllListeners();
+    destroy() {
+        this.socket.removeAllListeners();
     }
 }

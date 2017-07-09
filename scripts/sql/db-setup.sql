@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `playlists` (
 CREATE TABLE IF NOT EXISTS `playlistcontents` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `PlaylistID` int(11) DEFAULT NULL,
-  `VideoID` varchar(200) DEFAULT NULL,
+  `VideoID` varchar(100) DEFAULT NULL,
   `Order` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
   UNIQUE KEY `Uniq_pl_vid` (`PlaylistID`,`VideoID`),

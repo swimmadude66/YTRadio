@@ -14,37 +14,40 @@ export class UserDirectory {
     disconnect(socketid) {
         let user = this.sockettouser[socketid];
         if (user) {
-            delete this.usertosocket[user.Username];
+            let userSock = this.usertosocket[user.Username];
+            if (userSock.id === socketid) {
+                delete this.usertosocket[user.Username];
+            }
         }
         delete this.sockettouser[socketid];
         return user;
     }
 
     join(socket, user) {
-        let idParts = socket.id.split('#');
-        let room = idParts[0];
         let oldsock = null;
-        if ((user.Username in this.usertosocket) && (room in this.usertosocket[user.Username])) {
-            oldsock = this.usertosocket[user.Username][room];
+        if (user.Username in this.usertosocket) {
+            oldsock = this.usertosocket[user.Username];
         }
-        let socks = this.usertosocket[user.Username] || {};
-        socks[room] = socket;
-        this.usertosocket[user.Username] = socks;
+        // in case of duplicate joins, check if the socket is new
+        if (oldsock) {
+            if (socket.id === oldsock.id) {
+                return null;
+            }
+            // remove user's old socket
+            delete this.sockettouser[oldsock.id];
+        }
         this.sockettouser[socket.id] = user;
+        this.usertosocket[user.Username] = socket;
         return oldsock;
     }
 
     leave(socketid) {
         let user = null;
-        let idParts = socketid.split('#');
-        let room = idParts[0];
         if (this.sockettouser[socketid]) {
             user = this.sockettouser[socketid];
-            if (this.usertosocket[user.Username] && room in this.usertosocket[user.Username]) {
-                delete this.usertosocket[user.Username][room];
-                if (Object.keys(this.usertosocket[user.Username]).length < 1) {
-                    delete this.usertosocket[user.Username];
-                }
+            let userSocket = this.usertosocket[user.Username]
+            if (userSocket && userSocket.id === socketid) {
+                delete this.usertosocket[user.Username];
             }
         }
         this.sockettouser[socketid] = null;

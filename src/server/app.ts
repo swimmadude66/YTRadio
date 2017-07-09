@@ -1,9 +1,10 @@
-import {UserDirectory} from './services/userdirectory';
 import {join} from 'path';
 import {readFileSync} from 'fs';
 import {createServer} from 'http';
 import {Database} from './services/db';
 import {YTAPI} from './services/ytapi';
+import {SessionLookup} from './services/sessionlookup';
+import {UserDirectory} from './services/userdirectory';
 import * as https from 'https';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
@@ -14,9 +15,10 @@ import * as dotenv from 'dotenv';
 
 dotenv.config({silent: true});
 
-const database = new Database();
-const ytapiService = new YTAPI(database);
-const directory = new UserDirectory();
+const db = new Database();
+const ytapiService = new YTAPI(db);
+const sessionLookup = new SessionLookup(db);
+const userDirectory = new UserDirectory();
 
 const APP_CONFIG: any = {
   environment: process.env.ENVIRONMENT || 'dev',
@@ -25,9 +27,10 @@ const APP_CONFIG: any = {
   port: process.env.NODE_PORT || 3000,
   log_level: process.env.MORGAN_LOG_LEVEL || 'dev',
   YTAPI: process.env.YTAPI_KEY || 'fakeapikey',
-  db: database,
-  ytapiService: ytapiService,
-  userDirectory: directory
+  db,
+  ytapiService,
+  sessionLookup,
+  userDirectory,
 };
 
 const app = express();

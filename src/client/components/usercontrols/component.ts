@@ -1,7 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import { Http } from '@angular/http';
-import { SocketService, AuthService } from '../../services/';
-import { ToasterService } from 'angular2-toaster';
+import {AuthService} from '../../services/auth';
+import {SocketService} from '../../services/sockets';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Http} from '@angular/http';
+import {ToasterService} from 'angular2-toaster';
+import {Subscription} from 'rxjs/Rx';
 
 declare var $;
 
@@ -10,7 +12,7 @@ declare var $;
     templateUrl: './template.html',
     styleUrls: ['./styles.scss']
 })
-export class UserControlsComponent implements OnInit {
+export class UserControlsComponent implements OnInit, OnDestroy {
 
     expand = false;
     isSearching = false;
@@ -23,6 +25,8 @@ export class UserControlsComponent implements OnInit {
     newPlaylist = {};
     addingPlaylist = false;
 
+    private authSubscription: Subscription;
+
     constructor(
         private _auth: AuthService,
         private _sockets: SocketService,
@@ -34,9 +38,9 @@ export class UserControlsComponent implements OnInit {
         if (this._auth.getUser()) {
             this.fetch_playlist();
         }
-        this._sockets.onMedia('nextSong_fetch', () => {
+        this._sockets.on('nextSong_fetch', () => {
             let vidinfo = this.playlists[this.playlistName].Contents.shift();
-            this._sockets.mediaEmit('nextSong_response', vidinfo);
+            this._sockets.emit('nextSong_response', vidinfo);
             if (vidinfo) {
                 this.playlists[this.playlistName].Contents.push(vidinfo);
                 this._http.post('/api/playlists/update', this.playlists[this.playlistName])
@@ -48,14 +52,31 @@ export class UserControlsComponent implements OnInit {
             }
         });
 
-        this._sockets.onMedia('queue_kick', () => {
+        this._sockets.on('queue_kick', () => {
             this.joined = false;
             this._toastr.pop('error', 'You have been removed from the queue');
         });
 
-        this._sockets.onChat('user_join', (newUser) => {
+        this._sockets.on('inQueue', (inQueue) => {
+            this.joined = inQueue;
+        });
+
+        this._sockets.on('user_join', (newUser) => {
             this.fetch_playlist();
         });
+
+        this._sockets.on('request_identify', () => {
+            this._auth.identify();
+        });
+
+        this.authSubscription = this._auth.observe()
+        .subscribe(
+            event => {
+                if (event && event.User) {
+                    this.fetch_playlist();
+                }
+            }
+        );
 
         $('#authModal').modal({show: false});
         $('#authModal').on('hidden.bs.modal', (event) => {
@@ -63,6 +84,13 @@ export class UserControlsComponent implements OnInit {
                 this.fetch_playlist();
             }
         });
+    }
+
+    ngOnDestroy() {
+        this._sockets.destroy();
+        if (this.authSubscription && this.authSubscription.unsubscribe) {
+            this.authSubscription.unsubscribe();
+        }
     }
 
     private listPlaylists(): any[] {

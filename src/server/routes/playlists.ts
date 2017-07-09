@@ -77,7 +77,7 @@ module.exports = (APP_CONFIG) => {
         }
         let ID = req.body.ID;
         let sql = 'Update `playlists` SET `Active`= (`ID` = ?) where `Owner`=?;';
-        db.query(sql, [ID, res.locals.usersession.ID])
+        db.query(sql, [ID, res.locals.usersession.UserID])
             .subscribe(
             result => res.status(204).end(),
             err => {
@@ -94,7 +94,7 @@ module.exports = (APP_CONFIG) => {
         let name = body.Name;
         let contents = body.Contents;
         let active = body.Active;
-        db.query('Select `ID` from `playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.ID])
+        db.query('Select `ID` from `playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.UserID])
             .flatMap(results => {
                 if (results.length < 1) {
                     return Observable.throw('No such playlist');
@@ -131,7 +131,7 @@ module.exports = (APP_CONFIG) => {
         }
         let plname = body.PlaylistName;
         let vid = body.VideoID;
-        db.query('Delete from `playlistcontents` where `PlaylistID`=(select ID from `playlists` where `Name`=? and `Owner`=?) and `VideoID`=?', [plname, res.locals.usersession.ID, vid])
+        db.query('Delete from `playlistcontents` where `PlaylistID`=(select ID from `playlists` where `Name`=? and `Owner`=?) and `VideoID`=?', [plname, res.locals.usersession.UserID, vid])
             .subscribe(
             result => res.status(204).end(),
             err => {
@@ -146,7 +146,7 @@ module.exports = (APP_CONFIG) => {
             'left join `playlistcontents` on `playlistcontents`.`PlaylistID`=`playlists`.`ID` ' +
             'left join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` ' +
             'where `Owner` = ?;';
-        db.query(q, [res.locals.usersession.ID])
+        db.query(q, [res.locals.usersession.UserID])
             .map(results => {
                 if (results.length < 1) {
                     return [{ Name: 'Default', Contents: [], Active: true }];
@@ -186,7 +186,7 @@ module.exports = (APP_CONFIG) => {
             return res.status(400).send('Name is a required field');
         }
         let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
-        db.query(sql, [res.locals.usersession.ID, req.body.Name, JSON.stringify([]), false])
+        db.query(sql, [res.locals.usersession.UserID, req.body.Name, JSON.stringify([]), false])
         .subscribe(
             result => res.status(204).end(),
             err => {
@@ -203,7 +203,7 @@ module.exports = (APP_CONFIG) => {
         'join `playlistcontents` on `playlistcontents`.`PlaylistID`=`playlists`.`ID` ' +
         'join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` ' +
         'where `Owner` = ? AND `Name`=?;';
-        db.query(q, [res.locals.usersession.ID, name])
+        db.query(q, [res.locals.usersession.UserID, name])
         .subscribe(
             results => {
                 if (results.length < 1) {
@@ -238,8 +238,8 @@ module.exports = (APP_CONFIG) => {
         let name = req.params.name;
         let contentd = 'Delete from `playlistcontents` Where playlistID=(Select ID from playlists where Name=? and Owner=?);';
         let pdelete = 'Delete from playlists where Name=? and Owner=?;';
-        db.query(contentd, [name, res.locals.usersession.ID])
-        .flatMap(() => db.query(pdelete, [name, res.locals.usersession.ID]))
+        db.query(contentd, [name, res.locals.usersession.UserID])
+        .flatMap(() => db.query(pdelete, [name, res.locals.usersession.UserID]))
         .subscribe(
             _ => res.status(204).end(),
             err => {
@@ -261,7 +261,7 @@ module.exports = (APP_CONFIG) => {
                 return res.status(500).send(err);
             }
             let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
-            db.query(sql, [res.locals.usersession.ID, name, JSON.stringify([]), false])
+            db.query(sql, [res.locals.usersession.UserID, name, JSON.stringify([]), false])
             .flatMap(
                 result => {
                     let plid = result.insertId;

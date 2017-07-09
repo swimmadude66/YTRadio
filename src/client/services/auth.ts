@@ -1,8 +1,8 @@
+import {Injectable} from '@angular/core';
+import {Http} from '@angular/http';
+import {CookieService} from 'ngx-cookie-service';
+import {Observable, ReplaySubject} from 'rxjs/Rx';
 import {SocketService} from './sockets';
-import {Observable} from 'rxjs/Rx';
-import { Http } from '@angular/http';
-import { Injectable } from '@angular/core';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class AuthService {
@@ -10,21 +10,14 @@ export class AuthService {
     private session: string;
     private userInfo: any;
 
+    private authEvents: ReplaySubject<{User: any, Session: string}>;
+
     constructor(
         private _http: Http,
         private _cookies: CookieService,
         private _sockets: SocketService,
     ) {
-        this._http.get(`/api/auth/`)
-        .map(res => res.json().Data)
-        .subscribe(
-            data => {
-                this.session = data.Session.Key;
-                this.userInfo = data.User;
-                this._sockets.join(data.User);
-            },
-            err => console.error(err)
-        );
+        this.authEvents = new ReplaySubject<{User: any, Session: string}>(1);
     }
 
     private nuke() {
@@ -46,6 +39,24 @@ export class AuthService {
         return !!this.userInfo;
     }
 
+    observe(): Observable<{User: any, Session: string}> {
+        return this.authEvents;
+    }
+
+    identify() {
+        this._http.get(`/api/auth/`)
+        .map(res => res.json().Data)
+        .subscribe(
+            data => {
+                this.session = data.Session.Key;
+                this.userInfo = data.User;
+                this._sockets.join(data.Session.Key);
+                this.authEvents.next({User: data.User, Session: data.Session.Key});
+            },
+            err => console.error(err)
+        );
+    }
+
     logIn(creds): Observable<any> {
         if (!creds || !creds.Username || !creds.Password) {
             return Observable.throw('Need login creds');
@@ -55,10 +66,8 @@ export class AuthService {
             .do(data => {
                 this.session = data.Session;
                 this.userInfo = data.User;
-                let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
-                let eDate = new Date(future);
-                this._cookies.set('ytrk_66', data.Session, eDate);
-                this._sockets.join(data.User);
+                this._sockets.join(data.Session);
+                this.authEvents.next(data);
             });
     }
 
@@ -74,7 +83,8 @@ export class AuthService {
         return this._http.post('/api/logOut', null)
         .do(
             res => this.nuke(),
-            err => this.nuke()
+            err => this.nuke(),
+            () => this.authEvents.next(null)
         );
     }
 }
