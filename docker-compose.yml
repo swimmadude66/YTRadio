@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.2'
 
 services:
   app:
@@ -7,7 +7,7 @@ services:
     ports:
       - '3000:3000'
     environment:
-      - YTAPI_KEY=${YTAPI_KEY}
+      - YTAPI_KEY=AIzaSyD7hIR8nWudy2sLDSzf4CRIbXAWNHYJIjM
       - DB_HOST=mysql
       - DB_PORT=3306
       - DB_DATABASE=ytradio

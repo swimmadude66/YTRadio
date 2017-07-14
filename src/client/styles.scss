@@ -3,49 +3,101 @@
 @import '~angular2-toaster/toaster';
 @import './scss/_variables';
 
-html,body{
-  height:100%;
+html, body {
+  height: 100%;
   min-width: 600px;
   overflow-y: hidden;
-  background: #000;
-}
-
-.pointer {
+  background: #1b1921;
+  font-family: Tahoma, Verdana, Segoe, sans-serif;
+  color: $text-color-light;
+  
+  a, button, .btn, .expand-button, .pointer {
+    font-weight: bold;
     cursor: pointer;
+  }
+  
+  .btn-default {
+    background-color: #333;
+    border: 1px solid #666;
+    color: #fff;
+  }
+  .btn-success {
+    background-color: $green;
+    border-color: $green-light;
+    
+    &:hover {
+      background-color: $green-dark;
+      border-color: $green;
+    }
+  }
+  .btn-danger {
+    background-color: $red;
+    border-color: $red-light;
+    
+    &:hover {
+      background-color: $red-dark;
+      border-color: $red;
+    }
+  }
+  .btn-primary {
+    background-color: $blue;
+    border-color: $blue-light;
+    
+    &:hover {
+      background-color: $blue-dark;
+      border-color: $blue;
+    }
+  }
+  
+  input, textarea, .form-control {
+    background-color: #1a1a1a;
+    color: #999;
+    border: 1px solid #333;
+    
+    &:focus {
+      background-color: #333;
+      color: #fff;
+    }
+  }
+  
+  .modal {
+     background-color: rgba(0, 0, 0, 0.8);
+  }
+  .modal-header {
+    border-color: #000;
+  }
+  .modal-content {
+    background-color: $base-color-2;
+  }
 }
 
-.full-height{
-  height:100%;
+.full-height {
+  height: 100%;
 }
 
-.full-width{
+.full-width {
   width: 100%;
 }
 
-.nopad-x{
+.nopad-x {
   padding-left: 0px;
-  padding-right:0px;
+  padding-right: 0px;
 }
 
-.chatmessage{
-  word-wrap: break-word;
-  border-top: 2px dotted grey;
+.queue {
+  width: 100%;
+  height: 100%;
 }
 
-.queue{
-  width:100%;
-  height:100%;
+.queue-item {
+  min-height: 50px;
+  width: 100%;
+  padding: 2px;
 }
 
-.queue-item{
-  min-height:50px;
-  width:100%;
-  padding:2px;
-}
-
-.see-more{
+.see-more {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width:100%;
+  width: 100%;
 }

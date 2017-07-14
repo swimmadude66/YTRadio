@@ -1,17 +1,25 @@
 .chat-window {
-    height: 100%;
+  height: 100%;
+  padding-right: 0;
 
-    .messages {
-        height: calc(100% - 100px);
-        overflow-x: hidden;
-        overflow-y: scroll;
-        padding-right: 20px;
-        padding-bottom: 45px; 
-    }
+  .messages {
+    height: calc(100% - 100px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-right: 15px;
+    padding-bottom: 45px; 
+  }
 
-    .send-box {
-        height: 30px;
-        margin: 5px 0;
-        width: 100%;
-    }
+  .chatmessage {
+    word-wrap: break-word;
+    border-top: 1px dotted grey;
+    margin: 5px 0;
+    padding: 2px 0 0 0;
+    font-size: 14px;
+  }
+
+  .send-box {
+    margin-top: 5px;
+    width: 100%;
+  }
 }

@@ -6,14 +6,14 @@
         </div>
         <div class="col-md-4 col-lg-3 col-xl-2 hidden-sm-down full-height sidebar">
             <div class="row nopad-x align-items-space">
-                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===0}" (click)="activateTab(0)">
-                    <h1><span class="fa fa-user"></span></h1>
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===0}" (click)="activateTab(0)" title="Online Users" aria-label="Online Users">
+                    <span class="fa fa-user fa-2x"></span>
                 </div>
-                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===1}" (click)="activateTab(1)">
-                    <h1><span class="fa fa-list"></span></h1>
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===1}" (click)="activateTab(1)" title="DJ Queue" aria-label="DJ Queue">
+                    <span class="fa fa-list fa-2x"></span>
                 </div>
-                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===2}" (click)="activateTab(2)">
-                    <h1><span class="fa fa-comment"></span></h1>
+                <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===2}" (click)="activateTab(2)" title="Chat" aria-label="Chat">
+                    <span class="fa fa-comment fa-2x"></span>
                 </div>
             </div>
             <div class="row full-height">

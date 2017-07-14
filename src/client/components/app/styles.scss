@@ -1,18 +1,20 @@
 @import '../../scss/_variables';
 
-.sidebar{
-  background-color: $sidebar-color;
-  color: $light-text-color;
+.sidebar {
+  background-color: $base-color-2;
+  color: $text-color-light;
 }
 
-.sidebar-btn{
-  border:inset 1px #000;
+.sidebar-btn {
+  background-color: #272736;
+  border: inset 1px #1b1921;
+  padding: 10px 0;
 }
 
-.sidebar-btn-active{
-  background-color: rgba(255,255,255,0.5);
+.sidebar-btn-active {
+  background-color: #43495b;
 }
 
 .middle-section {
-    height: calc(100% - 100px);
+  height: calc(100% - 100px);
 }

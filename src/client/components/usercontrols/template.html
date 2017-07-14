@@ -5,7 +5,7 @@
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search for videos" [(ngModel)]="searchCriteria.query" name="search" required>
           <span class="input-group-btn">
-            <button class="btn btn-default" type="submit" [disabled]="searchForm.invalid">Search</button>
+            <button type="button" class="btn btn-primary" type="submit" [disabled]="searchForm.invalid">Search</button>
           </span>
         </div>
       </form>
@@ -31,21 +31,24 @@
         <div class="col-xs-12 text-center" *ngIf="!addingPlaylist">
           <button type="button" class="btn btn-success" (click)="addPlaylist()">
             <span class="fa fa-plus"></span>
+            &nbsp;New Playlist
           </button>
         </div>
         <div class="col-12" *ngIf="addingPlaylist">
           <div class="row">
             <div class="col-12">
-              <input name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist['Name']" style="color:#000000;" type="text">
+              <input name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist['Name']" type="text">
             </div>
           </div>
           <div class="row">
             <div class="col-12" style="padding-top:4px;">
               <button class="btn btn-danger btn-sm" style="margin: 5px 10px;" (click)="cancelPlaylistAdd()">
                 <span _ngcontent-cml-8="" class="fa fa-remove"></span>
+                &nbsp;Cancel
               </button>
               <button class="btn btn-success btn-sm" style="margin: 5px 10px;" (click)="registerPlaylist()">
                 <span _ngcontent-cml-8="" class="fa fa-check"></span>
+                &nbsp;Save
               </button>
             </div>
           </div>
@@ -125,7 +128,7 @@
       </div>
       <div class="col-3 col-md-2 text-center">
         <ng-container *ngIf="user">
-          <button type="button" class="btn join-button" [ngClass]="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
+          <button type="button" class="btn join-btn" [ngClass]="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
             {{joined ? 'Leave Queue' : 'Join Queue'}}
           </button>
         </ng-container>
@@ -140,13 +143,13 @@
       <div class="col-5">
         <p class="footer-text see-more full-width" *ngIf="user">
           <strong>Next Song: </strong>
-          {{playlists[playlistName]?.Contents[0]?.Title || 'No song left in playlist'}}
+          {{playlists[playlistName]?.Contents[0]?.Title || 'N/A (playlist is empty)'}}
         </p>
       </div>
       <div class="col-3 col-lg-2 float-right">
-        <a class="footer-text pointer float-right text-right" (click)="login()" *ngIf="!user">Log in/Sign up</a>
+        <a class="footer-text float-right text-right" (click)="login()" *ngIf="!user">Log In / Sign Up</a>
         <ng-container *ngIf="user && user.Username">
-          <a class="footer-text pointer float-right text-right" (click)="logOut()">Log Out?</a>
+          <button type="button" class="btn btn-danger float-right logout-btn" (click)="logOut()">Log Out</button>
           <p class="footer-text hidden-md-down float-left text-left">Logged in as {{user.Username}}</p>
         </ng-container>
       </div>
