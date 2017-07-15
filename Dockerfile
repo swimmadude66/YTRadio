@@ -1,9 +1,9 @@
 FROM gliderlabs/alpine:3.6
 
 RUN apk add --update \
-nodejs=6.10.3-r0 \
-nodejs-npm=6.10.3-r0 \
-&& npm install -g npm@5.0.4 \
+nodejs \
+nodejs-npm \
+&& npm install -g npm@5.2.0 \
 && npm i -g pm2 \
 && rm -rf /var/cache/apk/*
 

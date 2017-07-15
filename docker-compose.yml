@@ -1,11 +1,18 @@
-version: '3.3'
+version: '3'
 
 services:
   app:
-    build: '.'
+    build:
+      context: '.'
+      dockerfile: 'Dockerfile.dev'
     container_name: 'ytradio-app'
     ports:
       - '3000:3000'
+      - '3001:3001'
+      - '3003:3003'
+    volumes:
+      - '.:/app'
+    command: 'sh /app/entrypoint.sh'
     environment:
       - YTAPI_KEY=${YTAPI_KEY}
       - DB_HOST=mysql

@@ -1,0 +1,9 @@
+FROM gliderlabs/alpine:3.6
+
+RUN apk add --update \
+nodejs \
+nodejs-npm \
+&& rm -rf /var/cache/apk/* \
+&& npm install -g npm@5.2.0
+
+ENV DOCKER_MODE=true
