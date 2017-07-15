@@ -10,7 +10,7 @@ declare var $;
 })
 export class AuthComponent {
 
-    private action = 'Log in';
+    private action = 'Log In';
     private signupText = false;
     private isLoading = false;
     private auth: any = {};
@@ -26,7 +26,7 @@ export class AuthComponent {
     }
 
     passwordMismatch() {
-        return (this.action === 'Sign up' && this.auth.Password && this.auth.Password2 !== this.auth.Password);
+        return (this.action === 'Sign Up' && this.auth.Password && this.auth.Password2 !== this.auth.Password);
     }
 
     formInvalid(form) {
@@ -38,10 +38,10 @@ export class AuthComponent {
 
     toggleAction() {
         this.errormessage = undefined;
-        if (this.action === 'Log in') {
-            this.action = 'Sign up';
+        if (this.action === 'Log In') {
+            this.action = 'Sign Up';
         } else {
-            this.action = 'Log in';
+            this.action = 'Log In';
         }
     }
 
@@ -49,7 +49,7 @@ export class AuthComponent {
         e.preventDefault();
         this.errormessage = undefined;
         this.isLoading = true;
-        if (this.action === 'Log in') {
+        if (this.action === 'Log In') {
             this._auth.logIn(this.auth)
             .subscribe(
                 session => {

@@ -1,10 +1,10 @@
 <div class="modal" id="authModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-med" role="document">
         <div class="modal-content">
             <form class="form" #f="ngForm" name="authform" id="authform" (ngSubmit)="f.valid && submit($event)">
                 <div class="modal-header">
                     <h3 class="panel-title">{{action}}</h3>
-                    <button type="button" class="close" data-dismiss="authModal" aria-label="Close" (click)="closeModal()">
+                    <button type="button" class="btn btn-danger" data-dismiss="authModal" aria-label="Close" (click)="closeModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -14,14 +14,14 @@
                             <div class="form-group" [ngClass]="{'has-danger': !(username.valid || (username.pristine && !f.submitted))}">
                                 <label for="username" class="control-label">Username</label>
                                 <input type="text" name="username" id="username" class="form-control" 
-                                    pattern=".{3,}" placeholder="{{action==='Sign up' ? 'Pick a username' : 'Your Username'}}"
+                                    pattern=".{3,}" placeholder="{{action==='Sign Up' ? 'Pick a username' : 'Your username'}}"
                                     [(ngModel)]="auth.Username" #username="ngModel" required>
                                 <small [hidden]="username.valid || (username.pristine && !f.submitted)">
-                                    Username is required (minimum 3 characters).
+                                    Username is required (3 characters minimum).
                                 </small>
                             </div>
                         </div>
-                        <div class="col-md-6" *ngIf="action==='Sign up'" [ngClass]="{'has-danger': !(email.valid || (email.pristine && !f.submitted))}">
+                        <div class="col-md-6" *ngIf="action==='Sign Up'" [ngClass]="{'has-danger': !(email.valid || (email.pristine && !f.submitted))}">
                             <div class="form-group">
                                 <label for="email" class="control-label">Email</label>
                                 <input type="email" name="email" id="email" class="form-control" placeholder="Email to confirm your account" 
@@ -37,17 +37,17 @@
                             <div class="form-group" [ngClass]="{'has-danger': !(password.valid || (password.pristine && !f.submitted))}">
                                 <label for="password" class="control-label">Password</label>
                                 <input type="password" name="password" id="password" class="form-control" 
-                                    pattern="\S{8,}" placeholder="{{action==='Sign up' ? 'Create a Password' : 'Your Password'}}" 
+                                    pattern="\S{8,}" placeholder="{{action==='Sign Up' ? 'Create a password' : 'Your password'}}" 
                                     [(ngModel)]="auth.Password" #password="ngModel" required>
                                 <small [hidden]="password.valid || (password.pristine && !f.submitted)">
-                                    Password is required (minimum 8 characters).
+                                    Password is required (8 characters minimum).
                                 </small>
                             </div>                
                         </div>
-                        <div class="col-md-6" *ngIf="action==='Sign up'">
+                        <div class="col-md-6" *ngIf="action==='Sign Up'">
                             <div class="form-group" [ngClass]="{'has-danger': !(password2.valid || (password2.pristine && !f.submitted))}">
-                                <label for="password2" class="control-label">Re-Enter Password</label>
-                                    <input type="password" name="password2" class="form-control" pattern="\S{8,}" placeholder="Just to be safe" 
+                                <label for="password2" class="control-label">Confirm Password</label>
+                                    <input type="password" name="password2" class="form-control" pattern="\S{8,}" placeholder="Confirm your password" 
                                     [(ngModel)]="auth.Password2" #password2="ngModel" required>
                                 <small [hidden]="password2.valid || (password2.pristine && !f.submitted)">
                                     Password Confirm is required and must match password.
@@ -69,7 +69,7 @@
                     <div class="row">
                         <div class="col-6">
                             <button type="button" class="btn btn-primary pull-left" (click)="toggleAction()" [disabled]="isLoading">
-                                {{action==='Sign up' ? 'Log in instead' : 'Sign up instead'}}
+                                {{action==='Sign Up' ? 'Log In' : 'Sign Up'}}
                             </button>
                         </div>
                         <div class="col-6">

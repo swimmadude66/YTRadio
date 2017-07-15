@@ -3,22 +3,23 @@
     <div class="col-6 col-md-7 col-lg-8" id="songinfo">
       <div class="row" *ngIf="playing">
         <div class="col-4 hidden-md-down">
-          <p class="radio-control-text">DJ: {{videoInfo?.DJ?.Username}}</p>
+          <p class="radio-control-text"><strong>DJ: </strong>{{videoInfo?.DJ?.Username}}</p>
         </div>
         <div class="col-12 col-md-8 col-lg-6">
           <p class="radio-control-text see-more"><strong>Now Playing: </strong>{{videoInfo?.Title}}</p>
         </div>
         <div class="col-2 hidden-sm-down text-right">
-          <p class="radio-control-text text-right" *ngIf="timer">{{timer | async}}/{{videoInfo?.FormattedTime}}</p>
+          <p class="radio-control-text text-right" *ngIf="timer">{{timer | async}} / {{videoInfo?.FormattedTime}}</p>
         </div>
       </div>
     </div>
     <div class="col-6 col-md-5 col-lg-4 track-controls">
       <button type="button" class="btn btn-danger skip-button" (click)="skip()" [disabled]="!canSkip()">
             Skip
+            <span class="fa fa-forward"></span>
       </button>
       <input class="form-control volumebar float-right" type="range" [(ngModel)]="volume" [disabled]="muted"/>
-      <p class="fa mute-button float-right" [ngClass]="{'fa-volume-off':muted, 'fa-volume-up':!muted}" (click)="toggleMute()"></p>
+      <p class="fa mute-button float-right" [ngClass]="{'fa-volume-off':muted, 'fa-volume-up':!muted}" (click)="toggleMute()" title="Toggle Mute" aria-label="Toggle Mute"></p>
     </div>
   </div>
 </div>

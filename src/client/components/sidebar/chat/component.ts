@@ -29,7 +29,7 @@ export class ChatComponent implements OnDestroy {
         });
 
         this._sockets.on('user_join', (username) => {
-            this.messages.push({Author: 'Server', Message: 'User ' + username + ' just joined.'});
+            this.messages.push({Author: 'Server', Message: 'User ' + username + ' boarded.'});
         });
 
         this._sockets.on('user_left', (username) => {

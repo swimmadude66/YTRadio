@@ -1,5 +1,5 @@
 <div class="col-12 queue-list">
-  <h3 *ngIf="queue.length<1">No one in queue</h3>
+  <h3 *ngIf="queue.length<1">DJ Queue is Empty</h3>
   <h3 *ngIf="queue.length>0">Users in Queue:</h3>
   <ol class="queue" *ngIf="queue.length>0">
     <li *ngFor="let DJ of queue" class="queue-item" role="presentation">
