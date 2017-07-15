@@ -1,6 +1,6 @@
 {
   "name": "ytradio",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "distributed internet radio",
   "main": "dist/server/app.js",
   "scripts": {

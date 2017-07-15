@@ -9,7 +9,7 @@ The built in chat allows for lifeboat to serve as a fun substitute for a message
 
 # How to Host
 
-## Method 1 - __Docker__
+# Method 1 - __Docker__
 _requires docker_
 
 1. `Docker pull swimmadude66/ytradio`
@@ -21,24 +21,18 @@ you define the environment variables for connecting to your database (via `-e` o
 Additionally, you can mount a volume at /https by passing the `-v {cert_location}:/https` option.
 
 
-# Development
+## Development
 A `docker-compose` file has been included, which spins up a mysql instance with __unsafe__ defaults. __DO NOT USE THE DOCKER COMPOSE FILE IN PRODUCTION__
 
-Instead, it can be used as a handy way to isolate development. Check out the code, Make your changes in the editor of your choice, then run
-1. `docker-compose build`
-2. `docker-compose up -d`
+Instead, it can be used as a handy way to isolate development. Check out the code, Make your changes in the editor of your choice, then run `docker-compose up --build -d`
 
-The app will be accessible at `localhost:3000` with your changes included. By default, the app runs in production mode (minified code and AOT compilaion) in the docker container, but if you'd like to run in dev, simply exec into the running container and stop the running instance
+The app will be accessible at `localhost:3001` with your changes included. The app features live reload, so changes you make on your local filesystem will be instantly reflected in the app. NOTE: changes to server will trigger a server restart, so the app will disconnect momentarily, and your song will be interrupted.
 
-1. `docker exec -it  ytradio-app sh`
-2. `pm2 stop all`
-
-Now you can change anything in the container, or re-build in non-prod mode.
 
 Lastly, to access the mysql database being used for the containers, either exec in to that container (`docker exec -it ytradio-db mysql -u root -padmin`) or connect the database manager (eg MySQL Workbench, Datagrip) to `localhost:6033` and log in with the __unsafe__ default login.
 
 
-## Method 2 - __Build from Source__
+# Method 2 - __Build from Source__
 _requires git, node, and npm_
 
 1. Clone this repo on to your host box (or just download the zip from github, I'm not your mom)
@@ -46,7 +40,7 @@ _requires git, node, and npm_
 3. run `npm i`, then `npm run gulp`
 4. `npm start` will host the app on the default port!
 
-# Development
+## Development
 After cloning and installing, you can run `npm run dev` to create a live-reloading instance of the app. (note, you will need to run `npm start` or `npm start-dev` in a separate terminal to launch the api)
 
 Additionally, you can configure the app by workspace by creating and editing a `.env` fle in the project root.  The contents of the file will be read as KeyValuePairs and overwrite `process.env` variables.
