@@ -4,9 +4,7 @@
             <form class="form" #f="ngForm" name="authform" id="authform" (ngSubmit)="f.valid && submit($event)">
                 <div class="modal-header">
                     <h3 class="panel-title">{{action}}</h3>
-                    <button type="button" class="btn btn-danger" data-dismiss="authModal" aria-label="Close" (click)="closeModal()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn btn-danger fa fa-times" data-dismiss="authModal" aria-label="Close" (click)="closeModal()"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center">
@@ -14,7 +12,7 @@
                             <div class="form-group" [ngClass]="{'has-danger': !(username.valid || (username.pristine && !f.submitted))}">
                                 <label for="username" class="control-label">Username</label>
                                 <input type="text" name="username" id="username" class="form-control" 
-                                    pattern=".{3,}" placeholder="{{action==='Sign Up' ? 'Pick a username' : 'Your username'}}"
+                                    pattern=".{3,}" placeholder="{{action==='Sign Up' ? 'Choose a username' : 'Your username'}}"
                                     [(ngModel)]="auth.Username" #username="ngModel" required>
                                 <small [hidden]="username.valid || (username.pristine && !f.submitted)">
                                     Username is required (3 characters minimum).
@@ -24,7 +22,7 @@
                         <div class="col-md-6" *ngIf="action==='Sign Up'" [ngClass]="{'has-danger': !(email.valid || (email.pristine && !f.submitted))}">
                             <div class="form-group">
                                 <label for="email" class="control-label">Email</label>
-                                <input type="email" name="email" id="email" class="form-control" placeholder="Email to confirm your account" 
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" 
                                     [(ngModel)]="auth.Email" #email="ngModel" required>
                                 <small [hidden]="email.valid || (email.pristine && !f.submitted)">
                                     Email is required.
@@ -37,7 +35,7 @@
                             <div class="form-group" [ngClass]="{'has-danger': !(password.valid || (password.pristine && !f.submitted))}">
                                 <label for="password" class="control-label">Password</label>
                                 <input type="password" name="password" id="password" class="form-control" 
-                                    pattern="\S{8,}" placeholder="{{action==='Sign Up' ? 'Create a password' : 'Your password'}}" 
+                                    pattern="\S{8,}" placeholder="{{action==='Sign Up' ? 'Choose a password' : 'Your password'}}" 
                                     [(ngModel)]="auth.Password" #password="ngModel" required>
                                 <small [hidden]="password.valid || (password.pristine && !f.submitted)">
                                     Password is required (8 characters minimum).
@@ -68,12 +66,12 @@
                     </div>
                     <div class="row">
                         <div class="col-6">
-                            <button type="button" class="btn btn-primary pull-left" (click)="toggleAction()" [disabled]="isLoading">
+                            <button type="button" class="btn btn-primary float-left" (click)="toggleAction()" [disabled]="isLoading">
                                 {{action==='Sign Up' ? 'Log In' : 'Sign Up'}}
                             </button>
                         </div>
                         <div class="col-6">
-                            <button type="submit" class="btn btn-success pull-right" [disabled]="formInvalid(f)">
+                            <button type="submit" class="btn btn-success float-right" [disabled]="formInvalid(f)">
                                 {{action}}
                             </button>
                         </div>
