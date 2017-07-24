@@ -6,20 +6,32 @@
 html, body {
   height: 100%;
   min-width: 600px;
-  overflow-y: hidden;
-  background: #1b1921;
-  font-family: Tahoma, Verdana, Segoe, sans-serif;
+  background-color: $background-color;
   color: $text-color-light;
+  font-family: Tahoma, Verdana, Segoe, sans-serif;
   
   a, button, .btn, .expand-button, .pointer {
     font-weight: bold;
     cursor: pointer;
   }
   
-  .btn-default {
+  hr {
+    background-color: $background-color;
+  }
+  
+  .btn, .btn-default {
     background-color: #333;
     border: 1px solid #666;
     color: #fff;
+  }
+  .btn-primary {
+    background-color: $blue;
+    border-color: $blue-light;
+    
+    &:hover {
+      background-color: $blue-dark;
+      border-color: $blue;
+    }
   }
   .btn-success {
     background-color: $green;
@@ -39,24 +51,18 @@ html, body {
       border-color: $red;
     }
   }
-  .btn-primary {
-    background-color: $blue;
-    border-color: $blue-light;
-    
-    &:hover {
-      background-color: $blue-dark;
-      border-color: $blue;
-    }
-  }
   
   input, textarea, .form-control {
-    background-color: #1a1a1a;
-    color: #999;
-    border: 1px solid #333;
+    background-color: $background-color;
+    border: 1px solid $foreground-color;
+    color: $foreground-color;
     
     &:focus {
-      background-color: #333;
-      color: #fff;
+      background-color: $background-color;
+      border-color: $foreground-color;
+      color: $text-color-light;
+      outline: none;
+      -webkit-appearance: none;
     }
   }
   
@@ -64,10 +70,10 @@ html, body {
      background-color: rgba(0, 0, 0, 0.8);
   }
   .modal-header {
-    border-color: #000;
+    border-color: $background-color;
   }
   .modal-content {
-    background-color: $base-color-2;
+    background-color: $foreground-color;
   }
 }
 

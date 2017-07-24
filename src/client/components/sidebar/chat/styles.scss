@@ -1,21 +1,25 @@
+@import '../../../scss/_variables';
+
 .chat-window {
   height: 100%;
-  padding-right: 0;
+  padding: 0 10px;
 
   .messages {
-    height: calc(100% - 100px);
+    height: calc(100% - 105px);
     overflow-x: hidden;
     overflow-y: auto;
     padding-right: 15px;
-    padding-bottom: 45px; 
   }
 
   .chatmessage {
     word-wrap: break-word;
-    border-top: 1px dotted grey;
     margin: 5px 0;
     padding: 2px 0 0 0;
     font-size: 14px;
+    
+    &+.chatmessage {
+      border-top: 1px dotted $background-color;
+    }
   }
 
   .send-box {
