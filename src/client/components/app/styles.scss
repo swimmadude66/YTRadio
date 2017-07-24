@@ -1,20 +1,24 @@
 @import '../../scss/_variables';
 
 .sidebar {
-  background-color: $base-color-2;
+  background-color: $foreground-color;
   color: $text-color-light;
-}
-
-.sidebar-btn {
-  background-color: #272736;
-  border: inset 1px #1b1921;
-  padding: 10px 0;
-}
-
-.sidebar-btn-active {
-  background-color: #43495b;
+  
+  .sidebar-btn {
+    background-color: $base-color;
+    border-top: 1px solid $background-color;
+    padding: 10px 0;
+    
+    &+.sidebar-btn {
+      border-left: 1px solid $background-color;
+    }
+  }
+  .sidebar-btn-active {
+    background-color: #43495b;
+    color: #fff;
+  }
 }
 
 .middle-section {
-  height: calc(100% - 100px);
+  height: calc(100% - 110px);
 }

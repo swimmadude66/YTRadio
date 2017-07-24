@@ -1,6 +1,6 @@
 <div class="col-12 queue-list">
-  <h3 *ngIf="queue.length<1">DJ Queue is Empty</h3>
-  <h3 *ngIf="queue.length>0">Users in Queue:</h3>
+  <h3>Users in Queue:</h3>
+  <p *ngIf="queue.length<1">The queue is currently empty.</p>
   <ol class="queue" *ngIf="queue.length>0">
     <li *ngFor="let DJ of queue" class="queue-item" role="presentation">
       {{DJ}}

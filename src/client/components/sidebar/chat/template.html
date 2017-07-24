@@ -5,7 +5,7 @@
         </p>
     </div>
     <footer class="send-box" *ngIf="user">
-        <form (submit)="sendMessage()">
+        <form (submit)="sendMessage()" autocomplete="off">
             <input type="text" name="messageBox" class="form-control" placeholder="type here to chat" [(ngModel)]="messageText.contents" maxlength="512">
         </form>
     </footer>

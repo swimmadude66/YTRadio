@@ -11,23 +11,19 @@
       </form>
     </div>
   </div>
-  <div class="row full-height" style="padding-bottom:125px;">
+  <div class="row full-height">
     <div class="col-3 full-height overlay-col overlay-sidebar">
-      <div class="row">
-        <h2>Playlists</h2>
-      </div>
-      <hr>
-      <div class="row">
-        <ul class="list-group playlist-list">
-          <li class="list-group-item playlist-tab pointer" *ngFor="let pl of listPlaylists(); let i=index;" (click)="viewPlaylist(pl.Name)" [ngClass]="{'playlist-active': pl.Name===playlistName}">
-            <h4>
-              {{pl?.Name}}
-            </h4>
-          </li>
-        </ul>
-      </div>
-      <br />
-      <div class="row">
+      <h2>Playlists</h2>
+      <hr/>
+      <ul class="list-group playlist-list">
+        <li class="list-group-item playlist-tab pointer" *ngFor="let pl of listPlaylists(); let i=index;" (click)="viewPlaylist(pl.Name)" [ngClass]="{'playlist-active': pl.Name===playlistName}">
+          <h4>
+            {{pl?.Name}}
+          </h4>
+        </li>
+      </ul>
+      <br/>
+      <div>
         <div class="col-xs-12 text-center" *ngIf="!addingPlaylist">
           <button type="button" class="btn btn-success" (click)="addPlaylist()">
             <span class="fa fa-plus"></span>
@@ -37,16 +33,16 @@
         <div class="col-12" *ngIf="addingPlaylist">
           <div class="row">
             <div class="col-12">
-              <input name="nplaylistName" placeholder="New Playlist" [(ngModel)]="newPlaylist['Name']" type="text">
+              <input name="nplaylistName" class="form-control" placeholder="New Playlist" [(ngModel)]="newPlaylist['Name']" type="text">
             </div>
           </div>
           <div class="row">
-            <div class="col-12" style="padding-top:4px;">
-              <button class="btn btn-danger btn-sm" style="margin: 5px 10px;" (click)="cancelPlaylistAdd()">
+            <div class="col-12" style="margin-top:10px;">
+              <button class="btn btn-danger btn-sm" (click)="cancelPlaylistAdd()">
                 <span _ngcontent-cml-8="" class="fa fa-remove"></span>
                 &nbsp;Cancel
               </button>
-              <button class="btn btn-success btn-sm" style="margin: 5px 10px;" (click)="registerPlaylist()">
+              <button class="btn btn-success btn-sm float-right" (click)="registerPlaylist()">
                 <span _ngcontent-cml-8="" class="fa fa-check"></span>
                 &nbsp;Save
               </button>
@@ -55,25 +51,25 @@
         </div>        
       </div>
     </div>
-    <div class="col-9 full-height overlay-col" style="overflow-y: scroll;">
+    <div class="col-9 full-height overlay-col" style="overflow-y: auto;">
       <div id="loadingbar" *ngIf="isLoading" style="position:absolute; top:20%; right:50%;">
         <h3 class="text-center">Loading...</h3>
         <img src="assets/images/loading.gif" alt="loading" class="center-block" />
       </div>
       <div id="search-results" [hidden]="!isSearching || isLoading">
-        <h2>Results</h2>
-        <hr>
-        <ul class="list-group" >
-          <li *ngFor="let item of searchResults" (click)="addToPlaylist(item)" class="pointer list-group-item" role="presentation">
+        <h2>Search Results</h2>
+        <hr/>
+        <ul class="col-12 list-group">
+          <li *ngFor="let item of searchResults" (click)="addToPlaylist(item)" class="list-group-item" role="presentation">
             <div class="row vidrow">
-              <div class="col-3 hidden-md-down vidicon">
+              <div class="hidden-md-down vidicon">
                 <img src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               </div>
-              <div class="col-9 col-lg-7 vidtitle">
+              <div class="col-8 vidtitle">
                 <span>{{item?.Title}}</span>
               </div>
-              <div class="col-3 col-lg-2">
-                <span class="pull-right vidtime">
+              <div class="col-2">
+                <span class="vidtime">
                   {{item?.FormattedTime}}
                 </span>
               </div>
@@ -82,18 +78,18 @@
         </ul>
       </div>
       <div id="playlist-items" [hidden]="isSearching">
-        <h2>{{playlistName}}</h2>
-        <hr>
-        <ul class="list-group playlist-item-list" >
+        <h2>Playlist: {{playlistName}}</h2>
+        <hr/>
+        <ul class="col-12 list-group">
           <li class="list-group-item" *ngFor="let item of playlists[playlistName]?.Contents let i=index; let f=first; let l=last" role="presentation">
             <div class="row vidrow">
-              <div class="col-2 hidden-md-down vidicon">
+              <div class="hidden-md-down vidicon">
                 <img src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               </div>
-              <div class="col-8 col-lg-6 vidtitle">
+              <div class="col-6 vidtitle">
                 <span>{{item?.Title}}</span>
               </div>
-              <div class="col-4 col-lg-2 vidbuttons text-right">
+              <div class="col-2 vidbuttons text-right">
                 <div class="btn-group btn-group-sm">
                   <div class="btn-group" role="group">
                     <button type="button" class="btn btn-primary" (click)="moveUp(i)" [hidden]="f">
@@ -108,7 +104,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-2 hidden-md-down vidtime text-right">
+              <div class="col-2 hidden-md-down vidtime">
                 <span>{{item?.FormattedTime}}</span>
               </div>
             </div>
@@ -121,12 +117,15 @@
 <footer class="user-controls">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-1 expand-button text-center" (click)="expand=!expand">
+      <div class="expand-button" (click)="expand=!expand">
         <ng-container *ngIf="user">
-          <span class="footer-text fa pointer" [ngClass]="{'fa-chevron-up': !expand, 'fa-chevron-down': expand}"></span>
+          <button type="button" class="btn btn-primary">
+            <span class="fa pointer" [ngClass]="{'fa-chevron-up': !expand, 'fa-chevron-down': expand}"></span>
+            <span>Playlists</span>
+          </button>
         </ng-container>
       </div>
-      <div class="col-3 col-md-2 text-center">
+      <div>
         <ng-container *ngIf="user">
           <button type="button" class="btn join-btn" [ngClass]="{'btn-success': !joined, 'btn-danger': joined}" (click)="joinLeaveQueue()">
             {{joined ? 'Leave Queue' : 'Join Queue'}}
@@ -135,22 +134,22 @@
       </div>
       <div class="col-lg-2 hidden-md-down">
         <ng-container *ngIf="user">
-          <p class="footer-text see-more">
+          <p class="see-more">
             <strong>Playlist: </strong>{{playlistName}}
           </p>
         </ng-container>
       </div>
       <div class="col-5">
-        <p class="footer-text see-more full-width" *ngIf="user">
+        <p class="see-more full-width" *ngIf="user">
           <strong>Next Song: </strong>
           {{playlists[playlistName]?.Contents[0]?.Title || 'N/A (playlist is empty)'}}
         </p>
       </div>
-      <div class="col-3 col-lg-2 float-right">
-        <a class="footer-text float-right text-right" (click)="login()" *ngIf="!user">Log In / Sign Up</a>
+      <div class="col-3 logout-container">
+        <button type="button" class="btn btn-success float-right login-btn" (click)="login()" *ngIf="!user">Log In / Sign Up</button>
         <ng-container *ngIf="user && user.Username">
           <button type="button" class="btn btn-danger float-right logout-btn" (click)="logOut()">Log Out</button>
-          <p class="footer-text hidden-md-down float-left text-left">Logged in as {{user.Username}}</p>
+          <p class="hidden-md-down float-right">Logged in as {{user.Username}}</p>
         </ng-container>
       </div>
     </div>
