@@ -40,6 +40,7 @@ module.exports = (APP_CONFIG) => {
                 socketManager.emit('queue_updated', userQueue);
                 sock.emit('nextSong_fetch');
                 djtimer = setTimeout(() => {
+                    FETCHING = false;
                     return playNextSong(() => console.log('Could not reach DJ in time'));
                 }, 3000)
                 return callback();
