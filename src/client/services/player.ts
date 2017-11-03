@@ -63,7 +63,7 @@ export class PlayerService {
     }
 
     onPlayerStateChange(event, that) {
-        if (!this.novid && event.data === 2) {
+        if (event.data === 2) {
             that.player.playVideo();
         } else {
             that.playerEvents.next({Event: 'stateChange', Data: event.data});
@@ -73,16 +73,19 @@ export class PlayerService {
     playVideo(video, startSeconds) {
         if (video) {
             this.novid = false;
-            if (this.player && this.player.playVideo) {
+            if (this.player && this.player.clearVideo && this.player.playVideo) {
+                this.player.clearVideo();
+                this.player.cueVideoById(video.Info.ID, startSeconds || 0);
                 this.playerInfo.start = startSeconds || 0;
-                this.player.loadVideoById(video.Info.ID, startSeconds || 0);
+                this.player.playVideo();
             } else {
                 this.playerInfo.start = startSeconds || 0;
                 this.playerInfo.VideoId = video.Info.ID;
             }
         } else {
             this.novid = true;
-            if (this.player) {
+            this.playerInfo = {};
+            if (this.player && this.player.stopVideo) {
                 this.player.stopVideo();
             }
         }
