@@ -4,7 +4,7 @@ var span            = require('child_process').spawn;
 var gulp        	= require('gulp');
 var sass            = require('node-sass');
 var webpack         = require('webpack');
-var AotPlugin       = require('@ngtools/webpack').AotPlugin;
+var AotPlugin       = require('@ngtools/webpack').AngularCompilerPlugin;
 var webpackConfig   = require('./webpack.config');
 var browserSync     = require('browser-sync-webpack-plugin');
 var ts_project	    = require('gulp-typescript').createProject('./src/server/tsconfig.json');
@@ -68,21 +68,26 @@ gulp.task('start-server', ['compile_node'], function(){
 gulp.task('webpack', function(done) {
     var config = webpackConfig;
     config.module.rules.push({
-        test: /\.ts$/,
+        test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
         loader: '@ngtools/webpack'
     });
+    
     config.plugins.push(
-        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            parallel: true,
+            sourceMap: true 
+        }),
         new AotPlugin({
             tsConfigPath: path.join(__dirname, './src/client/tsconfig.json'),
-            mainPath: path.join(__dirname, './src/client/main.ts')
+            mainPath: path.join(__dirname, './src/client/main.ts'),
+            typeChecking: false,
         })
     );
-    config.stats = 'minimal';
     return webpack(config, function(err, stats){
         if (err) {
             console.error(err);
         }
+        console.log(stats);
         return done(err);
     });
 });

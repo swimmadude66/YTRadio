@@ -7,7 +7,7 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
 
-    private activeTab = 0;
+    activeTab = 0;
     constructor() {}
 
     activateTab(tabNum: number) {

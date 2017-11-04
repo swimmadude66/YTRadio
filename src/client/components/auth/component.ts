@@ -10,12 +10,12 @@ declare var $;
 })
 export class AuthComponent {
 
-    private action = 'Log In';
-    private signupText = false;
-    private isLoading = false;
-    private auth: any = {};
+    action = 'Log In';
+    signupText = false;
+    isLoading = false;
+    auth: any = {};
 
-    private errormessage: string;
+    errormessage: string;
 
     constructor(
         private _auth: AuthService

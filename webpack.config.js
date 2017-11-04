@@ -15,7 +15,7 @@ var commonConfig = {
     resolve: {
         extensions: ['.ts', '.js', '.json']
     },
-    devtool: 'source-map',
+    devtool: 'sourcemap',
     module: {
         rules: [
             {
@@ -51,7 +51,8 @@ var commonConfig = {
         }),
         new commonsChunkPlugin({
             name: 'common',
-            minChunks: 2
+            minChunks: 2,
+            chunks: ['app', 'vendor']
         })
     ]
 };

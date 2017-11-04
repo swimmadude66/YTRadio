@@ -9,7 +9,7 @@ import {Subscription} from 'rxjs/Rx';
 })
 export class ChatComponent implements OnDestroy {
 
-    @ViewChild('scrollMe') private messageWindow: ElementRef;
+    @ViewChild('scrollMe') messageWindow: ElementRef;
 
     messages = [];
     messageText: any = {};
