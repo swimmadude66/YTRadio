@@ -28,7 +28,7 @@ gulp.task('compile_node', function(){
 });
 
 gulp.task('copy_client_root', ['copy_client_assets'], function(done){
-    gulp.src('src/client/index.html')
+    gulp.src(['src/client/index.html', 'src/client/favicon.ico'])
     .pipe(gulp.dest('dist/client/'));
 
     sass.render({
