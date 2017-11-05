@@ -1,7 +1,7 @@
+import {HttpClientModule} from '@angular/common/http';
 import { SharedModule } from './shared.module';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { ToasterModule, ToasterService } from 'angular2-toaster';
@@ -22,7 +22,7 @@ import { ALL_SERVICES } from '../services';
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        HttpModule,
+        HttpClientModule,
         SharedModule,
         ToasterModule,
         RouterModule.forRoot(

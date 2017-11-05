@@ -1,7 +1,7 @@
+import {HttpClient} from '@angular/common/http';
 import {AuthService} from '../../services/auth';
 import {SocketService} from '../../services/sockets';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Http} from '@angular/http';
 import {ToasterService} from 'angular2-toaster';
 import {Subscription} from 'rxjs/Rx';
 
@@ -31,7 +31,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
     constructor(
         private _auth: AuthService,
         private _sockets: SocketService,
-        private _http: Http,
+        private _http: HttpClient,
         private _toastr: ToasterService,
     ) { }
 
@@ -45,7 +45,6 @@ export class UserControlsComponent implements OnInit, OnDestroy {
             if (vidinfo) {
                 this.playlists[this.playlistName].Contents.push(vidinfo);
                 this._http.post('/api/playlists/update', this.playlists[this.playlistName])
-                .map(res => res.json())
                 .subscribe(
                     data => data,
                     err => console.error(err)
@@ -105,8 +104,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         if (!this._auth.getUser()) {
             return;
         }
-        this._http.get('/api/playlists')
-        .map(res => res.json())
+        this._http.get<{playlists: any[]}>('/api/playlists')
         .subscribe(data => {
             this.playlists = data.playlists;
             let found = false;
@@ -131,8 +129,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         this.isSearching = true;
         this.isLoading = true;
         let cleancrit = encodeURIComponent(this.searchCriteria.query);
-        this._http.get(`/api/search/?q=${cleancrit}`)
-        .map(res => res.json())
+        this._http.get<{videos: any[]}>(`/api/search/?q=${cleancrit}`)
         .subscribe(
             data => {
                 this.isLoading = false;
@@ -153,7 +150,8 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         this.playlistName = name;
         this.playlists[this.playlistName].Active = true;
         this.isSearching = false;
-        this._http.post('/api/playlists/setActive', this.playlists[name]).subscribe();
+        this._http.post('/api/playlists/setActive', this.playlists[name])
+        .subscribe(_ => _);
     }
 
     addToPlaylist(vidinfo) {
@@ -166,7 +164,6 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         }
         this.playlists[this.playlistName].Contents.unshift(vidinfo);
         this._http.post('/api/playlists/update', this.playlists[this.playlistName])
-        .map(res => res.json())
         .subscribe(
             data => this._toastr.pop('success', `Song Added to Playlist: ${this.playlistName}`),
             err => console.error(err)
@@ -175,21 +172,24 @@ export class UserControlsComponent implements OnInit, OnDestroy {
 
     removeFromPlaylist(ind) {
         let item = this.playlists[this.playlistName].Contents.splice(ind, 1)[0];
-        this._http.post('/api/playlists/removeItem', { PlaylistName: this.playlistName, VideoID: item.ID }).subscribe();
+        this._http.post('/api/playlists/removeItem', { PlaylistName: this.playlistName, VideoID: item.ID })
+        .subscribe(_ => _);
     }
 
     moveUp(ind) {
         let item = this.playlists[this.playlistName].Contents[ind];
         this.playlists[this.playlistName].Contents.splice(ind, 1);
         this.playlists[this.playlistName].Contents.unshift(item);
-        this._http.post('/api/playlists/update', this.playlists[this.playlistName]).subscribe();
+        this._http.post('/api/playlists/update', this.playlists[this.playlistName])
+        .subscribe(_ => _);
     }
 
     moveDown(ind) {
         let item = this.playlists[this.playlistName].Contents[ind];
         this.playlists[this.playlistName].Contents.splice(ind, 1);
         this.playlists[this.playlistName].Contents.push(item);
-        this._http.post('/api/playlists/update', this.playlists[this.playlistName]).subscribe();
+        this._http.post('/api/playlists/update', this.playlists[this.playlistName])
+        .subscribe(_ => _);
     }
 
     addPlaylist() {
@@ -204,7 +204,6 @@ export class UserControlsComponent implements OnInit, OnDestroy {
 
     registerPlaylist() {
         this._http.post('/api/playlists/', this.newPlaylist)
-        .map(res => res.json())
         .subscribe(
             data => {
                 this.addingPlaylist = false;
@@ -221,7 +220,8 @@ export class UserControlsComponent implements OnInit, OnDestroy {
             this.joined = false;
             let user = this._auth.getUser();
             if (user) {
-                this._http.delete(`/api/radio/queue/${user.Username}`).subscribe();
+                this._http.delete(`/api/radio/queue/${user.Username}`)
+                .subscribe(_ => _);
             }
         } else {
             this.joined = true;

@@ -1,9 +1,9 @@
+import {HttpClient} from '@angular/common/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import {PlayerService} from '../../services/player';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import { AuthService, SocketService } from '../../services';
 import { CookieService } from 'ngx-cookie-service';
-import { Http } from '@angular/http';
 
 @Component({
     selector: 'radio-controls',
@@ -34,7 +34,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        private _http: Http,
+        private _http: HttpClient,
         private _cookies: CookieService,
         private _sockets: SocketService,
         private _auth: AuthService,
@@ -145,7 +145,10 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
         if (this.timer) {
             this.timer = undefined;
         }
-        setTimeout(() => this._http.post('/api/radio/songend', { PlaybackID: this.playbackID }).subscribe(), 1000);
+        Observable.timer(1000)
+        .take(1)
+        .flatMap(_ => this._http.post('/api/radio/songend', {PlaybackID: this.playbackID}))
+        .subscribe(_ => {});
     }
 
     private saveVolume() {
@@ -170,7 +173,8 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
         if (!this.canSkip()) {
             return;
         }
-        this._http.post('/api/radio/skip', { PlaybackID: this.videoInfo.PlaybackID }).subscribe();
+        this._http.post('/api/radio/skip', { PlaybackID: this.videoInfo.PlaybackID })
+        .subscribe(_ => {});
     }
 
     toggleMute() {

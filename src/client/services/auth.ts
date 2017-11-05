@@ -1,5 +1,5 @@
+import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Http} from '@angular/http';
 import {CookieService} from 'ngx-cookie-service';
 import {Observable, ReplaySubject} from 'rxjs/Rx';
 import {SocketService} from './sockets';
@@ -13,7 +13,7 @@ export class AuthService {
     private authEvents: ReplaySubject<{User: any, Session: string}>;
 
     constructor(
-        private _http: Http,
+        private _http: HttpClient,
         private _cookies: CookieService,
         private _sockets: SocketService,
     ) {
@@ -44,8 +44,8 @@ export class AuthService {
     }
 
     identify() {
-        this._http.get(`/api/auth/`)
-        .map(res => res.json().Data)
+        this._http.get<{Data: any}>(`/api/auth/`)
+        .map(res => res.Data)
         .subscribe(
             data => {
                 this.session = data.Session.Key;
@@ -61,8 +61,8 @@ export class AuthService {
         if (!creds || !creds.Username || !creds.Password) {
             return Observable.throw('Need login creds');
         }
-        return this._http.post('/api/login', creds)
-            .map(res => res.json().Data)
+        return this._http.post<{Data: any}>('/api/login', creds)
+            .map(res => res.Data)
             .do(data => {
                 this.session = data.Session;
                 this.userInfo = data.User;
