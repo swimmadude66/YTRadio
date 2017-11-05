@@ -12,3 +12,9 @@ coverage
 
 .env
 *.env
+
+.editorconfig
+.jshintrc
+.gitignore
+.docker-compose.yml
+tslint.json

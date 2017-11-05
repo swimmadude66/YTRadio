@@ -4,6 +4,6 @@ RUN apk add --update \
 nodejs \
 nodejs-npm \
 && rm -rf /var/cache/apk/* \
-&& npm install -g npm@5.2.0
+&& npm install -g npm
 
 ENV DOCKER_MODE=true

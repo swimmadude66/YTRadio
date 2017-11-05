@@ -1,15 +1,18 @@
 FROM gliderlabs/alpine:3.6
 
-RUN apk add --update \
-nodejs \
-nodejs-npm \
-&& npm install -g npm@5.3.0 \
-&& npm i -g pm2 \
-&& rm -rf /var/cache/apk/*
+ENV PROD_MODE=true
 
 WORKDIR /app
 COPY . /app
 
-RUN npm install && npm test && npm run build
+RUN apk add --update \
+nodejs \
+nodejs-npm \
+&& rm -rf /var/cache/apk/* \
+&& npm install -g npm \
+&& npm i -g pm2 \
+&& npm install \
+&& npm test \
+&& npm run build
 
-ENTRYPOINT ["pm2-docker", "dist/server/app.js"]
+ENTRYPOINT ["pm2-docker", "/app/dist/server/app.js"]
