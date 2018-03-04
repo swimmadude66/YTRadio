@@ -4,7 +4,6 @@ var span            = require('child_process').spawn;
 var gulp        	= require('gulp');
 var sass            = require('node-sass');
 var webpack         = require('webpack');
-var AotPlugin       = require('@ngtools/webpack').AngularCompilerPlugin;
 var webpackConfig   = require('./webpack.config');
 var browserSync     = require('browser-sync-webpack-plugin');
 var ts_project	    = require('gulp-typescript').createProject('./src/server/tsconfig.json');
@@ -67,27 +66,37 @@ gulp.task('start-server', ['compile_node'], function(){
 
 gulp.task('webpack', function(done) {
     var config = webpackConfig;
-    config.module.rules.push({
-        test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
-        loader: '@ngtools/webpack'
-    });
     
     config.plugins.push(
         new webpack.optimize.UglifyJsPlugin({
-            parallel: true,
-            sourceMap: true 
-        }),
-        new AotPlugin({
-            tsConfigPath: path.join(__dirname, './src/client/tsconfig.json'),
-            mainPath: path.join(__dirname, './src/client/main.ts'),
-            typeChecking: false,
+            compress: {
+                warnings: false,
+                screw_ie8: true,
+                conditionals: true,
+                unused: true,
+                comparisons: true,
+                sequences: true,
+                dead_code: true,
+                evaluate: true,
+                if_return: true,
+                join_vars: true,
+            },
+            output: {
+                comments: false
+            }
         })
     );
     return webpack(config, function(err, stats){
         if (err) {
             console.error(err);
         }
-        console.log(stats);
+        if (stats.hasErrors()) {
+            if (stats.compilation.errors) {
+                stats.compilation.errors.forEach(function(e){console.error(e,'\n');});
+            } else {
+                console.log(stats);
+            }
+        }
         return done(err);
     });
 });
@@ -103,23 +112,6 @@ gulp.task('webpack-watch', function() {
             enforce: 'pre',
             test: /\.ts$/,
             use: 'source-map-loader'
-        },
-        {
-            test: /\.ts$/,
-            use: [
-                {
-                    loader: 'awesome-typescript-loader',
-                    options: {
-                        configFileName: './src/client/tsconfig.json'
-                    }
-                },
-                {
-                    loader: 'angular-router-loader'
-                },
-                {
-                    loader: 'angular2-template-loader'
-                },
-            ]
         }
     );
     config.plugins.push(
@@ -134,6 +126,13 @@ gulp.task('webpack-watch', function() {
     webpack(config, function(err, stats) {
         if (err) {
             console.error(err);
+        }
+        if (stats.hasErrors()) {
+            if (stats.compilation.errors) {
+                stats.compilation.errors.forEach(function(e){console.error(e,'\n');});
+            } else {
+                console.log(stats);
+            }
         }
     });
 });
