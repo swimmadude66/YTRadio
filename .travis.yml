@@ -1,0 +1,16 @@
+sudo: required
+language: node_js
+
+services:
+  - docker
+
+branches:
+  only:
+  - master
+
+install: true
+script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker build -t swimmadude66/ytradio:latest .
+after_success: docker push swimmadude66/ytradio:latest
+after_script: docker rmi -f swimmadude66/ytradio:latest
