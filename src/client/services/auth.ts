@@ -75,7 +75,7 @@ export class AuthService {
         if (!creds || !creds.Username || !creds.Email || !creds.Password) {
             return Observable.throw('Need signup creds');
         }
-        return this._http.post<string>('/api/signup', creds, {responseType: 'text' as 'text'})
+        return this._http.post('/api/signup', creds, {responseType: 'text' as 'text'})
         .flatMap(_ => this.logIn(creds));
     }
 
