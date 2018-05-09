@@ -1,8 +1,10 @@
-import { Observable } from 'rxjs/Rx';
+import {Observable} from 'rxjs';
+import {flatMap, map} from 'rxjs/operators';
 import * as async from 'async';
+import {Router} from 'express';
 
 module.exports = (APP_CONFIG) => {
-    const router = require('express').Router();
+    const router = Router();
     const db = APP_CONFIG.db;
     const ytapi = APP_CONFIG.ytapiService;
 
@@ -45,7 +47,7 @@ module.exports = (APP_CONFIG) => {
                     innerresults.forEach((ir) => {
                         if (!ir.status || ir.status.embeddable) {
                             ebvids.push(ir);
-                        }else {
+                        } else {
                             delete batches[bn].cleanvids[ir.id];
                         }
                     });
@@ -95,27 +97,31 @@ module.exports = (APP_CONFIG) => {
         let contents = body.Contents;
         let active = body.Active;
         db.query('Select `ID` from `playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.UserID])
-            .flatMap(results => {
-                if (results.length < 1) {
-                    return Observable.throw('No such playlist');
-                }
+            .pipe(
+                flatMap((results: any[]) => {
+                    if (results.length < 1) {
+                        return Observable.throw('No such playlist');
+                    }
                 let plid = results[0].ID;
                 let sql = 'Update `playlists` SET `Active`= ? where `ID`=?;';
                 return db.query(sql, [active, plid])
-                    .flatMap(result => {
-                        let contentmap = [];
-                        let i = 0;
-                        contents.forEach((c) => {
-                            if (!c) {
+                    .pipe(
+                        flatMap(result => {
+                            let contentmap = [];
+                            let i = 0;
+                            contents.forEach((c) => {
+                                if (!c) {
+                                    i++;
+                                    return;
+                                }
+                                contentmap.push([plid, c.ID, i]);
                                 i++;
-                                return;
-                            }
-                            contentmap.push([plid, c.ID, i]);
-                            i++;
-                        });
-                        return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(contentmap) + ' ON DUPLICATE KEY UPDATE `Order`=VALUES(`Order`);');
-                    });
-            })
+                            });
+                            return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(contentmap) + ' ON DUPLICATE KEY UPDATE `Order`=VALUES(`Order`);');
+                        })
+                    );
+                })
+            )
             .subscribe(
             _ => res.status(204).end(),
             err => {
@@ -147,32 +153,34 @@ module.exports = (APP_CONFIG) => {
             'left join `videos` on `videos`.`VideoID` = `playlistcontents`.`VideoID` ' +
             'where `Owner` = ?;';
         db.query(q, [res.locals.usersession.UserID])
-            .map(results => {
-                if (results.length < 1) {
-                    return [{ Name: 'Default', Contents: [], Active: true }];
-                }
-                let playlists = {};
-                results.forEach((result) => {
-                    if (!(result.Name in playlists)) {
-                        playlists[result.Name] = {
-                            ID: result.ID,
-                            Name: result.Name,
-                            Contents: [],
-                            Active: result.Active
-                        };
+            .pipe(
+                map((results: any[]) => {
+                    if (results.length < 1) {
+                        return [{ Name: 'Default', Contents: [], Active: true }];
                     }
-                    let thumbs = JSON.parse(result.Thumbnails);
-                    if (result.videoID) {
-                        playlists[result.Name].Contents.push({ ID: result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails: thumbs, FormattedTime: result.FormattedTime, Duration: result.Duration, Order: result.Order });
+                    let playlists = {};
+                    results.forEach((result) => {
+                        if (!(result.Name in playlists)) {
+                            playlists[result.Name] = {
+                                ID: result.ID,
+                                Name: result.Name,
+                                Contents: [],
+                                Active: result.Active
+                            };
+                        }
+                        let thumbs = JSON.parse(result.Thumbnails);
+                        if (result.videoID) {
+                            playlists[result.Name].Contents.push({ ID: result.videoID, Title: result.Title, Poster: result.Poster, Thumbnails: thumbs, FormattedTime: result.FormattedTime, Duration: result.Duration, Order: result.Order });
+                        }
+                    });
+                    for (let pl in playlists) {
+                        if (playlists.hasOwnProperty(pl)) {
+                            playlists[pl].Contents.sort((a, b) => a.Order - b.Order);
+                        }
                     }
-                });
-                for (let pl in playlists) {
-                    if (playlists.hasOwnProperty(pl)) {
-                        playlists[pl].Contents.sort((a, b) => a.Order - b.Order);
-                    }
-                }
-                return playlists;
-            })
+                    return playlists;
+                })
+            )
             .subscribe(
             playlists => res.send({ playlists }),
             err => {
@@ -239,7 +247,9 @@ module.exports = (APP_CONFIG) => {
         let contentd = 'Delete from `playlistcontents` Where playlistID=(Select ID from playlists where Name=? and Owner=?);';
         let pdelete = 'Delete from playlists where Name=? and Owner=?;';
         db.query(contentd, [name, res.locals.usersession.UserID])
-        .flatMap(() => db.query(pdelete, [name, res.locals.usersession.UserID]))
+        .pipe(
+            flatMap(() => db.query(pdelete, [name, res.locals.usersession.UserID]))
+        )
         .subscribe(
             _ => res.status(204).end(),
             err => {
@@ -262,17 +272,19 @@ module.exports = (APP_CONFIG) => {
             }
             let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
             db.query(sql, [res.locals.usersession.UserID, name, JSON.stringify([]), false])
-            .flatMap(
-                result => {
-                    let plid = result.insertId;
-                    let plcontents = [];
-                    let i = 0;
-                    contents.forEach((c) => {
-                        plcontents.push([plid, c.ID, i]);
-                        i++;
-                    });
-                    return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(plcontents) + ' ON DUPLICATE KEY UPDATE `ID`=`ID`;');
-                }
+            .pipe(
+                flatMap(
+                    result => {
+                        let plid = result['insertId'];
+                        let plcontents = [];
+                        let i = 0;
+                        contents.forEach((c) => {
+                            plcontents.push([plid, c.ID, i]);
+                            i++;
+                        });
+                        return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(plcontents) + ' ON DUPLICATE KEY UPDATE `ID`=`ID`;');
+                    }
+                )
             )
             .subscribe(
                 _ => res.status(204).end(),

@@ -1,6 +1,6 @@
 import {SocketService, AuthService} from '../../../services/';
 import {Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 
 @Component({
     selector: 'chat',

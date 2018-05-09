@@ -1,18 +1,5 @@
-import {PlayerService} from './player';
-import {QueueService} from './queue';
-import {SocketService} from './sockets';
-import {AuthService} from './auth';
-
-export {
-    AuthService,
-    SocketService,
-    QueueService,
-    PlayerService
-}
-
-export const ALL_SERVICES = [
-    AuthService,
-    SocketService,
-    QueueService,
-    PlayerService
-];
+export * from './auth';
+export * from './player';
+export * from './queue';
+export * from './sockets';
+export * from './storage';

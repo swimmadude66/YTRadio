@@ -1,12 +1,14 @@
-import {Observable} from 'rxjs/Rx';
+import {Observable} from 'rxjs';
+import {flatMap, map} from 'rxjs/operators';
 import {Session} from '../models/session';
 import {Database} from '../services/db';
 import {SessionLookup} from '../services/sessionlookup';
 import {createHash} from 'crypto';
 import * as uuid from 'uuid/v4';
+import {Router} from 'express';
 
 module.exports = (APP_CONFIG) => {
-    const router = require('express').Router();
+    const router = Router();
     const db: Database = APP_CONFIG.db;
     const sessionLookup: SessionLookup = APP_CONFIG.sessionLookup;
     /*
@@ -72,9 +74,11 @@ module.exports = (APP_CONFIG) => {
         let salt = uuid();
         let encpass = createHash('sha256').update(salt + '|' + body.Password).digest('hex');
         db.query('Insert into users(`Username`, `Email`, `Password`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,1);', [body.Username, body.Email, encpass, salt, uuid()])
-        .flatMap(() => {
-            return db.query('Insert into playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select `ID` from `users` where `Username`=?), \'Default\', \'[]\', 0);', [body.Username]);
-        })
+        .pipe(
+            flatMap(() => {
+                return db.query('Insert into playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select `ID` from `users` where `Username`=?), \'Default\', \'[]\', 0);', [body.Username]);
+            })
+        )
         .subscribe(
         result => res.send('Signed up successfully.'),
         err => {
@@ -99,26 +103,30 @@ module.exports = (APP_CONFIG) => {
             return res.status(400).send('Username and Password are required fields');
         }
         db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from users where `Username` = ?', [body.Username])
-        .flatMap(
-        results => {
-            if (results.length < 1) {
-                return Observable.throw('Invalid username and/or password');
-            }
-            let user = results[0];
-            if (user.Active === 0) {
-                return Observable.throw('Invalid username and/or password');
-            }
-            let validpass = (createHash('sha256').update(user.Salt + '|' + body.Password).digest('hex') === user.Password);
-            if (!validpass) {
-                return Observable.throw('Invalid username and/or password');
-            }
-            let public_user = { ID: user.ID, Username: user.Username, Role: user.Role };
-            let sid = uuid();
-            return db.query('Insert into sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
-            .map(() => {
-                return {Session: sid, User: public_user};
-            });
-        })
+        .pipe(
+            flatMap(
+            results => {
+                if (results.length < 1) {
+                    return Observable.throw('Invalid username and/or password');
+                }
+                let user = results[0];
+                if (user.Active === 0) {
+                    return Observable.throw('Invalid username and/or password');
+                }
+                let validpass = (createHash('sha256').update(user.Salt + '|' + body.Password).digest('hex') === user.Password);
+                if (!validpass) {
+                    return Observable.throw('Invalid username and/or password');
+                }
+                let public_user = { ID: user.ID, Username: user.Username, Role: user.Role };
+                let sid = uuid();
+                return db.query('Insert into sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
+                .pipe(
+                    map(() => {
+                        return {Session: sid, User: public_user};
+                    })
+                );
+            })
+        )
         .subscribe(
             result => {
                 res.cookie(APP_CONFIG.cookie_name, result.Session, {

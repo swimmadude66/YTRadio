@@ -3,7 +3,7 @@ import {AuthService} from '../../services/auth';
 import {SocketService} from '../../services/sockets';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ToasterService} from 'angular2-toaster';
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 
 declare var $;
 

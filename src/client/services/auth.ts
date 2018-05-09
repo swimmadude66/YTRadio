@@ -1,10 +1,13 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {CookieService} from 'ngx-cookie-service';
-import {Observable, ReplaySubject} from 'rxjs/Rx';
+import {Observable, ReplaySubject} from 'rxjs';
+import {map, tap, flatMap} from 'rxjs/operators';
 import {SocketService} from './sockets';
+import {StorageService} from './storage';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class AuthService {
 
     private session: string;
@@ -14,14 +17,14 @@ export class AuthService {
 
     constructor(
         private _http: HttpClient,
-        private _cookies: CookieService,
+        private _storage: StorageService,
         private _sockets: SocketService,
     ) {
         this.authEvents = new ReplaySubject<{User: any, Session: string}>(1);
     }
 
     private nuke() {
-        this._cookies.deleteAll();
+        this._storage.clear();
         this.session = undefined;
         this.userInfo = undefined;
         this._sockets.leave();
@@ -45,7 +48,9 @@ export class AuthService {
 
     identify() {
         this._http.get<{Data: any}>(`/api/auth/`)
-        .map(res => res.Data)
+        .pipe(
+            map(res => res.Data)
+        )
         .subscribe(
             data => {
                 this.session = data.Session.Key;
@@ -62,13 +67,15 @@ export class AuthService {
             return Observable.throw('Need login creds');
         }
         return this._http.post<{Data: any}>('/api/login', creds)
-            .map(res => res.Data)
-            .do(data => {
-                this.session = data.Session;
-                this.userInfo = data.User;
-                this._sockets.join(data.Session);
-                this.authEvents.next(data);
-            });
+            .pipe(
+                map(res => res.Data),
+                tap(data => {
+                    this.session = data.Session;
+                    this.userInfo = data.User;
+                    this._sockets.join(data.Session);
+                    this.authEvents.next(data);
+                })
+            );
     }
 
     signUp(creds): Observable<any> {
@@ -76,7 +83,9 @@ export class AuthService {
             return Observable.throw('Need signup creds');
         }
         return this._http.post('/api/signup', creds, {responseType: 'text' as 'text'})
-        .flatMap(_ => this.logIn(creds));
+        .pipe(
+            flatMap(_ => this.logIn(creds))
+        );
     }
 
     expireSocket() {
@@ -87,10 +96,12 @@ export class AuthService {
 
     logOut(): Observable<any> {
         return this._http.post('/api/logOut', null)
-        .do(
-            res => this.nuke(),
-            err => this.nuke(),
-            () => this.authEvents.next(null)
+        .pipe(
+            tap(
+                res => this.nuke(),
+                err => this.nuke(),
+                () => this.authEvents.next(null)
+            )
         );
     }
 }
