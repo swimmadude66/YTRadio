@@ -1,6 +1,8 @@
 @import '~bootstrap/scss/bootstrap';
+// point to fa-fonts before import
+$fa-font-path : '../../node_modules/font-awesome/fonts';
 @import '~font-awesome/scss/font-awesome';
-@import '~angular2-toaster/toaster';
+@import '~ngx-toastr/toastr-bs4-alert';
 @import './scss/_variables';
 
 html, body {
@@ -62,7 +64,7 @@ html, body {
       border-color: $foreground-color;
       color: $text-color-light;
       outline: none;
-      -webkit-appearance: none;
+      appearance: none;
     }
   }
   

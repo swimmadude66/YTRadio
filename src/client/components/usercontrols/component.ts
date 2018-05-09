@@ -2,7 +2,7 @@ import {HttpClient} from '@angular/common/http';
 import {AuthService} from '../../services/auth';
 import {SocketService} from '../../services/sockets';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ToasterService} from 'angular2-toaster';
+import {ToastrService} from 'ngx-toastr';
 import {Subscription} from 'rxjs';
 
 declare var $;
@@ -32,7 +32,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
         private _auth: AuthService,
         private _sockets: SocketService,
         private _http: HttpClient,
-        private _toastr: ToasterService,
+        private _toastr: ToastrService,
     ) { }
 
     ngOnInit() {
@@ -54,7 +54,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
 
         this._sockets.on('queue_kick', () => {
             this.joined = false;
-            this._toastr.pop('error', 'You have been removed from the queue');
+            this._toastr.error('You have been removed from the queue');
         });
 
         this._sockets.on('inQueue', (inQueue) => {
@@ -138,7 +138,7 @@ export class UserControlsComponent implements OnInit, OnDestroy {
             err => {
                 this.isLoading = false;
                 console.error(err);
-                this._toastr.pop('error', 'Error completing search');
+                this._toastr.error('Error completing search');
             }
         );
     }
@@ -159,13 +159,13 @@ export class UserControlsComponent implements OnInit, OnDestroy {
             return;
         }
         if (this.playlists[this.playlistName].Contents.indexOf(vidinfo) > -1) {
-            this._toastr.pop('error', 'Song already exists in playlist');
+            this._toastr.error('Song already exists in playlist');
             return;
         }
         this.playlists[this.playlistName].Contents.unshift(vidinfo);
         this._http.post('/api/playlists/update', this.playlists[this.playlistName])
         .subscribe(
-            data => this._toastr.pop('success', `Song Added to Playlist: ${this.playlistName}`),
+            data => this._toastr.success(`Song Added to Playlist: ${this.playlistName}`),
             err => console.error(err)
         );
     }
@@ -209,9 +209,9 @@ export class UserControlsComponent implements OnInit, OnDestroy {
                 this.addingPlaylist = false;
                 this.newPlaylist = {};
                 this.fetch_playlist();
-                this._toastr.pop('success', 'Added Playlist!');
+                this._toastr.success('Added Playlist!');
             },
-            err => this._toastr.pop('error', err)
+            err => this._toastr.error(err)
         );
     }
 
@@ -227,10 +227,10 @@ export class UserControlsComponent implements OnInit, OnDestroy {
             this.joined = true;
             this._http.post('/api/radio/queue', null)
             .subscribe(
-                _ => this._toastr.pop('success', 'added to queue'),
+                _ => this._toastr.success('added to queue'),
                 err => {
                     this.joined = false;
-                    this._toastr.pop('error', 'Could not join Queue', err);
+                    this._toastr.error('Could not join Queue', err);
                 }
             );
         }

@@ -4,7 +4,7 @@ import {RouterModule} from '@angular/router';
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {ToasterModule, ToasterService} from 'angular2-toaster';
+import {ToastrModule} from 'ngx-toastr';
 import {
     AppComponent,
     UserListComponent,
@@ -22,7 +22,9 @@ import {
         BrowserAnimationsModule,
         HttpClientModule,
         SharedModule,
-        ToasterModule,
+        ToastrModule.forRoot({
+            maxOpened: 2,
+        }),
         RouterModule.forRoot(
             [
                 { path: '**', redirectTo: '/'}
@@ -38,9 +40,6 @@ import {
         TheatreComponent,
         UserControlsComponent,
         AuthComponent,
-    ],
-    providers: [
-        ToasterService,
     ],
     bootstrap: [AppComponent],
 })
