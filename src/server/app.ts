@@ -5,7 +5,7 @@ import {Database} from './services/db';
 import {YTAPI} from './services/ytapi';
 import {SessionLookup} from './services/sessionlookup';
 import {UserDirectory} from './services/userdirectory';
-import * as https from 'https';
+import * as spdy from 'spdy';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as compress from 'compression';
@@ -60,7 +60,7 @@ if (process.env.HTTPS) {
         ca: (process.env.SSLCHAIN ? tryLoad(process.env.SSLCHAIN) : undefined),
         pfx: (process.env.SSLPFX ? tryLoad(process.env.SSLPFX) : undefined)
     };
-    server = https.createServer(ssl_config, app);
+    server = spdy.createServer(ssl_config, app);
     let redir = express();
     redir.get('*', (req, res, next) => {
       let httpshost = `https://${req.headers.host}${req.url}`;
