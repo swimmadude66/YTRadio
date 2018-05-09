@@ -9,7 +9,6 @@ var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
-var UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 var AotPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 
