@@ -80,13 +80,6 @@ export class UserControlsComponent implements OnInit, OnDestroy {
                 }
             }
         );
-
-        $('#authModal').modal({show: false});
-        $('#authModal').on('hidden.bs.modal', (event) => {
-            if (this._auth.getUser()) {
-                this.fetch_playlist();
-            }
-        });
     }
 
     ngOnDestroy() {
@@ -234,10 +227,6 @@ export class UserControlsComponent implements OnInit, OnDestroy {
                 }
             );
         }
-    }
-
-    login() {
-        $('#authModal').show();
     }
 
     logOut() {

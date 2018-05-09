@@ -62,7 +62,7 @@
         <ul class="col-12 list-group">
           <li *ngFor="let item of searchResults" (click)="addToPlaylist(item)" class="list-group-item" role="presentation">
             <div class="row vidrow">
-              <div class="hidden-md-down vidicon">
+              <div class="d-none d-lg-block vidicon">
                 <img src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               </div>
               <div class="col-8 vidtitle">
@@ -83,7 +83,7 @@
         <ul class="col-12 list-group">
           <li class="list-group-item" *ngFor="let item of playlists[playlistName]?.Contents let i=index; let f=first; let l=last" role="presentation">
             <div class="row vidrow">
-              <div class="hidden-md-down vidicon">
+              <div class="d-none d-lg-block vidicon">
                 <img src="{{item.Thumbnails.default.url}}" width="120" height="90"/>
               </div>
               <div class="col-6 vidtitle">
@@ -104,7 +104,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-2 hidden-md-down vidtime">
+              <div class="col-lg-2 d-none d-lg-block vidtime">
                 <span>{{item?.FormattedTime}}</span>
               </div>
             </div>
@@ -132,7 +132,7 @@
           </button>
         </ng-container>
       </div>
-      <div class="col-lg-2 hidden-md-down">
+      <div class="col-lg-2 d-none d-lg-block">
         <ng-container *ngIf="user">
           <p class="see-more">
             <strong>Playlist: </strong>{{playlistName}}
@@ -146,12 +146,13 @@
         </p>
       </div>
       <div class="col-3 logout-container">
-        <button type="button" class="btn btn-success float-right login-btn" (click)="login()" *ngIf="!user">Log In / Sign Up</button>
+        <button type="button" class="btn btn-success float-right login-btn" data-toggle="modal" data-target="#authModal" *ngIf="!user">Log In / Sign Up</button>
         <ng-container *ngIf="user && user.Username">
           <button type="button" class="btn btn-danger float-right logout-btn" (click)="logOut()">Log Out</button>
-          <p class="hidden-md-down float-right">Logged in as {{user.Username}}</p>
+          <p class="d-none d-lg-block float-right">Logged in as {{user.Username}}</p>
         </ng-container>
       </div>
     </div>
   </div>
 </footer>
+<auth></auth>

@@ -16,13 +16,12 @@ export class AuthComponent {
     auth: any = {};
 
     errormessage: string;
-
     constructor(
         private _auth: AuthService
     ) {}
 
     closeModal() {
-        $('#authModal').hide();
+        $('#btnModalClose').click();
     }
 
     passwordMismatch() {

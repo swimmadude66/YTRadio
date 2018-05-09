@@ -4,7 +4,7 @@
         <div id="screen" class="col-12 col-md-8 col-lg-9 col-xl-10 full-height align-self-middle">
             <theatre></theatre>
         </div>
-        <div class="col-md-4 col-lg-3 col-xl-2 hidden-sm-down full-height sidebar">
+        <div class="col-md-4 col-lg-3 col-xl-2 d-none d-md-block full-height sidebar">
             <div class="row nopad-x align-items-space">
                 <div class="col text-center pointer sidebar-btn" [ngClass]="{'sidebar-btn-active':activeTab===0}" (click)="activateTab(0)" title="Online Users" aria-label="Online Users">
                     <span class="fa fa-user fa-2x"></span>
@@ -25,4 +25,3 @@
     </div>
 </div>
 <user-controls></user-controls>
-<auth></auth>

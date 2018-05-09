@@ -1,10 +1,10 @@
-<div class="modal" id="authModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal" #authModal id="authModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="false">
     <div class="modal-dialog modal-med" role="document">
         <div class="modal-content">
             <form class="form" #f="ngForm" name="authform" id="authform" (ngSubmit)="f.valid && submit($event)">
                 <div class="modal-header">
                     <h3 class="panel-title">{{action}}</h3>
-                    <button type="button" class="btn btn-danger fa fa-times" data-dismiss="authModal" aria-label="Close" (click)="closeModal()"></button>
+                    <button type="button" class="btn btn-danger fa fa-times" data-dismiss="modal" aria-label="Close" id="btnModalClose"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row justify-content-center">

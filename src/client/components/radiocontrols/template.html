@@ -2,13 +2,13 @@
   <div class="row">
     <div class="col-6 col-md-7 col-lg-8" id="songinfo">
       <div class="row" *ngIf="playing">
-        <div class="col-4 hidden-md-down">
+        <div class="col-lg-4 d-none d-lg-block">
           <p class="radio-control-text"><strong>DJ: </strong>{{videoInfo?.DJ?.Username}}</p>
         </div>
         <div class="col-12 col-md-8 col-lg-6">
           <p class="radio-control-text see-more"><strong>Now Playing: </strong>{{videoInfo?.Title}}</p>
         </div>
-        <div class="col-2 hidden-sm-down text-right">
+        <div class="col-md-2 d-none d-md-block text-right">
           <p class="radio-control-text text-right" *ngIf="timer">{{timer | async}} / {{videoInfo?.FormattedTime}}</p>
         </div>
       </div>
