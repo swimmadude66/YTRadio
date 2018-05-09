@@ -1,13 +1,11 @@
-FROM gliderlabs/alpine:3.6
+FROM alpine:3.7
 
 WORKDIR /build
 COPY . /build
 
-RUN apk add --update \
+RUN apk add --no-cache --update \
 nodejs \
 nodejs-npm \
-&& rm -rf /var/cache/apk/* \
-&& npm install -g npm@5.4.2 pm2 \
 && npm i \
 && npm run build \
 && mkdir -p -m 0777 /app/bin \
@@ -19,4 +17,6 @@ nodejs-npm \
 && mkdir -p -m 0777 /var/log/ytradio \
 && npm cache clean --force
 
-ENTRYPOINT ["pm2-docker", "/app/bin/server/app.js", "-l /var/log/ytradio/ytradio.logs"]
+WORKDIR /app
+
+ENTRYPOINT ["node", "/app/bin/server/app.js", ">> /var/log/ytradio/ytradio.logs", "2>&1"]

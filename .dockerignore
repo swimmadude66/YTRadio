@@ -1,6 +1,7 @@
-dist
-.vscode
+dist/
+.vscode/
 node_modules/
+data/
 logs
 *.log
 npm-debug.log*
@@ -18,3 +19,4 @@ coverage
 .gitignore
 .docker-compose.yml
 tslint.json
+*.node
