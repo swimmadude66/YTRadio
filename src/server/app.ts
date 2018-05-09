@@ -47,7 +47,7 @@ app.use(morgan((tokens, req, res) => {
         tokens['response-time'](req, res),
         'ms',
         '- user:',
-        (res.locals.usersession || {Username: 'Unauthenticated User'}).Username,
+        (res.locals.usersession || {User: {Username: 'Unauthenticated User'}}).User.Username,
         '(' + req.ip + ')'
     ].join(' ');
 }));
@@ -75,17 +75,20 @@ if (process.env.HTTPS) {
 let io = socketio(server);
 APP_CONFIG.Socks = io;
 
+/*-------- User Auth --------*/
+app.use(require('./routes/auth')(APP_CONFIG));
+
 /*-------- API --------*/
 app.use('/api', require('./routes/api')(APP_CONFIG));
 
 /*------- Angular client on Root ------- */
 app.set('view engine', 'html');
 app.use(express.static(join(__dirname, '../client')));
-app.get('/*', function(req, res){
+app.get('/*', function(req, res) {
   return res.sendFile(join(__dirname, '../client/index.html'));
 });
 
-app.all('*', function(req, res){
+app.all('*', function(req, res) {
   return res.status(404).send('404 UNKNOWN ROUTE');
 });
 

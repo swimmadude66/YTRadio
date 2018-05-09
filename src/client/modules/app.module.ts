@@ -1,11 +1,10 @@
 import {HttpClientModule} from '@angular/common/http';
-import { SharedModule } from './shared.module';
-import { RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import { ToasterModule, ToasterService } from 'angular2-toaster';
-import { CookieService} from 'ngx-cookie-service';
+import {SharedModule} from './shared.module';
+import {RouterModule} from '@angular/router';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ToastrModule} from 'ngx-toastr';
 import {
     AppComponent,
     UserListComponent,
@@ -16,7 +15,6 @@ import {
     UserControlsComponent,
     AuthComponent
 } from '../components/';
-import { ALL_SERVICES } from '../services';
 
 @NgModule({
     imports: [
@@ -24,7 +22,9 @@ import { ALL_SERVICES } from '../services';
         BrowserAnimationsModule,
         HttpClientModule,
         SharedModule,
-        ToasterModule,
+        ToastrModule.forRoot({
+            maxOpened: 2,
+        }),
         RouterModule.forRoot(
             [
                 { path: '**', redirectTo: '/'}
@@ -40,11 +40,6 @@ import { ALL_SERVICES } from '../services';
         TheatreComponent,
         UserControlsComponent,
         AuthComponent,
-    ],
-    providers: [
-        ...ALL_SERVICES,
-        ToasterService,
-        CookieService,
     ],
     bootstrap: [AppComponent],
 })

@@ -1,4 +1,4 @@
-import {Subscription} from 'rxjs/Rx';
+import {Subscription} from 'rxjs';
 import {QueueService} from '../../../services/';
 import {Component, OnDestroy, OnInit} from '@angular/core';
 

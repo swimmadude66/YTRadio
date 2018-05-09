@@ -16,13 +16,12 @@ export class AuthComponent {
     auth: any = {};
 
     errormessage: string;
-
     constructor(
         private _auth: AuthService
     ) {}
 
     closeModal() {
-        $('#authModal').hide();
+        $('#btnModalClose').click();
     }
 
     passwordMismatch() {
@@ -30,9 +29,9 @@ export class AuthComponent {
     }
 
     formInvalid(form) {
-        let htmlinValid = form.invalid;
-        let busy = this.isLoading;
-        let pwdMismatch = this.passwordMismatch();
+        const htmlinValid = form.invalid;
+        const busy = this.isLoading;
+        const pwdMismatch = this.passwordMismatch();
         return htmlinValid || busy || pwdMismatch;
     }
 

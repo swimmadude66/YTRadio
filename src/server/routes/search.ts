@@ -1,6 +1,7 @@
+import {Router} from 'express';
 
 module.exports = (APP_CONFIG) => {
-    const router = require('express').Router();
+    const router = Router();
     const ytapi = APP_CONFIG.ytapiService;
 
     // router.use((req, res, next) => {

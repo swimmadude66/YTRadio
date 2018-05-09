@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs/Rx';
+import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 
 declare var YT;
@@ -17,7 +17,9 @@ const playerVars = {
     playsinline: 1,
 };
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class PlayerService {
     private playerEvents: Subject<PlayerEvent> = new Subject<PlayerEvent>();
     private player;

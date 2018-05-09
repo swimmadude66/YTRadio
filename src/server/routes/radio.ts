@@ -1,4 +1,5 @@
 import * as uuid from 'uuid/v4';
+import {Router} from 'express';
 
 let userQueue = [];
 let userinqueue = {};
@@ -13,7 +14,7 @@ let recentMessages = [];
 let djtimer;
 
 module.exports = (APP_CONFIG) => {
-    const router = require('express').Router();
+    const router = Router();
     const db = APP_CONFIG.db;
     const directory = APP_CONFIG.userDirectory;
     const sessionLookup = APP_CONFIG.sessionLookup;

@@ -1,8 +1,10 @@
-import {ReplaySubject, Subject} from 'rxjs/Rx';
+import {ReplaySubject, Subject} from 'rxjs';
 import {SocketService} from './sockets';
 import {Injectable} from '@angular/core';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class QueueService {
     private queue: string[] = [];
     private qSubject: Subject<string[]> = new ReplaySubject<string[]>(1);

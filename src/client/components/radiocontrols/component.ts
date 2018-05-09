@@ -1,9 +1,13 @@
-import {HttpClient} from '@angular/common/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
-import {PlayerService} from '../../services/player';
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { AuthService, SocketService } from '../../services';
-import { CookieService } from 'ngx-cookie-service';
+import {HttpClient} from '@angular/common/http';
+import {Observable, Subject, Subscription, timer} from 'rxjs';
+import {distinct, debounceTime, map, take, flatMap} from 'rxjs/operators';
+import {
+    AuthService,
+    PlayerService,
+    SocketService,
+    StorageService
+} from '../../services';
 
 @Component({
     selector: 'radio-controls',
@@ -35,12 +39,12 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
 
     constructor(
         private _http: HttpClient,
-        private _cookies: CookieService,
+        private _storage: StorageService,
         private _sockets: SocketService,
         private _auth: AuthService,
         private _player: PlayerService
     ) {
-        let savedVolume = this._cookies.get('ytvolume');
+        let savedVolume = this._storage.load('ytvolume');
         if (savedVolume) {
             let vparts = savedVolume.split('|');
             this.muted = JSON.parse(vparts[0]);
@@ -79,21 +83,27 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.subs.push(this._player.observe()
-        .distinct()
-        .subscribe(
-            event => {
-                if (event.Data === 1) {
-                    this.startTimer();
-                } else if (event.Data === 0) {
-                    this.stopTimer();
+        this.subs.push(
+            this._player.observe()
+            .pipe(
+                distinct()
+            )
+            .subscribe(
+                event => {
+                    if (event.Data === 1) {
+                        this.startTimer();
+                    } else if (event.Data === 0) {
+                        this.stopTimer();
+                    }
                 }
-            }
-        ));
+            )
+        );
 
         this.subs.push(
             this.volumeEvents
-            .debounce(() => Observable.timer(400))
+            .pipe(
+                debounceTime(400)
+            )
             .subscribe(
                 vol => this.saveVolume()
             )
@@ -119,43 +129,45 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
     }
 
     private startTimer() {
-        this.timer = Observable.timer(0, 1000)
-        .map(_ => {
-            let currtime = Math.floor(this._player.getCurrentTime());
-            let trem = '';
-            let minutes = Math.floor(currtime / 60);
-            let seconds = currtime % 60;
-            if (minutes >= 60) {
-                trem += Math.floor(minutes / 60) + ':';
-                minutes = minutes % 60;
-                if (minutes < 10) {
+        this.timer = timer(0, 1000)
+        .pipe(
+            map(_ => {
+                let currtime = Math.floor(this._player.getCurrentTime());
+                let trem = '';
+                let minutes = Math.floor(currtime / 60);
+                let seconds = currtime % 60;
+                if (minutes >= 60) {
+                    trem += Math.floor(minutes / 60) + ':';
+                    minutes = minutes % 60;
+                    if (minutes < 10) {
+                        trem += '0';
+                    }
+                }
+                trem += minutes + ':';
+                if (seconds < 10) {
                     trem += '0';
                 }
-            }
-            trem += minutes + ':';
-            if (seconds < 10) {
-                trem += '0';
-            }
-            trem += seconds;
-            return trem;
-        });
+                trem += seconds;
+                return trem;
+            })
+        );
     }
 
     private stopTimer() {
         if (this.timer) {
             this.timer = undefined;
         }
-        Observable.timer(1000)
-        .take(1)
-        .flatMap(_ => this._http.post('/api/radio/songend', {PlaybackID: this.playbackID}))
+        timer(1000)
+        .pipe(
+            take(1),
+            flatMap(_ => this._http.post('/api/radio/songend', {PlaybackID: this.playbackID}))
+        )
         .subscribe(_ => {});
     }
 
     private saveVolume() {
         let volume_cookie = JSON.stringify(this.muted) + '|' + this.premuteVolume + '|' + this.volume;
-        let future = new Date().getTime() + (52 * 7 * 24 * 60 * 60000);
-        let eDate = new Date(future);
-        this._cookies.set('ytvolume', volume_cookie, eDate);
+        this._storage.save('ytvolume', volume_cookie);
     }
 
     canSkip() {
