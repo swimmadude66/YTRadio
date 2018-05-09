@@ -1,18 +1,25 @@
 {
-  "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "removeComments": true,
-    "noImplicitAny": false,
-    "outDir": "../../build/client",
-    "typeRoots": [
-      "../../node_modules/@types"
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noEmitHelpers": true,
+        "importHelpers": true,
+        "noEmitOnError": true,
+        "lib": [
+            "es6",
+            "dom",
+            "es2015.iterable"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "@components/*": ["components/*", "components/index"],
+            "@modules/*": ["modules/*", "modules/index"],
+            "@services/*": ["services/*", "services/index"]
+        }
+    },
+    "exclude": [
+        "../../node_modules",
     ]
-  },
-  "compileOnSave": false
 }
-
