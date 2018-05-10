@@ -11,8 +11,9 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 var AotPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
+var NormalModuleReplacementPlugin = webpack.NormalModuleReplacementPlugin;
 
-module.exports = {
+const config = {
     mode: 'production', // default to prod
     entry: {
         'app': path.join(__dirname,'./src/client/main.ts'),
@@ -211,6 +212,9 @@ module.exports = {
                 to: path.join(__dirname, './dist/client/assets')
             }
         ]),
+        new NormalModuleReplacementPlugin(/environments\/environment/, function(resource) {
+            resource.request = resource.request.replace(/environment$/, `${config.mode === 'production' ? 'prodEnvironment':'devEnvironment'}`);
+        }), 
         new workbox.GenerateSW({
             swDest: 'sw.js',
             clientsClaim: true,
@@ -240,3 +244,5 @@ module.exports = {
         })
     ]
 };
+
+module.exports = config;

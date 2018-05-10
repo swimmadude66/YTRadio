@@ -33,15 +33,17 @@ Lastly, to access the mysql database being used for the containers, either exec 
 
 
 # Method 2 - __Build from Source__
-_requires git, node, and npm_
+_requires git, node, mysql, and npm_
+
+__Before you get started, make sure you have appropriate access to either a local or remote mysql server such that you can create a new schema. You will need to configure the access credentials in your environment variables, or a `.env` file in order for the app to connect__
 
 1. Clone this repo on to your host box (or just download the zip from github, I'm not your mom)
 2. `cd` in to the cloned/downloaded repo
-3. run `npm i`, then `npm run gulp`
-4. `npm start` will host the app on the default port!
+3. run the included `scripts/sql/db-init.sql` script against your mysql server
+4. run `npm i`, then `npm run gulp`
+5. `npm start` will host the app on the default port!
 
 ## Development
-After cloning and installing, you can run `npm run dev` to create a live-reloading instance of the app. (note, you will need to run `npm start` or `npm start-dev` in a separate terminal to launch the api)
-
+After cloning and installing, you can run `npm run dev` to create a live-reloading instance of the app and API.
 Additionally, you can configure the app by workspace by creating and editing a `.env` fle in the project root.  The contents of the file will be read as KeyValuePairs and overwrite `process.env` variables.
 

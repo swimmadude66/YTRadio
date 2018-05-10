@@ -48,7 +48,6 @@ gulp.task('webpack-watch', function() {
     config.cache = true;
     config.bail = false;
     config.devtool = 'source-map';
-    config.stats = 'errors-only';
     config.module.rules.push(
         {
             enforce: 'pre',

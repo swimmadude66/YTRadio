@@ -1,9 +1,7 @@
-FROM gliderlabs/alpine:3.6
+FROM alpine:3.7
 
-RUN apk add --update \
+RUN apk add --no-cache --update \
 nodejs \
-nodejs-npm \
-&& rm -rf /var/cache/apk/* \
-&& npm install -g npm
+nodejs-npm
 
 ENV DOCKER_MODE=true
