@@ -21,7 +21,7 @@ const config = {
         'styles': path.join(__dirname, './src/client/styles.scss')
     },
     output: {
-        filename: '[name].min.js',
+        filename: '[name].[hash].min.js',
         path: path.join(__dirname, 'dist/client')
     },
     resolve: {
@@ -219,7 +219,7 @@ const config = {
             swDest: 'sw.js',
             clientsClaim: true,
             skipWaiting: true,
-            include: [/assets/, /.*\.((html)|(css)|(jpg)|(png)|(svg)|(woff(2?))|(eot)|(ttf))/, /((common)|(vendor)|(app))\.min\.js/],
+            include: [/assets/, /.*\.((html)|(css)|(jpg)|(png)|(svg)|(woff(2?))|(eot)|(ttf))/],
             exclude: [/manifest/],
             runtimeCaching: [{
                 // Match any same-origin request that contains 'api'.

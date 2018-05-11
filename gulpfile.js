@@ -57,10 +57,14 @@ gulp.task('webpack-watch', function() {
     );
     config.plugins.push(
         new browserSync({
-            host: 'localhost',
             port: 3001,
-            proxy: 'localhost:3000',
-            ws: true,
+            proxy: {
+                target: 'localhost:3000',
+                ws: true
+            },
+            ui: {
+                port: 3003
+            },
             open: !(process.env.DOCKER_MODE)
         })
     );

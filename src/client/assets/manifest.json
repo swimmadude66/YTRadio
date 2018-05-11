@@ -17,5 +17,5 @@
     "background_color": "#ffffff",
     "display": "standalone",
     "orientation": "landscape",
-    "start_url": "/index.html"
+    "start_url": "."
 }
