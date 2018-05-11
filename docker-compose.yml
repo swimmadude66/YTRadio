@@ -12,6 +12,7 @@ services:
       - '3003:3003'
     volumes:
       - '.:/app'
+      - /app/node_modules
     command: 'sh /app/entrypoint.sh'
     environment:
       - YTAPI_KEY=${YTAPI_KEY}
@@ -25,7 +26,7 @@ services:
     depends_on: 
       - mysql
   mysql:
-    image: 'mysql'
+    image: 'mysql:5.7'
     container_name: 'ytradio-db'
     expose: 
       - 3306
