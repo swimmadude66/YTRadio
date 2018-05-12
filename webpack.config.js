@@ -4,36 +4,27 @@ var workbox = require('workbox-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var uncss = require('postcss-uncss');
 var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 var AotPlugin = require('@ngtools/webpack').AngularCompilerPlugin;
+var commonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 var ProvidePlugin = webpack.ProvidePlugin;
 var NormalModuleReplacementPlugin = webpack.NormalModuleReplacementPlugin;
 
-const config = {
-    mode: 'production', // default to prod
+var config = {
     entry: {
         'app': path.join(__dirname,'./src/client/main.ts'),
         'vendor': path.join(__dirname,'./src/client/vendor.ts'),
         'styles': path.join(__dirname, './src/client/styles.scss')
     },
     output: {
-        filename: '[name].[hash].min.js',
+        filename: '[name].min.js',
         path: path.join(__dirname, 'dist/client')
     },
     resolve: {
         extensions: ['.ts', '.js', '.json', '.scss', '.css']
-    },
-    optimization: {
-        namedModules: true,
-        splitChunks: {
-            name: 'common',
-            minChunks: 2,
-        },
-        minimize: true
     },
     module: {
         rules: [
@@ -80,13 +71,9 @@ const config = {
                                 ident: 'postcss',
                                 plugins: function(loader){
                                     return [
-                                        // uncss({
-                                        //     html: [path.join(__dirname, './src/client/index.html'), path.join(__dirname, './src/client/**/*.html')],
-                                        //     ignore: [/has-error/, /disabled/, /hover/, /active/, /focus/, /hidden/, /hide/, /show/, /^fa-/]
-                                        // }),
                                         autoprefixer({remove: false, flexbox: true}),
                                         cssnano
-                                    ];
+                                    ]
                                 }
                             }
                         },
@@ -198,6 +185,12 @@ const config = {
             mainPath: path.join(__dirname, './src/client/main.ts'),
             typeChecking: false,
         }),
+        new commonsChunkPlugin({
+            name: 'common',
+            minChunks: 2,
+            async: false,
+            children: false
+        }),
         new ExtractTextPlugin({
             allChunks: true, 
             filename: 'styles.min.css'
@@ -213,13 +206,13 @@ const config = {
             }
         ]),
         new NormalModuleReplacementPlugin(/environments\/environment/, function(resource) {
-            resource.request = resource.request.replace(/environment$/, `${config.mode === 'production' ? 'prodEnvironment':'devEnvironment'}`);
-        }), 
+            resource.request = resource.request.replace(/environment$/, (process.env.BUILD_MODE === 'development' ? 'devEnvironment':'prodEnvironment'));
+        }),
         new workbox.GenerateSW({
             swDest: 'sw.js',
             clientsClaim: true,
             skipWaiting: true,
-            include: [/assets/, /.*\.((html)|(css)|(jpg)|(png)|(svg)|(woff(2?))|(eot)|(ttf))/],
+            include: [/assets/, /.*\.((html)|(css)|(jpg)|(png)|(svg)|(woff(2?))|(eot)|(ttf))/, /((common)|(vendor)|(app))\.min\.js/],
             exclude: [/manifest/],
             runtimeCaching: [{
                 // Match any same-origin request that contains 'api'.
