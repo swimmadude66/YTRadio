@@ -6,5 +6,5 @@ import 'jquery';
 import 'popper.js';
 import 'bootstrap';
 
-import {Observable, Subject, ReplaySubject, Subscription, timer} from 'rxjs';
-import {map, flatMap, tap, take} from 'rxjs/operators';
+import {Observable, Subject, ReplaySubject, Subscription, timer, throwError} from 'rxjs';
+import {map, switchMap, tap, take, catchError} from 'rxjs/operators';

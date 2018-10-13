@@ -1,5 +1,5 @@
-import {Observable} from 'rxjs';
-import {flatMap, map} from 'rxjs/operators';
+import {throwError} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import * as async from 'async';
 import {Router} from 'express';
 
@@ -98,29 +98,30 @@ module.exports = (APP_CONFIG) => {
         let active = body.Active;
         db.query('Select `ID` from `playlists` where `Name`=? and `Owner`=?', [name, res.locals.usersession.UserID])
             .pipe(
-                flatMap((results: any[]) => {
+                switchMap((results: any[]) => {
                     if (results.length < 1) {
-                        return Observable.throw('No such playlist');
+                        return throwError('No such playlist');
                     }
-                let plid = results[0].ID;
-                let sql = 'Update `playlists` SET `Active`= ? where `ID`=?;';
-                return db.query(sql, [active, plid])
-                    .pipe(
-                        flatMap(result => {
-                            let contentmap = [];
-                            let i = 0;
-                            contents.forEach((c) => {
-                                if (!c) {
+                    let plid = results[0].ID;
+                    let sql = 'Update `playlists` SET `Active`= ? where `ID`=?;';
+                    return db.query(sql, [active, plid])
+                        .pipe(
+                            switchMap(result => {
+                                let contentmap = [];
+                                let i = 0;
+                                contents.forEach((c) => {
+                                    if (!c) {
+                                        i++;
+                                        return;
+                                    }
+                                    contentmap.push([plid, c.ID, i]);
                                     i++;
-                                    return;
-                                }
-                                contentmap.push([plid, c.ID, i]);
-                                i++;
-                            });
-                            return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(contentmap) + ' ON DUPLICATE KEY UPDATE `Order`=VALUES(`Order`);');
-                        })
-                    );
-                })
+                                });
+                                return db.query('Insert into `playlistcontents` (`PlaylistID`, `VideoID`, `Order`) VALUES ' + db.escape(contentmap) + ' ON DUPLICATE KEY UPDATE `Order`=VALUES(`Order`);');
+                            })
+                        );
+                    }
+                )
             )
             .subscribe(
             _ => res.status(204).end(),
@@ -248,7 +249,7 @@ module.exports = (APP_CONFIG) => {
         let pdelete = 'Delete from playlists where Name=? and Owner=?;';
         db.query(contentd, [name, res.locals.usersession.UserID])
         .pipe(
-            flatMap(() => db.query(pdelete, [name, res.locals.usersession.UserID]))
+            switchMap(() => db.query(pdelete, [name, res.locals.usersession.UserID]))
         )
         .subscribe(
             _ => res.status(204).end(),
@@ -273,7 +274,7 @@ module.exports = (APP_CONFIG) => {
             let sql = 'Insert into `playlists` (`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES (?, ?, ?, ?);';
             db.query(sql, [res.locals.usersession.UserID, name, JSON.stringify([]), false])
             .pipe(
-                flatMap(
+                switchMap(
                     result => {
                         let plid = result['insertId'];
                         let plcontents = [];

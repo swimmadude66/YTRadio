@@ -29,6 +29,7 @@
   "license": "MIT",
   "author": "swimmadude66",
   "dependencies": {
+    "argon2": "0.19.3",
     "async": "2.6.0",
     "body-parser": "1.18.2",
     "compression": "1.7.2",
@@ -38,7 +39,7 @@
     "morgan": "1.9.0",
     "mysql": "2.15.0",
     "request": "2.85.0",
-    "rxjs": "6.1.0",
+    "rxjs": "6.2.2",
     "socket.io": "2.1.0",
     "spdy": "3.4.7",
     "uuid": "3.2.1",

@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, Subject, Subscription, timer} from 'rxjs';
-import {distinct, debounceTime, map, take, flatMap} from 'rxjs/operators';
+import {distinct, debounceTime, map, take, switchMap} from 'rxjs/operators';
 import {
     AuthService,
     PlayerService,
@@ -160,7 +160,7 @@ export class RadioControlsComponent implements OnInit, OnDestroy {
         timer(1000)
         .pipe(
             take(1),
-            flatMap(_ => this._http.post('/api/radio/songend', {PlaybackID: this.playbackID}))
+            switchMap(_ => this._http.post('/api/radio/songend', {PlaybackID: this.playbackID}))
         )
         .subscribe(_ => {});
     }

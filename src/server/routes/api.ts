@@ -1,38 +1,45 @@
-import {Observable} from 'rxjs';
-import {flatMap, map} from 'rxjs/operators';
+import {throwError, of} from 'rxjs';
+import {map, switchMap} from 'rxjs/operators';
 import {Session} from '../models/session';
 import {Database} from '../services/db';
 import {SessionLookup} from '../services/sessionlookup';
-import {createHash} from 'crypto';
 import * as uuid from 'uuid/v4';
 import {Router} from 'express';
+import {AuthService} from '../services/auth';
 
 module.exports = (APP_CONFIG) => {
     const router = Router();
     const db: Database = APP_CONFIG.db;
     const sessionLookup: SessionLookup = APP_CONFIG.sessionLookup;
+    const auth  = new AuthService();
     /*
     * Public Methods
     */
     router.post('/signup', (req, res) => {
-        let body = req.body;
+        const body = req.body;
         if (!body || !body.Username || !body.Email || !body.Password) {
             return res.status(400).send('Username, Email, and Password are required fields');
         }
-        let salt = uuid();
-        let encpass = createHash('sha256').update(salt + '|' + body.Password).digest('hex');
-        db.query('Insert into users(`Username`, `Email`, `Password`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,1);', [body.Username, body.Email, encpass, salt, uuid()])
+        const salt = uuid();
+        auth.hashPassword(`${salt}|${body.Password}`)
         .pipe(
-            flatMap(() => {
+            switchMap((passConfig: {algo: string, hash: string}) => {
+                return db.query(
+                    'Insert into users(`Username`, `Email`, `Password`, `Algorithm`, `Salt`, `Confirm`, `Active`) VALUES(?,?,?,?,?,?,1);',
+                    [body.Username, body.Email, passConfig.hash, passConfig.algo, salt, uuid()]
+                )
+            }),
+            switchMap(() => {
                 return db.query('Insert into playlists(`Owner`, `Name`, `ContentsJSON`, `Active`) VALUES ((Select `ID` from `users` where `Username`=?), \'Default\', \'[]\', 0);', [body.Username]);
             })
         )
         .subscribe(
-        result => res.send('Signed up successfully.'),
-        err => {
-            console.error(err);
-            return res.status(500).send('Error signing up');
-        });
+            result => res.send('Signed up successfully.'),
+            err => {
+                console.error(err);
+                return res.status(500).send('Error signing up');
+            }
+        );
     });
 
     // router.get('/verification/:v_key', (req, res) => {
@@ -50,27 +57,45 @@ module.exports = (APP_CONFIG) => {
         if (!body || !body.Username || !body.Password) {
             return res.status(400).send('Username and Password are required fields');
         }
-        db.query('Select `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from users where `Username` = ?', [body.Username])
+        db.query('Select `Algorithm`, `Password`, `Salt`, `Role`, `ID`, `Username`, `Active` from users where `Username` = ?', [body.Username])
         .pipe(
-            flatMap(
-            results => {
+            switchMap(results => {
                 if (results.length < 1) {
-                    return Observable.throw('Invalid username and/or password');
+                    return throwError('Invalid username and/or password');
                 }
                 let user = results[0];
                 if (user.Active === 0) {
-                    return Observable.throw('Invalid username and/or password');
+                    return throwError('Invalid username and/or password');
                 }
-                let validpass = (createHash('sha256').update(user.Salt + '|' + body.Password).digest('hex') === user.Password);
-                if (!validpass) {
-                    return Observable.throw('Invalid username and/or password');
-                }
-                let public_user = { ID: user.ID, Username: user.Username, Role: user.Role };
-                let sid = uuid();
-                return db.query('Insert into sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
+                return auth.validatePassword(user, body.Password)
                 .pipe(
-                    map(() => {
-                        return {Session: sid, User: public_user};
+                    switchMap(isValid => {
+                        if (!isValid) {
+                            return throwError('Invalid username and/or password');
+                        } else {
+                            if (user.Algorithm !== 'argon2') { // detect if user needs an update
+                                return auth.hashPassword(`${user.Salt}|${body.Password}`);
+                            }  else {
+                                return of(null);
+                            }
+                        }
+                    }),
+                    switchMap(newPass => {
+                        if (newPass) {
+                            return db.query('Update users SET `Algorithm`=?, `Password`=? WHERE `ID`=?', [newPass.algo, newPass.hash, user.ID]);
+                        } else {
+                            return of(null);
+                        }
+                    }),
+                    switchMap(_ => {
+                        const public_user = { ID: user.ID, Username: user.Username, Role: user.Role };
+                        const sid = uuid();
+                        return db.query('Insert into sessions(`Key`, `UserID`) Values(?, ?);', [sid, user.ID])
+                        .pipe(
+                            map(() => {
+                                return {Session: sid, User: public_user};
+                            })
+                        )
                     })
                 );
             })

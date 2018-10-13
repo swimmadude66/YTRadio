@@ -9,7 +9,7 @@ export class SessionLookup {
 
     constructor(private db: Database) { }
 
-    lookupSession(sessionId): Observable<Session> {
+    lookupSession(sessionId: string): Observable<Session> {
         let keylookup = 'Select users.`Username`, users.`ID`, users.`Role`, sessions.`Key` from sessions \
         join users on sessions.`UserID` = users.`ID` \
         Where sessions.`Active`=1 AND `users`.`Active`=1 AND sessions.`Key`=?;';

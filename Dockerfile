@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.8
 
 WORKDIR /build
 COPY . /build
@@ -6,6 +6,9 @@ COPY . /build
 RUN apk add --no-cache --update \
 nodejs \
 nodejs-npm \
+python2 \
+g++ \
+make \
 && npm i \
 && npm run build \
 && mkdir -p -m 0777 /app/bin \

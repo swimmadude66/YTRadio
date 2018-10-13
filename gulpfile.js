@@ -17,7 +17,7 @@ gulp.task('start-server', ['compile-node'], function(){
         server_proc.kill();
         server_proc = undefined;
     }
-    server_proc = spawn('node', ['dist/server/app.js', '--inspect=5858'], {
+    server_proc = spawn('node', ['--inspect=5858', 'dist/server/app.js'], {
         cwd: __dirname,
         stdio: [0, 1, 2, 'ipc']
     });
@@ -56,6 +56,7 @@ gulp.task('webpack', function(done) {
                 console.log(stats);
             }
         }
+        console.log(stats.toString());
         return done(err);
     });
 });
@@ -95,6 +96,7 @@ gulp.task('webpack-watch', function() {
                 console.log(stats);
             }
         }
+        console.log(stats.toString());
     });
 });
 

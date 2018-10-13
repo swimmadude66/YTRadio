@@ -1,5 +1,3 @@
-import {Observable} from 'rxjs';
-import {flatMap, map} from 'rxjs/operators';
 import {SessionLookup} from '../services/sessionlookup';
 import {Router} from 'express';
 

@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
-import {Observable, ReplaySubject} from 'rxjs';
-import {map, tap, flatMap} from 'rxjs/operators';
+import {Observable, ReplaySubject, throwError} from 'rxjs';
+import {map, tap, switchMap} from 'rxjs/operators';
 import {SocketService} from './sockets';
 import {StorageService} from './storage';
 
@@ -64,7 +64,7 @@ export class AuthService {
 
     logIn(creds): Observable<any> {
         if (!creds || !creds.Username || !creds.Password) {
-            return Observable.throw('Need login creds');
+            return throwError('Need login creds');
         }
         return this._http.post<{Data: any}>('/api/login', creds)
             .pipe(
@@ -80,11 +80,11 @@ export class AuthService {
 
     signUp(creds): Observable<any> {
         if (!creds || !creds.Username || !creds.Email || !creds.Password) {
-            return Observable.throw('Need signup creds');
+            return throwError('Need signup creds');
         }
         return this._http.post('/api/signup', creds, {responseType: 'text' as 'text'})
         .pipe(
-            flatMap(_ => this.logIn(creds))
+            switchMap(_ => this.logIn(creds))
         );
     }
 
