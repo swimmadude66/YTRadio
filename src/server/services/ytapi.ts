@@ -38,7 +38,16 @@ export class YTAPI {
                     } else {
                         try {
                             let body = JSON.parse(bodyText);
-                            results = results.concat(body.items);
+                            if (('errors' in body) && body.errors.length) {
+                                throw new Error(body);
+                            }
+                            if (('error' in body) && body.error) {
+                                throw new Error(body);
+                            }
+                            if (!('items' in body)) {
+                                throw new Error(body);
+                            }
+                            results = results.concat(body.items || []);
                             nextPage = body.nextPageToken;
                             more = !!nextPage;
                             return cb();
@@ -60,12 +69,12 @@ export class YTAPI {
     addDurations(videos, cleanvids, callback) {
         let full_list = [];
         videos.forEach((ir) => {
-            if (!ir.contentDetails || !ir.contentDetails.duration) {
+            if (!ir.contentDetails || !ir.contentDetails.duration || ir.contentDetails.duration === 'P0D') {
                 delete cleanvids[ir.id];
                 return;
             }
             let duration = ir.contentDetails.duration;
-            let durationparts = duration.replace(/P(\d+D)?T(\d+H)?(\d+M)?(\d+S)?/i, '$1, $2, $3, $4').split(/\s*,\s*/i);
+            let durationparts = duration.replace(/P(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?/i, '$1, $3, $4, $5').split(/\s*,\s*/i);
             let durationmillis = 0;
             let mults = [1000, 60000, 60 * 60000, 24 * 60 * 60000];
             for (let i = durationparts.length - 1; i >= 0; i--) {
