@@ -30,7 +30,7 @@
   "author": "swimmadude66",
   "dependencies": {
     "argon2": "0.19.3",
-    "async": "2.6.0",
+    "async": "2.6.4",
     "body-parser": "1.18.2",
     "compression": "1.7.2",
     "cookie-parser": "1.4.3",
